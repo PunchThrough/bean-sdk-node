@@ -1,7 +1,7 @@
 module.exports = {
-  entry: './src/frontend/webpack-entry.js',
+  entry: './app/app.jsx',
   output: {
-    path: __dirname + '/src/frontend',
+    path: __dirname + '/build/',
     filename: 'bundle.js'
   },
   module: {

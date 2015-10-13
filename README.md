@@ -17,3 +17,11 @@ App dependencies:
 $ npm install -g electron-prebuilt
 $ npm install
 ```
+
+
+## Running
+
+```
+webpack src/frontend/webpack-entry.js src/frontend/bundle.js
+electron .
+```

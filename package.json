@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/PunchThrough/Bean-JS-FW-Updater#readme",
   "dependencies": {
-    "electron-prebuilt": "^0.33.7"
+    "electron-prebuilt": "^0.33.7",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0"
   }
 }

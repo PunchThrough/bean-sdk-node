@@ -1,0 +1,19 @@
+{
+  "name": "bean-js-fw-updater",
+  "version": "1.0.0",
+  "description": "Bean FW Updater written in JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PunchThrough/Bean-JS-FW-Updater.git"
+  },
+  "author": "Stephen Stack",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PunchThrough/Bean-JS-FW-Updater/issues"
+  },
+  "homepage": "https://github.com/PunchThrough/Bean-JS-FW-Updater#readme"
+}

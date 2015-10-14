@@ -1,9 +1,10 @@
 module.exports = {
-  entry: './app/app.jsx',
+  entry: './app/entry.jsx',
   output: {
     path: __dirname + '/build/',
     filename: 'bundle.js'
   },
+  devtool: 'source-map',
   module: {
     loaders: [
       {
@@ -13,7 +14,19 @@ module.exports = {
         query: {
           stage: 0
         }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json'
+      },
+      {
+        test: /\.node$/,
+        loader: 'node'
       }
     ]
+  },
+  externals: {
+    'bluetooth-hci-socket': 'bluetooth-hci-socket',
+    'fs': 'fs'
   }
 }

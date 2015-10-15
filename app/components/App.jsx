@@ -1,12 +1,31 @@
 import React from 'react'
+import BeanList from './BeanList.jsx'
 
-export var App = React.createClass({
+var App = React.createClass({
 
-  render: function() {
+  render: function () {
     return (
-      <div>
+      <div className="window">
+
+        <div className="window-content">
+          <BeanList />
+        </div>
+
+        <footer className="toolbar toolbar-footer">
+          <div className="toolbar-actions">
+            <button className="btn btn-default">
+              Refresh
+            </button>
+
+            <button className="btn btn-primary pull-right">
+              Update Firmware
+            </button>
+          </div>
+        </footer>
       </div>
     )
   }
 
 })
+
+module.exports = App

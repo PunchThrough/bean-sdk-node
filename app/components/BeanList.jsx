@@ -22,12 +22,12 @@ class BeanList extends React.Component {
 
   render() {
     return (
-      <div className='bean-list-table'>
+      <div className='bean-list-table bean-list'>
         <ul className="list-group">
           <li className="list-group-header">
-            Bean List
+            <h3>Beans</h3>
           </li>
-          {this.state.devices.map((d)=> <BeanListItem beanName={d.name} beanUUID={d.uuid}/>)}
+          {this.state.devices.map((d, i)=> <BeanListItem key={i} beanName={d.name} beanUUID={d.uuid}/>)}
         </ul>
       </div>
     )

@@ -21,7 +21,7 @@ ElectronApp.on('window-all-closed', function () {
 })
 
 ElectronApp.on('ready', function () {
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 320, height: 450})
 
   LB.on('discover', (device)=> {
     mainWindow.webContents.send('deviceFound', device.serialize())

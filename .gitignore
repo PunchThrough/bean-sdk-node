@@ -2,3 +2,4 @@ build/
 tmp/
 .idea/
 node_modules/
+*npm-debug.log

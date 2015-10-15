@@ -1,21 +1,23 @@
 // Electron entry point and Main Process
 
 import ElectronApp from 'app'
+import BrowserWindow from 'browser-window'
+import LB from './lightblue/lightblue.js'
 
-var electronApp = require('app')
-var BrowserWindow = require('browser-window')
-
-var sdk = require('./lightblue/lightblue')
+LB.startScanning()
+LB.on('discover', (device)=> {
+  console.log(device)
+})
 
 var mainWindow = null
 
-electronApp.on('window-all-closed', function () {
+ElectronApp.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
-    electronApp.quit()
+    ElectronApp.quit()
   }
 })
 
-electronApp.on('ready', function () {
+ElectronApp.on('ready', function () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
   mainWindow.loadUrl('file://' + __dirname + '/index.html')
   mainWindow.openDevTools()

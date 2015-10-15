@@ -34,4 +34,4 @@ class LightBlueSDK {
 
 }
 
-module.exports.sdk = new LightBlueSDK()
+module.exports = new LightBlueSDK()

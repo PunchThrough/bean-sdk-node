@@ -4,29 +4,36 @@ Stand alone tool for updating Bean FW on desktop platforms
 
 ## Development Environment
 
-Install and use Node 4.2.1:
+Install and use Node 0.12.7
 
 ```bash
-$ nvm install 4.2.1
-$ nvm use 4.2.1
+$ nvm install 0.12.7
+$ nvm use 0.12.7
 ```
 
-App dependencies:
+Build app dependencies:
 
-```
-$ npm install -g electron-prebuilt
+```bash
 $ npm install
 ```
+
+Build native dependencies against Electrons headers:
+
+```bash
+./node_modules/.bin/electron-rebuild
+```
+
+__Note:__ This step should be done each time you run `npm install` for _certain_ dependencies...like `noble`...i think?  Not too sure.
 
 
 ## Running
 
-```
-webpack src/frontend/webpack-entry.js src/frontend/bundle.js
-electron .
+```bash
+$ npm run dev
 ```
 
 
 ## Knowledge Base
 
 * https://github.com/atom/electron/issues/1611
+* Electron __Main Procs__ and __Render Procs__ communicate through electrons `ipc` module.

@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './app/entry.jsx',
+  entry: './app/render.jsx',
   output: {
     path: __dirname + '/build/',
     filename: 'bundle.js'
@@ -25,8 +25,8 @@ module.exports = {
       }
     ]
   },
-  externals: {
-    'bluetooth-hci-socket': 'bluetooth-hci-socket',
-    'fs': 'fs'
-  }
+  //externals: {
+  //  'bluetooth-hci-socket': 'bluetooth-hci-socket',
+  //  'fs': 'fs'
+  //}
 }

@@ -25,3 +25,8 @@ $ npm install
 webpack src/frontend/webpack-entry.js src/frontend/bundle.js
 electron .
 ```
+
+
+## Knowledge Base
+
+* https://github.com/atom/electron/issues/1611

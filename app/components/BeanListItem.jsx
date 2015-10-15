@@ -1,3 +1,5 @@
+require("babel/register")
+
 import React from 'react'
 
 var BeanListItem = React.createClass({

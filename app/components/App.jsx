@@ -1,5 +1,5 @@
 import React from 'react'
-import BeanList from './BeanList.jsx'
+import BeanList from './BeanList'
 
 var App = React.createClass({
 

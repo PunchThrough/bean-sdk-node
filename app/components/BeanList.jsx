@@ -1,21 +1,37 @@
 import React from 'react'
-import BeanListItem from './BeanListItem.jsx'
+import BeanListItem from './BeanListItem'
+import ipc from 'ipc'
 
-var BeanList = React.createClass({
+class BeanList extends React.Component {
+  constructor() {
+    super()
+    this.state = {devices: []}
+  }
 
-  render: function () {
+  componentDidMount() {
+    ipc.on('deviceFound', (device) => {
+      var newDevices = this.state.devices.slice()
+      newDevices.push(device)
+      this.setState({devices: newDevices})
+    });
+  }
+
+  componentWillUnmount() {
+    ipc.removeListener('deviceFound');
+  }
+
+  render() {
     return (
       <div className='bean-list-table'>
         <ul className="list-group">
           <li className="list-group-header">
             Bean List
-            <BeanListItem beanName="Amazing Bean" beanUUID="XXX-XXX-XXX-XXX" />
           </li>
+          {this.state.devices.map((d)=> <BeanListItem beanName={d.name} beanUUID={d.uuid}/>)}
         </ul>
       </div>
     )
   }
-
-})
+}
 
 module.exports = BeanList

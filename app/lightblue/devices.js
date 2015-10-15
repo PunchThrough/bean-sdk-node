@@ -12,6 +12,7 @@ function fromPeripheral(peripheral) {
   }
 }
 
+
 class BleDevice {
 
   constructor(uuid, name, services) {
@@ -30,6 +31,13 @@ class BleDevice {
     }
     out += '\n'
     return out
+  }
+
+  serialize() {
+    return {
+      name: this._name,
+      uuid: this._uuid
+    }
   }
 }
 

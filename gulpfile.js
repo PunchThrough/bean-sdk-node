@@ -10,6 +10,6 @@ gulp.task('build', [], function() {
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest('./build/'));
 
-  gulp.src(['./app/**/*.html', './app/assets/**/*'])
+  gulp.src(['./app/**/*.html', './app/**/*.*'])
     .pipe(gulp.dest('./build/'))
 });

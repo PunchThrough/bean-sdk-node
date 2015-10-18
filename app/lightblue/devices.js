@@ -1,6 +1,12 @@
 "use strict"
 
+// Device types
+let DEVICE_TYPE_BEAN = 'DEVICE_TYPE_BEAN'
+let DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
+let DEVICE_TYPE_BEAN_PLUS = 'DEVICE_TYPE_BEAN_PLUS'
+
 var BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
+
 
 function fromPeripheral(peripheral) {
   var adv = peripheral.advertisement
@@ -19,6 +25,10 @@ class BleDevice {
     this._uuid = uuid
     this._name = name
     this._services = services
+  }
+
+  get_type() {
+    return DEVICE_TYPE_BLE
   }
 
   toString() {
@@ -44,6 +54,10 @@ class BleDevice {
 class LightBlueDevice extends BleDevice {
   constructor(uuid, name, services) {
     super(uuid, name, services)
+  }
+
+  get_type() {
+    return DEVICE_TYPE_BEAN
   }
 
   toString() {

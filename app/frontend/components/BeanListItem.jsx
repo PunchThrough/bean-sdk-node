@@ -1,21 +1,26 @@
-require("babel/register")
-
 import React from 'react'
+import Icon from './Icon.js'
 
-var BeanListItem = React.createClass({
+class BeanListItem extends React.Component {
 
-  render: function () {
+  constructor() {
+    super()
+  }
+
+  render() {
     return (
       <li className="list-group-item">
-        <span className="icon icon-upload media-object pull-left"></span>
+        <Icon dType={this.props.device.get_type()}/>
+
         <div className="media-body">
-          <strong>{this.props.beanName}</strong>
-          <p>{this.props.beanUUID}</p>
+          <strong>{this.props.device.beanName}</strong>
+
+          <p>{this.props.device.beanUUID}</p>
         </div>
       </li>
     )
   }
 
-})
+}
 
 module.exports = BeanListItem

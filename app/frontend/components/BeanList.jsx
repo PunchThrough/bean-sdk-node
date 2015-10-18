@@ -27,7 +27,7 @@ class BeanList extends React.Component {
           <li className="list-group-header">
             <h3>Beans</h3>
           </li>
-          {this.state.devices.map((d, i)=> <BeanListItem key={i} beanName={d.name} beanUUID={d.uuid}/>)}
+          {this.state.devices.map((d, i)=> <BeanListItem key={i} device={d}/>)}
         </ul>
       </div>
     )

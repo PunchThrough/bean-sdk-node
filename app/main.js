@@ -5,6 +5,7 @@ import BrowserWindow from 'browser-window'
 import LB from './lightblue/lightblue.js'
 import ipc from 'ipc'
 
+
 // Constants
 const INDEX = 'index.html'
 const GUI_WIDTH = 320

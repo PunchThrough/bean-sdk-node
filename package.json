@@ -17,23 +17,25 @@
     "url": "https://github.com/PunchThrough/Bean-JS-FW-Updater/issues"
   },
   "homepage": "https://github.com/PunchThrough/Bean-JS-FW-Updater#readme",
-  "devDependencies": {
-    "electron-prebuilt": "^0.33.7",
+  "dependencies": {
+    "flux": "^2.1.1",
     "noble": "^1.2.0",
     "react": "^0.14.0",
-    "react-dom": "^0.14.0",
+    "react-dom": "^0.14.0"
+  },
+  "devDependencies": {
     "babel": "^5.8.23",
     "babel-core": "^5.8.25",
     "babel-loader": "^5.3.2",
+    "electron-prebuilt": "^0.33.7",
     "electron-rebuild": "^1.0.1",
-    "json-loader": "^0.5.3",
-    "node-loader": "^0.5.0",
-    "webpack": "^1.12.2",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-replace": "^0.5.4",
     "gulp-run": "^1.6.10",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-zip": "^3.0.2"
+    "gulp-zip": "^3.0.2",
+    "json-loader": "^0.5.3",
+    "node-loader": "^0.5.0"
   }
 }

@@ -2,9 +2,7 @@
 
 import ElectronApp from 'app'
 import BrowserWindow from 'browser-window'
-import LB from './lightblue/lightblue.js'
-import ipc from 'ipc'
-
+import LB from './lightblue/lightblue'
 
 // Constants
 const INDEX = 'index.html'
@@ -38,6 +36,7 @@ ElectronApp.on('ready', function () {
   })
 
   LB.on('discover', (device)=> {
+    console.log(device)
     mainWindow.webContents.send('deviceFound', device.serialize())
   })
 

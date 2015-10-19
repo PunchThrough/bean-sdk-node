@@ -1,13 +1,13 @@
 'use strict'
 
-import Dispatcher from 'dispatcher'
+import Dispatcher from './dispatcher'
 import events from 'events'
-import assign from 'object-assign'
-import SERVER_DEVICE_FOUND from '../lightblue/devices'
-
-let EventEmitter = events.EventEmitter
+import actions from './actions'
 
 const CHANGE_EVENT = 'change'
+
+let EventEmitter = events.EventEmitter
+let _devices = []
 
 class Store extends EventEmitter {
   constructor() {
@@ -26,19 +26,24 @@ class Store extends EventEmitter {
     this.removeListener(CHANGE_EVENT, callback)
   }
 
-}
+  getDevices() {
+    return _devices
+  }
 
+}
 
 Dispatcher.register(function (action) {
 
   switch (action.actionType) {
-    case SERVER_DEVICE_FOUND:
-      console.log('store thing')
+    case actions.SERVER_DEVICE_FOUND:
+      _devices.push(action.device)
+      store.emitChange()
       break
 
     default:
-    // none
+      console.log(`No registered handler for ${action.actionType}`)
   }
 });
 
-module.exports = Store
+let store = new Store()
+module.exports = store

@@ -1,23 +1,33 @@
+'use strict'
+
 import React from 'react'
 import BeanListItem from './BeanListItem'
-import ipc from 'ipc'
+import Store from '../store'
+
+function getDevices() {
+  return {
+    devices: Store.getDevices()
+  }
+}
 
 class BeanList extends React.Component {
+
   constructor() {
     super()
-    this.state = {devices: []}
+    this.state = getDevices()
+
+    // Have to use a fat-arrow so that `this` is bound correctly...
+    this._onChange = () => {
+      this.setState(getDevices())
+    }
   }
 
   componentDidMount() {
-    ipc.on('deviceFound', (device) => {
-      var newDevices = this.state.devices.slice()
-      newDevices.push(device)
-      this.setState({devices: newDevices})
-    });
+    Store.addChangeListener(this._onChange);
   }
 
   componentWillUnmount() {
-    ipc.removeListener('deviceFound');
+    Store.removeChangeListener(this._onChange);
   }
 
   render() {

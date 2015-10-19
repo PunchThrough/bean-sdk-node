@@ -10,12 +10,11 @@ class BeanListItem extends React.Component {
   render() {
     return (
       <li className="list-group-item">
-        <Icon dType={this.props.device.get_type()}/>
+        <Icon device_type={this.props.device.device_type}/>
 
         <div className="media-body">
-          <strong>{this.props.device.beanName}</strong>
-
-          <p>{this.props.device.beanUUID}</p>
+          <strong>{this.props.device.name}</strong>
+          <p>{this.props.device.uuid}</p>
         </div>
       </li>
     )

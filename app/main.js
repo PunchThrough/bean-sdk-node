@@ -8,8 +8,8 @@ import ipc from 'ipc'
 
 // Constants
 const INDEX = 'index.html'
-const GUI_WIDTH = 320
-const GUI_HEIGHT = 450
+const GUI_WIDTH = 440
+const GUI_HEIGHT = 500
 
 let mainWindow = null
 

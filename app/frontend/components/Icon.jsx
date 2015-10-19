@@ -3,8 +3,10 @@
 require("babel/register")
 
 import React from 'react'
-import DEVICE_TYPE_BEAN from '../../lightblue/devices.js'
-import DEVICE_TYPE_BLE from '../../lightblue/devices.js'
+
+const DEVICE_TYPE_BEAN = require('../../lightblue/devices').consts.DEVICE_TYPE_BEAN
+const DEVICE_TYPE_BLE = require('../../lightblue/devices').consts.DEVICE_TYPE_BLE
+let icon_classes = 'img-circle media-object pull-left'
 
 class Icon extends React.Component {
   constructor() {
@@ -12,21 +14,26 @@ class Icon extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <p>
           {(() => {
-            switch (this.props.dType) {
+            switch (this.props.device_type) {
               case DEVICE_TYPE_BEAN:
+                icon_classes += ' icon-bean'
                 return (
-                  <img class="img-circle media-object pull-left" src="/assets/images/bean.png" width="32" height="32">
+                  <img className={icon_classes} src="assets/images/bean.png" width="32" height="32">
                   </img>
                 )
+              break
               default:
+                icon_classes += ' icon-ble'
                 return (
-                  <img class="img-circle media-object pull-left" src="/assets/images/ble.png" width="32" height="32">
+                  <img className={icon_classes} src="assets/images/ble.png" width="32" height="32">
                   </img>
                 )
+              break
             }
           })()}
         </p>
@@ -34,3 +41,5 @@ class Icon extends React.Component {
     )
   }
 }
+
+module.exports = Icon

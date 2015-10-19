@@ -46,7 +46,8 @@ class BleDevice {
   serialize() {
     return {
       name: this._name,
-      uuid: this._uuid
+      uuid: this._uuid,
+      device_type: this.get_type()
     }
   }
 }
@@ -76,5 +77,10 @@ class LightBlueDevice extends BleDevice {
 module.exports = {
   fromPeripheral: fromPeripheral,
   BleDevice: BleDevice,
-  LightBlueDevice: LightBlueDevice
+  LightBlueDevice: LightBlueDevice,
+  DEVICE_TYPE_BEAN: DEVICE_TYPE_BEAN,
+  consts: {
+    DEVICE_TYPE_BEAN: DEVICE_TYPE_BEAN,
+    DEVICE_TYPE_BLE: DEVICE_TYPE_BLE
+  }
 }

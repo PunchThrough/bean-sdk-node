@@ -2,11 +2,18 @@
 
 import React from 'react'
 
+function getSelectedDevice() {
+  
+}
+
 
 class DeviceView extends React.Component {
 
   constructor() {
     super()
+    this.state = {
+      activeDevice: null
+    }
   }
 
   render() {

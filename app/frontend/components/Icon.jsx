@@ -13,19 +13,19 @@ class Icon extends React.Component {
   }
 
   render() {
-    let icon_classes = 'img-circle media-object pull-left'
+    let iconClasses = 'img-circle media-object pull-left'
 
     switch (this.props.device_type) {
       case DEVICE_TYPE_BEAN:
-        icon_classes += ' icon-bean'
+        iconClasses += ' icon-bean'
         return (
-          <img className={icon_classes} src="assets/img/bean-full.png"></img>
+          <img className={iconClasses} src="assets/img/bean-full.png"></img>
         )
         break
       default:
-        icon_classes += ' icon-ble'
+        iconClasses += ' icon-ble'
           return (
-            <img className={icon_classes} src="assets/img/ble-full.png"></img>
+            <img className={iconClasses} src="assets/img/ble-full.png"></img>
           )
         break
     }

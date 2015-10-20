@@ -1,5 +1,8 @@
+'use strict'
+
 import React from 'react'
 import Icon from './Icon'
+import actions from '../actions'
 
 class BeanListItem extends React.Component {
 
@@ -7,9 +10,15 @@ class BeanListItem extends React.Component {
     super()
   }
 
+  _selectDevice(uuid) {
+    actions.Actions.selectDevice(uuid)
+  }
+
   render() {
+    let liClasses = this.props.device.selected ? 'selected' : ''
+    liClasses += ' list-group-item'
     return (
-      <li className="list-group-item">
+      <li className={liClasses} onClick={this._selectDevice.bind(this, this.props.device.uuid)}>
         <Icon device_type={this.props.device.device_type}/>
 
         <div className="media-body">
@@ -19,7 +28,6 @@ class BeanListItem extends React.Component {
       </li>
     )
   }
-
 }
 
 module.exports = BeanListItem

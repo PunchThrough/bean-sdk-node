@@ -7,7 +7,7 @@ import actions from './actions'
 const CHANGE_EVENT = 'change'
 
 let EventEmitter = events.EventEmitter
-let _devices = []
+let _devices = {}
 
 class Store extends EventEmitter {
   constructor() {
@@ -37,12 +37,22 @@ Dispatcher.register(function (action) {
   switch (action.actionType) {
 
     case actions.DEVICE_FOUND:
-      _devices.push(action.device)
+      let d = action.device
+      d.selected = false
+      _devices[d.uuid] = d
       store.emitChange()
       break
 
     case actions.CLEAR_DEVICES:
-      _devices = []
+      _devices = {}
+      store.emitChange()
+      break
+
+    case actions.SELECT_DEVICE:
+      for (let i in _devices) {
+        _devices[i].selected = false
+      }
+      _devices[action.uuid].selected = true
       store.emitChange()
       break
 

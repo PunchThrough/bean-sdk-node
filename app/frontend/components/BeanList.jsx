@@ -6,8 +6,13 @@ import Store from '../store'
 import actions from '../actions'
 
 function getDevices() {
+  let devices = Store.getDevices()
+  let deviceArray = []
+  for (let i in devices) {
+    deviceArray.push(devices[i])
+  }
   return {
-    devices: Store.getDevices()
+    devices: deviceArray
   }
 }
 
@@ -44,7 +49,11 @@ class BeanList extends React.Component {
             <span className="pull-left">
               <h3>Devices</h3>
             </span>
-            <button className="btn btn-default pull-right center-vertical" onClick={this._refreshDeviceList}>
+            <button
+              className="btn btn-default pull-right center-vertical"
+              onClick={this._refreshDeviceList}
+              style={{marginTop: 5}}
+              >
               <span className="icon icon-arrows-ccw"></span>
             </button>
           </li>

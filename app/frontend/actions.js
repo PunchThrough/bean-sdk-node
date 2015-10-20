@@ -6,6 +6,7 @@ import ipc from 'ipc'
 // Action constants
 const DEVICE_FOUND = 'DEVICE_FOUND'
 const CLEAR_DEVICES = 'CLEAR_DEVICES'
+const SELECT_DEVICE = 'SELECT_DEVICE'
 
 
 ipc.on('deviceFound', function (device) {
@@ -39,11 +40,19 @@ let Actions = {
     Actions.stopScanning()
     Actions.clearDevices()
     Actions.startScanning()
+  },
+
+  selectDevice: (uuid) => {
+    Dispatcher.dispatch({
+      actionType: SELECT_DEVICE,
+      uuid: uuid
+    })
   }
 }
 
 module.exports = {
   Actions: Actions,
   DEVICE_FOUND: DEVICE_FOUND,
-  CLEAR_DEVICES: CLEAR_DEVICES
+  CLEAR_DEVICES: CLEAR_DEVICES,
+  SELECT_DEVICE: SELECT_DEVICE
 }

@@ -54,4 +54,5 @@ ElectronApp.on('ready', function () {
   mainWindow.on('closed', function () {
     quit()
   })
+
 })

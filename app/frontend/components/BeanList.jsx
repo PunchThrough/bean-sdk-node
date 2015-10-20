@@ -3,6 +3,7 @@
 import React from 'react'
 import BeanListItem from './BeanListItem'
 import Store from '../store'
+import actions from '../actions'
 
 function getDevices() {
   return {
@@ -23,11 +24,12 @@ class BeanList extends React.Component {
   }
 
   componentDidMount() {
-    Store.addChangeListener(this._onChange);
+    Store.addChangeListener(this._onChange)
+    actions.Actions.startScanning()
   }
 
   componentWillUnmount() {
-    Store.removeChangeListener(this._onChange);
+    Store.removeChangeListener(this._onChange)
   }
 
   render() {

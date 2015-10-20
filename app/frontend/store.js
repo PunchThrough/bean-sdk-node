@@ -35,8 +35,14 @@ class Store extends EventEmitter {
 Dispatcher.register(function (action) {
 
   switch (action.actionType) {
-    case actions.SERVER_DEVICE_FOUND:
+
+    case actions.DEVICE_FOUND:
       _devices.push(action.device)
+      store.emitChange()
+      break
+
+    case actions.CLEAR_DEVICES:
+      _devices = []
       store.emitChange()
       break
 

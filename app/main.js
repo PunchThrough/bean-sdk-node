@@ -3,6 +3,7 @@
 import ElectronApp from 'app'
 import BrowserWindow from 'browser-window'
 import LB from './lightblue/lightblue'
+import ipc from 'ipc'
 
 // Constants
 const INDEX = 'index.html'
@@ -10,8 +11,6 @@ const GUI_WIDTH = 440
 const GUI_HEIGHT = 500
 
 let mainWindow = null
-
-LB.startScanning()
 
 function quit() {
   /**
@@ -33,6 +32,16 @@ ElectronApp.on('ready', function () {
   mainWindow = new BrowserWindow({
     width: GUI_WIDTH,
     height: GUI_HEIGHT
+  })
+
+  ipc.on('startScanning', (event, args)=> {
+    console.log('Starting to scan...')
+    LB.startScanning()
+  })
+
+  ipc.on('stopScanning', (event, args)=> {
+    console.log('No longer scanning...')
+    LB.stopScanning()
   })
 
   LB.on('discover', (device)=> {

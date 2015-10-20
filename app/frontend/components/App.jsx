@@ -1,9 +1,18 @@
 import React from 'react'
 import BeanList from './BeanList'
+import actions from '../actions'
 
-var App = React.createClass({
+class App extends React.Component {
 
-  render: function () {
+  constructor() {
+    super()
+  }
+
+  _refreshDeviceList() {
+    actions.Actions.refreshDeviceList()
+  }
+
+  render() {
     return (
       <div className="window">
 
@@ -13,7 +22,7 @@ var App = React.createClass({
 
         <footer className="toolbar toolbar-footer">
           <div className="toolbar-actions">
-            <button className="btn btn-default">
+            <button className="btn btn-default" onClick={this._refreshDeviceList}>
               Refresh
             </button>
 
@@ -25,7 +34,6 @@ var App = React.createClass({
       </div>
     )
   }
-
-})
+}
 
 module.exports = App

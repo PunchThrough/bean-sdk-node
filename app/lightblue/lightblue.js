@@ -3,6 +3,8 @@
 import noble from 'noble'
 import devices from './devices.js'
 
+const NOBLE_STATE_READY = 'poweredOn'
+
 class LightBlueSDK {
   constructor() {
     this._events = {
@@ -17,11 +19,15 @@ class LightBlueSDK {
   }
 
   startScanning() {
-    noble.on('stateChange', function (state) {
-      if (state === 'poweredOn') {
-        noble.startScanning();
-      }
-    })
+    if (noble.state === NOBLE_STATE_READY) {
+      noble.startScanning()
+    } else {
+      noble.on('stateChange', function (state) {
+        if (state === NOBLE_STATE_READY) {
+          noble.startScanning()
+        }
+      })
+    }
   }
 
   stopScanning() {

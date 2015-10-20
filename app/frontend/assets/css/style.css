@@ -1,5 +1,5 @@
 .bean-list {
-    width: 100%
+    width: 100%;
 }
 
 .icon-bean {
@@ -10,4 +10,20 @@
 .icon-ble {
     height: 35px;
     width: auto
+}
+
+.pane {
+    overflow-y: scroll;
+}
+
+.center-vertical {
+    float: none;
+    margin: 0 auto;
+}
+
+.pull-down {
+    position: absolute;
+    bottom: 0;
+    padding-bottom: 5px;
+    width: 100%;
 }

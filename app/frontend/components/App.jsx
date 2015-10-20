@@ -1,5 +1,6 @@
 import React from 'react'
 import BeanList from './BeanList'
+import DeviceView from './DeviceView'
 import actions from '../actions'
 
 class App extends React.Component {
@@ -8,29 +9,18 @@ class App extends React.Component {
     super()
   }
 
-  _refreshDeviceList() {
-    actions.Actions.refreshDeviceList()
-  }
-
   render() {
     return (
       <div className="window">
 
         <div className="window-content">
-          <BeanList />
-        </div>
-
-        <footer className="toolbar toolbar-footer">
-          <div className="toolbar-actions">
-            <button className="btn btn-default" onClick={this._refreshDeviceList}>
-              Refresh
-            </button>
-
-            <button className="btn btn-primary pull-right">
-              Update Firmware
-            </button>
+          <div className="pane pane-sm sidebar">
+            <BeanList />
           </div>
-        </footer>
+          <div className="pane">
+            <DeviceView />
+          </div>
+        </div>
       </div>
     )
   }

@@ -7,14 +7,17 @@ const NOBLE_STATE_READY = 'poweredOn'
 
 class LightBlueSDK {
   constructor() {
+    this._devices = {}
     this._events = {
-      discover: this._discover
+      discover: (cb) => this._discover(cb)
     }
   }
 
   _discover(cb) {
     noble.on('discover', (peripheral) => {
-      cb(devices.fromPeripheral(peripheral))
+      let device = devices.fromPeripheral(peripheral)
+      this._devices[device.getUUID()] = device
+      cb(device)
     })
   }
 
@@ -32,6 +35,10 @@ class LightBlueSDK {
 
   stopScanning() {
     noble.stopScanning()
+  }
+
+  getDeviceForUUID(uuid) {
+    return this._devices[uuid]
   }
 
   on(event, callback) {

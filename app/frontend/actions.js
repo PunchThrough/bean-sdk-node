@@ -43,11 +43,14 @@ let Actions = {
   },
 
   selectDevice: (uuid) => {
+    ipc.send('connectToDevice', uuid)
     Dispatcher.dispatch({
       actionType: SELECT_DEVICE,
       uuid: uuid
     })
   }
+
+
 }
 
 module.exports = {

@@ -1,9 +1,8 @@
 "use strict"
 
 // Device types
-const DEVICE_TYPE_BEAN = 'DEVICE_TYPE_BEAN'
+const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
 const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
-const DEVICE_TYPE_BEAN_PLUS = 'DEVICE_TYPE_BEAN_PLUS'
 
 const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
 
@@ -12,27 +11,36 @@ function fromPeripheral(peripheral) {
   var adv = peripheral.advertisement
   var name = adv.localName ? adv.localName : ''
   if (adv.serviceUuids.indexOf(BEAN_UUID) == -1) {
-    return new BleDevice(peripheral.uuid, name, adv.serviceUuids)
+    return new BleDevice(peripheral.uuid, name, adv.serviceUuids, peripheral)
   } else {
-    return new LightBlueDevice(peripheral.uuid, name, adv.serviceUuids)
+    return new LightBlueDevice(peripheral.uuid, name, adv.serviceUuids, peripheral)
   }
 }
 
 
 class BleDevice {
 
-  constructor(uuid, name, services) {
+  constructor(uuid, name, services, noble_peripheral) {
     this._uuid = uuid
     this._name = name
     this._services = services
+    this._noble_peripheral = noble_peripheral
   }
 
-  get_type() {
+  getType() {
     return DEVICE_TYPE_BLE
   }
 
+  getUUID() {
+    return this._uuid
+  }
+
+  getName() {
+    return this._name
+  }
+
   toString() {
-    var out = `BLE Device:\n`
+    var out = `${this.getType()}:\n`
     out += `    Name: ${this._name}\n`
     out += `    UUID: ${this._uuid}\n`
     out += `    Services:\n`
@@ -47,22 +55,36 @@ class BleDevice {
     return {
       name: this._name,
       uuid: this._uuid,
-      device_type: this.get_type()
+      device_type: this.getType()
     }
+  }
+
+  connect(cb) {
+    console.log(`Connecting to device: ${this._name}`)
+    this._noble_peripheral.connect(cb)
+  }
+
+  getServices(cb) {
+    this._noble_peripheral.discoverAllServicesAndCharacteristics((services, characteristics) => {
+      console.log('Services--!')
+      console.log(services)
+      console.log('Charssss')
+      console.log(characteristics)
+    })
   }
 }
 
 class LightBlueDevice extends BleDevice {
-  constructor(uuid, name, services) {
-    super(uuid, name, services)
+  constructor(uuid, name, services, noble_peripheral) {
+    super(uuid, name, services, noble_peripheral)
   }
 
-  get_type() {
-    return DEVICE_TYPE_BEAN
+  getType() {
+    return DEVICE_TYPE_LIGHT_BLUE
   }
 
   toString() {
-    var out = `LightBlue Device:\n`
+    var out = `${this.getType()}:\n`
     out += `    Name: ${this._name}\n`
     out += `    UUID: ${this._uuid}\n`
     out += `    Services:\n`
@@ -72,15 +94,16 @@ class LightBlueDevice extends BleDevice {
     out += '\n'
     return out
   }
+
+  getFirmwareVersion() {
+
+  }
 }
 
 module.exports = {
   fromPeripheral: fromPeripheral,
   BleDevice: BleDevice,
   LightBlueDevice: LightBlueDevice,
-  DEVICE_TYPE_BEAN: DEVICE_TYPE_BEAN,
-  consts: {
-    DEVICE_TYPE_BEAN: DEVICE_TYPE_BEAN,
-    DEVICE_TYPE_BLE: DEVICE_TYPE_BLE
-  }
+  DEVICE_TYPE_LIGHT_BLUE: DEVICE_TYPE_LIGHT_BLUE,
+  DEVICE_TYPE_BLE: DEVICE_TYPE_BLE
 }

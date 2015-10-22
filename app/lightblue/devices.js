@@ -64,13 +64,22 @@ class BleDevice {
     this._noble_peripheral.connect(cb)
   }
 
+  disconnect() {
+    this._noble_peripheral.disconnect()
+  }
+
   getServices(cb) {
-    this._noble_peripheral.discoverAllServicesAndCharacteristics((services, characteristics) => {
-      console.log('Services--!')
-      console.log(services)
-      console.log('Charssss')
-      console.log(characteristics)
+    this._noble_peripheral.discoverAllServicesAndCharacteristics((err, services) => {
+      if (err) {
+        console.log(`There was an error getting services: ${err}`)
+      } else {
+        cb(services)
+      }
     })
+  }
+
+  isConnected() {
+    return this._noble_peripheral.state === 'connected'
   }
 }
 

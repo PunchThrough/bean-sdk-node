@@ -45,6 +45,16 @@ class LightBlueSDK {
     this._events[event](callback)
   }
 
+  quitGracefully() {
+    this.stopScanning()
+    for (let i in this._devices) {
+      let d = this._devices[i]
+      if (d.isConnected()) {
+        d.disconnect()
+        console.log(`Disconnected from Bean: ${d.getName()}`)
+      }
+    }
+  }
 }
 
 module.exports = new LightBlueSDK()

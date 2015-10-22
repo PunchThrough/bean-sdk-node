@@ -20,8 +20,8 @@ function quit() {
 
   console.log('Goodbye')
   mainWindow = null
-  ElectronApp.quit()
-  LB.stopScanning()
+  LB.quitGracefully()
+  ElectronApp.quit()  // Call this last!!!
 }
 
 ElectronApp.on('window-all-closed', function () {

@@ -37,3 +37,6 @@ $ npm run dev
 
 * https://github.com/atom/electron/issues/1611
 * Electron __Main Procs__ and __Render Procs__ communicate through electrons `ipc` module.
+* Reliability issues:
+    * Over time the scan results return fewer and fewer devices
+    * Can't connect to any device

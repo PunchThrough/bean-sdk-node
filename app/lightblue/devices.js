@@ -1,5 +1,8 @@
 "use strict"
 
+import BleServices from './services'
+import util from './util'
+
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
 const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
@@ -11,20 +14,20 @@ function fromPeripheral(peripheral) {
   var adv = peripheral.advertisement
   var name = adv.localName ? adv.localName : ''
   if (adv.serviceUuids.indexOf(BEAN_UUID) == -1) {
-    return new BleDevice(peripheral.uuid, name, adv.serviceUuids, peripheral)
+    return new BleDevice(peripheral.uuid, name, peripheral)
   } else {
-    return new LightBlueDevice(peripheral.uuid, name, adv.serviceUuids, peripheral)
+    return new LightBlueDevice(peripheral.uuid, name, peripheral)
   }
 }
 
 
 class BleDevice {
 
-  constructor(uuid, name, services, noble_peripheral) {
+  constructor(uuid, name, noble_peripheral) {
     this._uuid = uuid
     this._name = name
-    this._services = services
     this._noble_peripheral = noble_peripheral
+    this._services = {}
   }
 
   getType() {
@@ -68,18 +71,32 @@ class BleDevice {
     this._noble_peripheral.disconnect()
   }
 
-  getServices(cb) {
+  lookupServices(completionCallback) {
+    console.log(`Looking up services for device: ${this._name}`)
     this._noble_peripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         console.log(`There was an error getting services: ${err}`)
+        completionCallback(err)
       } else {
-        cb(services)
+        for (let i in services) {
+          let s = services[i]
+          this._services[util.normalizeUUID(s.uuid)] = BleServices.fromNobleService(s)
+        }
+        completionCallback()
       }
     })
   }
 
   isConnected() {
     return this._noble_peripheral.state === 'connected'
+  }
+
+  getDeviceInformation() {
+    let dis = this._services[BleServices.UUID_DEVICE_INFORMATION]
+    if (dis)
+      return dis
+    else
+      console.log('No Device Information Service')
   }
 }
 
@@ -104,9 +121,6 @@ class LightBlueDevice extends BleDevice {
     return out
   }
 
-  getFirmwareVersion() {
-
-  }
 }
 
 module.exports = {

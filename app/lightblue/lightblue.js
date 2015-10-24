@@ -23,10 +23,12 @@ class LightBlueSDK {
 
   startScanning() {
     if (noble.state === NOBLE_STATE_READY) {
+      console.log('Starting to scan...')
       noble.startScanning()
     } else {
       noble.on('stateChange', function (state) {
         if (state === NOBLE_STATE_READY) {
+          console.log('Starting to scan...')
           noble.startScanning()
         }
       })
@@ -34,6 +36,7 @@ class LightBlueSDK {
   }
 
   stopScanning() {
+    console.log('No longer scanning...')
     noble.stopScanning()
   }
 
@@ -46,6 +49,7 @@ class LightBlueSDK {
   }
 
   quitGracefully() {
+    console.log('Quitting LightBlue SDK...')
     this.stopScanning()
     for (let i in this._devices) {
       let d = this._devices[i]

@@ -6,7 +6,7 @@ import Store from '../store'
 import actions from '../actions'
 
 function getDevices() {
-  let devices = Store.getDevices()
+  let devices = Store.store.getDevices()
   let deviceArray = []
   for (let i in devices) {
     deviceArray.push(devices[i])
@@ -29,12 +29,12 @@ class BeanList extends React.Component {
   }
 
   componentDidMount() {
-    Store.addChangeListener(this._onChange)
+    Store.store.addChangeListener(Store.ANY_CHANGE, this._onChange)
     actions.Actions.startScanning()
   }
 
   componentWillUnmount() {
-    Store.removeChangeListener(this._onChange)
+    Store.store.removeChangeListener(Store.ANY_CHANGE, this._onChange)
   }
 
   _refreshDeviceList() {

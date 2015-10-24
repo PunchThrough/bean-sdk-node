@@ -13,6 +13,10 @@ ipc.on('deviceFound', function (device) {
   Actions.deviceFound(device)
 })
 
+ipc.on('deviceInformationReady', function (deviceInformation) {
+  console.log(deviceInformation)
+})
+
 let Actions = {
 
   deviceFound: (device) => {
@@ -48,9 +52,11 @@ let Actions = {
       actionType: SELECT_DEVICE,
       uuid: uuid
     })
+  },
+
+  deviceServicesReady: (services) => {
+
   }
-
-
 }
 
 module.exports = {

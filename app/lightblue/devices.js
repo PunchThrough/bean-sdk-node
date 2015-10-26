@@ -101,6 +101,7 @@ class BleDevice {
   }
 }
 
+
 class LightBlueDevice extends BleDevice {
   constructor(uuid, name, services, noble_peripheral) {
     super(uuid, name, services, noble_peripheral)

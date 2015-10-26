@@ -37,19 +37,40 @@ class DeviceView extends React.Component {
         {(() => {
           switch (this.state.state) {
             case Store.STATE_DEVICE_SELECTED:
-              return(
+              return (
                 <div className="text-center">
                   <h3>Loading Information...</h3>
                 </div>
               )
             case Store.STATE_DEVICE_INFORMATION_READY:
-              return(
+              return (
                 <div className="text-center">
-                  <h3>Connected!</h3>
+                  <h3>{this.state.device.name}</h3>
+                  <table className="table-striped">
+                    <thead>
+                    <tr>
+                      <th colSpan="2" align="center"><strong>Device Information</strong></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>Hardware Version:</td>
+                      <td>{this.state.device_information.hardware_version}</td>
+                    </tr>
+                    <tr>
+                      <td>Firmware Version:</td>
+                      <td>{this.state.device_information.firmware_version}</td>
+                    </tr>
+                    <tr>
+                      <td>Software Version:</td>
+                      <td>{this.state.device_information.software_version}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
               )
             default:
-              return(
+              return (
                 <div className="text-center">
                   <h3>No Device Selected.</h3>
                 </div>

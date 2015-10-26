@@ -1,7 +1,7 @@
-"use strict"
+'use strict'
 
 import noble from 'noble'
-import devices from './devices.js'
+import devices from './devices'
 
 const NOBLE_STATE_READY = 'poweredOn'
 

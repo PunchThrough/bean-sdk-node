@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 import Dispatcher from './dispatcher'
 import ipc from 'ipc'

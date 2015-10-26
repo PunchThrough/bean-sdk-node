@@ -54,6 +54,14 @@ class DeviceView extends React.Component {
                     </thead>
                     <tbody>
                     <tr>
+                      <td>Manufacturer Name:</td>
+                      <td>{this.state.device_information.manufacturer_name}</td>
+                    </tr>
+                    <tr>
+                      <td>Model Number:</td>
+                      <td>{this.state.device_information.model_number}</td>
+                    </tr>
+                    <tr>
                       <td>Hardware Version:</td>
                       <td>{this.state.device_information.hardware_version}</td>
                     </tr>

@@ -2,6 +2,7 @@
 
 import util from './util'
 import async from 'async'
+import buffer from 'buffer'
 
 // Services
 const UUID_SERVICE_DEVICE_INFORMATION = 0x180A
@@ -34,7 +35,7 @@ function fromNobleService(nobleService) {
    */
 
   let s = null
-  switch(util.normalizeUUID(nobleService.uuid)) {
+  switch (util.normalizeUUID(nobleService.uuid)) {
     case UUID_SERVICE_DEVICE_INFORMATION:
       s = new DeviceInformationService(_charListToObject(nobleService.characteristics), nobleService)
       break
@@ -84,8 +85,61 @@ class OADService extends BleService {
 
   constructor(characteristics, nobleService) {
     super(characteristics, nobleService)
+
+    // Object that holds arrays of callbacks, keyed by the attribute value
+    this._registeredNotificationCallbacks = {}
+    this._registeredNotificationCallbacks[UUID_CHAR_OAD_BLOCK] = []     // default empty array
+    this._registeredNotificationCallbacks[UUID_CHAR_OAD_IDENTIFY] = []  // default empty array
+
+    // Setup notifications IDENTIFY
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
+      if (err) console.log(err)
+    })
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].on('read', (data, isNotification)=> {
+      if (isNotification) this._onIdentifyNotification(data)
+    })
+
+    // Setup notifications BLOCK
+    this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
+      if (err) console.log(err)
+    })
+    this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
+      if (isNotification) this._onBlockNotification(data)
+    })
   }
 
+  _fireCBs(key, data) {
+    for (let i in this._registeredNotificationCallbacks[key]) {
+      let cb = this._registeredNotificationCallbacks[key][i]
+      cb(data)
+    }
+  }
+
+  _onIdentifyNotification(data) {
+    console.log('Got Notification - IDENTIFY')
+    this._fireCBs(UUID_CHAR_OAD_IDENTIFY, data)
+  }
+
+  _onBlockNotification(data) {
+    console.log('Got Notification - BLOCK')
+    this._fireCBs(UUID_CHAR_OAD_BLOCK, data)
+  }
+
+  registerForNotifications(key, cb) {
+    this._registeredNotificationCallbacks[key].push(cb)
+  }
+
+  getName() {
+    return 'OAD Service'
+  }
+
+  triggerIdentifyHeaderNotification() {
+    let zeros = new buffer.Buffer(16).fill(0)
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].write(zeros, true, (err)=> {
+      if (err)
+        console.log(`Error: ${err}`)
+    })
+  }
 }
 
 class DeviceInformationService extends BleService {
@@ -161,5 +215,8 @@ class DeviceInformationService extends BleService {
 
 module.exports = {
   fromNobleService: fromNobleService,
-  UUID_DEVICE_INFORMATION: UUID_SERVICE_DEVICE_INFORMATION
+  UUID_SERVICE_DEVICE_INFORMATION: UUID_SERVICE_DEVICE_INFORMATION,
+  UUID_SERVICE_OAD: UUID_SERVICE_OAD,
+  UUID_CHAR_OAD_IDENTIFY: UUID_CHAR_OAD_IDENTIFY,
+  UUID_CHAR_OAD_BLOCK: UUID_CHAR_OAD_BLOCK
 }

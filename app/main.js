@@ -54,7 +54,7 @@ ElectronApp.on('ready', function () {
         } else {
           console.log(`Connected to Bean (${device.getName()}) successfully`)
           device.lookupServices((err)=> {
-            device.getDeviceInformation().serialize((error, deviceInformation)=>{
+            device.getDeviceInformationService().serialize((error, deviceInformation)=>{
               // TODO: Callback hell is occurring, how do we fix the API?!
               mainWindow.webContents.send('deviceInformationReady', deviceInformation)
             })

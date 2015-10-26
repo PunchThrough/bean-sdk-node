@@ -30,6 +30,19 @@ class BleDevice {
     this._services = {}
   }
 
+  _lookupService(serviceKey) {
+    /**
+     * Helper function to look up a service based on a key, with error logging
+     */
+
+    let s = this._services[serviceKey]
+    if (s)
+      return s
+
+    console.log(`No such service: ${serviceKey}`)
+    return null
+  }
+
   getType() {
     return DEVICE_TYPE_BLE
   }
@@ -40,6 +53,14 @@ class BleDevice {
 
   getName() {
     return this._name
+  }
+
+  getDeviceInformationService() {
+    return this._lookupService(BleServices.UUID_SERVICE_DEVICE_INFORMATION)
+  }
+
+  getOADService() {
+    return this._lookupService(BleServices.UUID_SERVICE_OAD)
   }
 
   toString() {
@@ -60,6 +81,10 @@ class BleDevice {
       uuid: this._uuid,
       device_type: this.getType()
     }
+  }
+
+  isConnected() {
+    return this._noble_peripheral.state === 'connected'
   }
 
   connect(cb) {
@@ -88,17 +113,6 @@ class BleDevice {
     })
   }
 
-  isConnected() {
-    return this._noble_peripheral.state === 'connected'
-  }
-
-  getDeviceInformation() {
-    let dis = this._services[BleServices.UUID_DEVICE_INFORMATION]
-    if (dis)
-      return dis
-    else
-      console.log('No Device Information Service')
-  }
 }
 
 

@@ -34,6 +34,17 @@ __Note:__ This step should be done each time you run `npm install` for _certain_
 $ npm run dev
 ```
 
+## Build and Release
+
+TBD: Need to document how to build and release this bad boy as a binary file, or installer for Windows (and other platforms)
+
+## Platform considerations and API
+
+This projects main priority is building a FW updater that runs on Windows. However, there will be effort made to identify and implement pieces of the code that will be reusable for our long term goal of creating a X-Platform JS SDK. Ideally all of our GUI products (loader, LB explorer) will be consumers of the JS SDK and rewritten in Electron/React-Native.
+
+### TODOs
+
+* API to discover by device name or UUID
 
 ## Knowledge Base
 

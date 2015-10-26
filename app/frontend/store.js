@@ -11,13 +11,14 @@ const DEVICE_STATE = 'DEVICE_STATE'
 // Device States
 const STATE_NO_DEVICE = 'STATE_NO_DEVICE'
 const STATE_DEVICE_SELECTED = 'STATE_DEVICE_SELECTED'
-const STATE_DEVICE_READY = 'STATE_DEVICE_READY'
+const STATE_DEVICE_INFORMATION_READY = 'STATE_DEVICE_INFORMATION_READY'
 
 let EventEmitter = events.EventEmitter
 
 let _devices = {}
 let _deviceState = STATE_NO_DEVICE
 let _currentlySelectedUUID = null
+let _currentlySelectedDeviceInformation = null
 
 class Store extends EventEmitter {
   constructor() {
@@ -52,7 +53,7 @@ class Store extends EventEmitter {
   }
 
   getDeviceInformation() {
-    let d = this.getSelectedDevice()
+    return _currentlySelectedDeviceInformation
   }
 
 }
@@ -83,6 +84,13 @@ Dispatcher.register(function (action) {
       store.emitChange(DEVICE_STATE)
       break
 
+    case actions.DEVICE_INFORMATION_READY:
+      _deviceState = STATE_DEVICE_INFORMATION_READY
+      _currentlySelectedDeviceInformation = action.device_information
+      store.emitChange(ANY_CHANGE)
+      store.emitChange(DEVICE_STATE)
+      break
+
     default:
       console.log(`No registered handler for ${action.actionType}`)
   }
@@ -95,5 +103,5 @@ module.exports = {
   DEVICE_STATE: DEVICE_STATE,
   STATE_NO_DEVICE: STATE_NO_DEVICE,
   STATE_DEVICE_SELECTED: STATE_DEVICE_SELECTED,
-  STATE_DEVICE_READY: STATE_DEVICE_READY
+  STATE_DEVICE_INFORMATION_READY: STATE_DEVICE_INFORMATION_READY
 }

@@ -79,8 +79,9 @@ class BleDevice {
         completionCallback(err)
       } else {
         for (let i in services) {
-          let s = services[i]
-          this._services[util.normalizeUUID(s.uuid)] = BleServices.fromNobleService(s)
+          let s = BleServices.fromNobleService(services[i])
+          this._services[util.normalizeUUID(s.getUUID())] = s
+          console.log(`Found service: ${s.getName()}`)
         }
         completionCallback()
       }

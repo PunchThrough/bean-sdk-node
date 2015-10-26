@@ -7,6 +7,7 @@ import ipc from 'ipc'
 const DEVICE_FOUND = 'DEVICE_FOUND'
 const CLEAR_DEVICES = 'CLEAR_DEVICES'
 const SELECT_DEVICE = 'SELECT_DEVICE'
+const DEVICE_INFORMATION_READY = 'DEVICE_INFORMATION_READY'
 
 
 ipc.on('deviceFound', function (device) {
@@ -14,7 +15,7 @@ ipc.on('deviceFound', function (device) {
 })
 
 ipc.on('deviceInformationReady', function (deviceInformation) {
-  console.log(deviceInformation)
+  Actions.deviceInformationReady(deviceInformation)
 })
 
 let Actions = {
@@ -54,8 +55,11 @@ let Actions = {
     })
   },
 
-  deviceServicesReady: (services) => {
-
+  deviceInformationReady: (deviceInformation) => {
+    Dispatcher.dispatch({
+      actionType: DEVICE_INFORMATION_READY,
+      device_information: deviceInformation
+    })
   }
 }
 
@@ -63,5 +67,6 @@ module.exports = {
   Actions: Actions,
   DEVICE_FOUND: DEVICE_FOUND,
   CLEAR_DEVICES: CLEAR_DEVICES,
-  SELECT_DEVICE: SELECT_DEVICE
+  SELECT_DEVICE: SELECT_DEVICE,
+  DEVICE_INFORMATION_READY: DEVICE_INFORMATION_READY
 }

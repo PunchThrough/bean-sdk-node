@@ -42,7 +42,7 @@ class DeviceView extends React.Component {
                   <h3>Loading Information...</h3>
                 </div>
               )
-            case Store.STATE_DEVICE_READY:
+            case Store.STATE_DEVICE_INFORMATION_READY:
               return(
                 <div className="text-center">
                   <h3>Connected!</h3>

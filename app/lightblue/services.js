@@ -19,8 +19,7 @@ function fromNobleService(nobleService) {
     return new DeviceInformationService(chars, nobleService)
 
   } else {
-
-    return 'Service Not Yet Supported'
+    return new BleService([], nobleService)
   }
 }
 
@@ -32,6 +31,14 @@ class BleService {
   constructor(characteristics, nobleService) {
     this._characteristics = characteristics
     this._nobleService = nobleService
+  }
+
+  getName() {
+    return this._nobleService.name == null ? 'Unknown' : this._nobleService.name
+  }
+
+  getUUID() {
+    return this._nobleService.uuid
   }
 
 }

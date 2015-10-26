@@ -52,7 +52,10 @@ function fromNobleService(nobleService) {
 
 class BleService {
   /**
-   * Base class for all BLE services
+   * Generic BLE Service and base class for all BLE services
+   *
+   * @param characteristics
+   * @param nobleService
    */
 
   constructor(characteristics, nobleService) {

@@ -45,23 +45,21 @@ ElectronApp.on('ready', function () {
   })
 
   ipc.on('connectToDevice', (event, uuid) => {
-    LB.stopScanning()
     let device = LB.getDeviceForUUID(uuid)
-    if (device) {
-      device.connect((err)=> {
-        if (err) {
-          console.log(`There was a failure while connecting ${err}`)
-        } else {
-          console.log(`Connected to Bean (${device.getName()}) successfully`)
-          device.lookupServices((err)=> {
-            device.getDeviceInformationService().serialize((error, deviceInformation)=>{
-              // TODO: Callback hell is occurring, how do we fix the API?!
-              mainWindow.webContents.send('deviceInformationReady', deviceInformation)
-            })
+    LB.connectToDevice(uuid, (err)=> {
+      if (err) {
+        console.log(`There was a failure while connecting ${err}`)
+      } else {
+        console.log(`Connected to Bean (${device.getName()}) successfully`)
+        device.lookupServices((err)=> {
+          device.getDeviceInformationService().serialize((error, deviceInformation)=>{
+            // TODO: Callback hell is occurring, how do we fix the API?!
+            mainWindow.webContents.send('deviceInformationReady', deviceInformation)
           })
-        }
-      })
-    }
+        })
+      }
+    })
+
   })
 
   ipc.on('performFirmwareUpdate', (event, uuid) => {
@@ -73,7 +71,6 @@ ElectronApp.on('ready', function () {
   })
 
   LB.on('discover', (device) => {
-    console.log(device.toString())
     if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
       mainWindow.webContents.send('deviceFound', device.serialize())
     }

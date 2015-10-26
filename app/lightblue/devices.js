@@ -27,7 +27,10 @@ class BleDevice {
     this._uuid = uuid
     this._name = name
     this._noble_peripheral = noble_peripheral
+
+    // State
     this._services = {}
+    this._autoReconnect = false
   }
 
   _lookupService(serviceKey) {
@@ -53,6 +56,15 @@ class BleDevice {
 
   getName() {
     return this._name
+  }
+
+  setAutoReconnect(state) {
+    console.log(`Set reconnect for ${this._name}: ${state}`)
+    this._autoReconnect = state
+  }
+
+  autoReconnect() {
+    return this._autoReconnect
   }
 
   getDeviceInformationService() {
@@ -87,9 +99,15 @@ class BleDevice {
     return this._noble_peripheral.state === 'connected'
   }
 
-  connect(cb) {
+  isConnectedOrConnecting() {
+    return this._noble_peripheral.state === 'connected' || this._noble_peripheral.state === 'connecting'
+  }
+
+  connect(callback) {
     console.log(`Connecting to device: ${this._name}`)
-    this._noble_peripheral.connect(cb)
+    this._noble_peripheral.connect((err)=> {
+      callback(err)
+    })
   }
 
   disconnect() {

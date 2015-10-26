@@ -2,6 +2,8 @@
 
 Stand alone tool for updating Bean FW on desktop platforms
 
+![alt text](./docs/img/screenshot_bean_connected.png)
+
 ## Development Environment
 
 Install and use Node 0.12.7

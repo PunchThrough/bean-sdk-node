@@ -8,6 +8,7 @@ const DEVICE_FOUND = 'DEVICE_FOUND'
 const CLEAR_DEVICES = 'CLEAR_DEVICES'
 const SELECT_DEVICE = 'SELECT_DEVICE'
 const DEVICE_INFORMATION_READY = 'DEVICE_INFORMATION_READY'
+const PERFORM_FIRMWARE_UPDATE = 'PERFORM_FIRMWARE_UPDATE'
 
 
 ipc.on('deviceFound', function (device) {
@@ -59,6 +60,14 @@ let Actions = {
     Dispatcher.dispatch({
       actionType: DEVICE_INFORMATION_READY,
       device_information: deviceInformation
+    })
+  },
+
+  performFirmwareUpdate: (uuid) => {
+    ipc.send('performFirmwareUpdate', uuid)
+    Dispatcher.dispatch({
+      actionType: PERFORM_FIRMWARE_UPDATE,
+      uuid: uuid
     })
   }
 }

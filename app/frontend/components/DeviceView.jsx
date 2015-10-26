@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Store from '../store'
+import actions from '../actions'
 
 class DeviceView extends React.Component {
 
@@ -20,6 +21,10 @@ class DeviceView extends React.Component {
         device: Store.store.getSelectedDevice(),
         device_information: Store.store.getDeviceInformation()
       })
+    }
+
+    this._updateFirmware = ()=> {
+      actions.Actions.performFirmwareUpdate(this.state.device.uuid)
     }
   }
 
@@ -88,7 +93,10 @@ class DeviceView extends React.Component {
 
         <div className="pull-down">
           <div className="text-center">
-            <button className="btn btn-primary">
+            <button
+              className="btn btn-primary"
+              onClick={this._updateFirmware}
+              >
               Update Firmware
             </button>
           </div>

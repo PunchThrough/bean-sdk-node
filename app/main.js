@@ -4,6 +4,7 @@ import ElectronApp from 'app'
 import BrowserWindow from 'browser-window'
 import LB from './lightblue/lightblue'
 import devices from './lightblue/devices'
+import FirmwareUpdater from './lightblue/firmware'
 import ipc from 'ipc'
 
 // Constants
@@ -61,6 +62,14 @@ ElectronApp.on('ready', function () {
         }
       })
     }
+  })
+
+  ipc.on('performFirmwareUpdate', (event, uuid) => {
+    let device = LB.getDeviceForUUID(uuid)
+    let fwUpdater = new FirmwareUpdater(device)
+    fwUpdater.start(()=> {
+      // callback for fw complete
+    })
   })
 
   LB.on('discover', (device) => {

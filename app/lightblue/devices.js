@@ -26,7 +26,7 @@ class BleDevice {
   constructor(uuid, name, noble_peripheral) {
     this._uuid = uuid
     this._name = name
-    this._noble_peripheral = noble_peripheral
+    this._noblePeripheral = noble_peripheral
 
     // State
     this._services = {}
@@ -76,14 +76,18 @@ class BleDevice {
   }
 
   toString() {
-    var out = `${this.getType()}:\n`
+    let adv = this._noblePeripheral.advertisement
+    let out = `${this.getType()}:\n`
     out += `    Name: ${this._name}\n`
     out += `    UUID: ${this._uuid}\n`
-    out += `    Services:\n`
-    for (var i in this._services) {
-      out += `        ${this._services[i]}`
+    out += `    Advertised Services:\n`
+    if (adv.serviceUuids.length > 0) {
+      for (let i in adv.serviceUuids) {
+        out += `        ${adv.serviceUuids[i]}\n`
+      }
+    } else {
+      out += `        None\n`
     }
-    out += '\n'
     return out
   }
 
@@ -96,27 +100,27 @@ class BleDevice {
   }
 
   isConnected() {
-    return this._noble_peripheral.state === 'connected'
+    return this._noblePeripheral.state === 'connected'
   }
 
   isConnectedOrConnecting() {
-    return this._noble_peripheral.state === 'connected' || this._noble_peripheral.state === 'connecting'
+    return this._noblePeripheral.state === 'connected' || this._noblePeripheral.state === 'connecting'
   }
 
   connect(callback) {
     console.log(`Connecting to device: ${this._name}`)
-    this._noble_peripheral.connect((err)=> {
+    this._noblePeripheral.connect((err)=> {
       callback(err)
     })
   }
 
   disconnect() {
-    this._noble_peripheral.disconnect()
+    this._noblePeripheral.disconnect()
   }
 
   lookupServices(completionCallback) {
     console.log(`Looking up services for device: ${this._name}`)
-    this._noble_peripheral.discoverAllServicesAndCharacteristics((err, services) => {
+    this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         console.log(`There was an error getting services: ${err}`)
         completionCallback(err)
@@ -141,18 +145,6 @@ class LightBlueDevice extends BleDevice {
 
   getType() {
     return DEVICE_TYPE_LIGHT_BLUE
-  }
-
-  toString() {
-    var out = `${this.getType()}:\n`
-    out += `    Name: ${this._name}\n`
-    out += `    UUID: ${this._uuid}\n`
-    out += `    Services:\n`
-    for (var i in this._services) {
-      out += `        ${this._services[i]}`
-    }
-    out += '\n'
-    return out
   }
 
 }

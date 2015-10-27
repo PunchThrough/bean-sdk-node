@@ -11,6 +11,10 @@ const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
 
 
 function fromPeripheral(peripheral) {
+  /**
+   * Return a Device class given a Noble peripheral object
+   */
+
   var adv = peripheral.advertisement
   var name = adv.localName ? adv.localName : ''
   if (adv.serviceUuids.indexOf(BEAN_UUID) == -1) {
@@ -71,10 +75,6 @@ class BleDevice {
     return this._lookupService(BleServices.UUID_SERVICE_DEVICE_INFORMATION)
   }
 
-  getOADService() {
-    return this._lookupService(BleServices.UUID_SERVICE_OAD)
-  }
-
   toString() {
     let adv = this._noblePeripheral.advertisement
     let out = `${this.getType()}:\n`
@@ -109,9 +109,14 @@ class BleDevice {
 
   connect(callback) {
     console.log(`Connecting to device: ${this._name}`)
-    this._noblePeripheral.connect((err)=> {
-      callback(err)
-    })
+    if (this.isConnected()) {
+      console.log('Already connected.')
+      callback(null)
+    } else {
+      this._noblePeripheral.connect((err)=> {
+        callback(err)
+      })
+    }
   }
 
   disconnect() {
@@ -145,6 +150,10 @@ class LightBlueDevice extends BleDevice {
 
   getType() {
     return DEVICE_TYPE_LIGHT_BLUE
+  }
+
+  getOADService() {
+    return this._lookupService(BleServices.UUID_SERVICE_OAD)
   }
 
 }

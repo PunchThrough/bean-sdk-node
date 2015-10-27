@@ -36,15 +36,19 @@ ElectronApp.on('ready', function () {
     height: GUI_HEIGHT
   })
 
-  ipc.on('startScanning', (event, args) => {
+  ipc.on('startScanning', (event, args)=> {
     LB.startScanning()
   })
 
-  ipc.on('stopScanning', (event, args) => {
+  ipc.on('stopScanning', (event, args)=> {
     LB.stopScanning()
   })
 
-  ipc.on('connectToDevice', (event, uuid) => {
+  ipc.on('clearDevices', (event, args)=> {
+    LB.reset()
+  })
+
+  ipc.on('connectToDevice', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
     LB.connectToDevice(uuid, (err)=> {
       if (err) {
@@ -62,7 +66,7 @@ ElectronApp.on('ready', function () {
 
   })
 
-  ipc.on('performFirmwareUpdate', (event, uuid) => {
+  ipc.on('performFirmwareUpdate', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
     let fwUpdater = new FirmwareUpdater(device)
     fwUpdater.start(()=> {
@@ -70,7 +74,7 @@ ElectronApp.on('ready', function () {
     })
   })
 
-  LB.on('discover', (device) => {
+  LB.on('discover', (device)=> {
     if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
       mainWindow.webContents.send('deviceFound', device.serialize())
     }

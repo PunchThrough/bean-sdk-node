@@ -16,6 +16,16 @@ class LightBlueSDK {
     this._scanning = false
   }
 
+  _disconnectDevices() {
+    for (let i in this._devices) {
+      let d = this._devices[i]
+      if (d.isConnected()) {
+        d.disconnect()
+        console.log(`Disconnected from Bean: ${d.getName()}`)
+      }
+    }
+  }
+
   _discover(cb) {
     noble.on('discover', (peripheral) => {
 
@@ -26,7 +36,7 @@ class LightBlueSDK {
         // Check and handle Auto-reconnect cases
         if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
           console.log(`Auto reconnecting to ${device.getName()}`)
-          this.connectToDevice(peripheral.uuid, (err)=>{
+          this.connectToDevice(peripheral.uuid, (err)=> {
             if (err)
               console.log(`Error reconnecting to ${device.getName()}`)
             else
@@ -42,6 +52,13 @@ class LightBlueSDK {
       }
 
     })
+  }
+
+  reset() {
+    console.log('Disconnected all devices!')
+    this._disconnectDevices()
+    console.log('Clearing device cache!')
+    this._devices = {}
   }
 
   startScanning() {
@@ -103,13 +120,7 @@ class LightBlueSDK {
   quitGracefully() {
     console.log('Quitting LightBlue SDK...')
     this.stopScanning()
-    for (let i in this._devices) {
-      let d = this._devices[i]
-      if (d.isConnected()) {
-        d.disconnect()
-        console.log(`Disconnected from Bean: ${d.getName()}`)
-      }
-    }
+    this._disconnectDevices()
   }
 }
 

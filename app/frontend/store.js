@@ -20,6 +20,13 @@ let _deviceState = STATE_NO_DEVICE
 let _currentlySelectedUUID = null
 let _currentlySelectedDeviceInformation = null
 
+function clearState() {
+  _devices = {}
+  _deviceState = STATE_NO_DEVICE
+  _currentlySelectedUUID = null
+  _currentlySelectedDeviceInformation = null
+}
+
 class Store extends EventEmitter {
   constructor() {
     super()
@@ -70,8 +77,9 @@ Dispatcher.register(function (action) {
       break
 
     case actions.CLEAR_DEVICES:
-      _devices = {}
+      clearState()
       store.emitChange(ANY_CHANGE)
+      store.emitChange(DEVICE_STATE)
       break
 
     case actions.SELECT_DEVICE:

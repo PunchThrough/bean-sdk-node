@@ -29,6 +29,7 @@ let Actions = {
   },
 
   clearDevices: () => {
+    ipc.send('clearDevices')
     Dispatcher.dispatch({
       actionType: CLEAR_DEVICES
     })

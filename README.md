@@ -68,3 +68,4 @@ This projects main priority is building a FW updater that runs on Windows. Howev
     * Over time the scan results return fewer and fewer devices
     * Can't connect to any device
 * Serializing everything over IPC is quite cumbersome ... we already have a really nice object model under `/lightblue` and it's a shame we can't use these objects directly in the frontend (React).  If we plan to use Electron long-term we should come up with a clever, generic way to serialize/de-serialze these objects automatically over the wire so that you can call methods directly and if the object is on the client then it knows to rpc over to the server if it needs to.
+* It seems like `redux` is a superior solution to just `flux` ... let's use it in the future.

@@ -10,7 +10,7 @@ const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
 const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
 
 
-function fromPeripheral(peripheral) {
+function fromNoblePeripheral(peripheral) {
   /**
    * Return a Device class given a Noble peripheral object
    */
@@ -159,7 +159,7 @@ class LightBlueDevice extends BleDevice {
 }
 
 module.exports = {
-  fromPeripheral: fromPeripheral,
+  fromNoblePeripheral: fromNoblePeripheral,
   BleDevice: BleDevice,
   LightBlueDevice: LightBlueDevice,
   DEVICE_TYPE_LIGHT_BLUE: DEVICE_TYPE_LIGHT_BLUE,

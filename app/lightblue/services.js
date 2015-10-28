@@ -120,11 +120,13 @@ class OADService extends BleService {
 
   _onIdentifyNotification(data) {
     console.log('Got Notification - IDENTIFY')
+    console.log(data)
     this._fireCBs(UUID_CHAR_OAD_IDENTIFY, data)
   }
 
   _onBlockNotification(data) {
     console.log('Got Notification - BLOCK')
+    console.log(data)
     this._fireCBs(UUID_CHAR_OAD_BLOCK, data)
   }
 
@@ -158,16 +160,23 @@ class DeviceInformationService extends BleService {
   }
 
   _performCachedLookup(key, callback) {
-    if (this._charValueCache[key])
-      callback(null, this._charValueCache[key])
+    if (this._charValueCache[key]) {
+      let cachedVal = this._charValueCache[key]
+      console.log(`Got cached value(${key}): ${cachedVal}`)
+      callback(null, cachedVal)
+      return
+    }
 
     let char = this._characteristics[key]
-    this._charValueCache[key] = char.read((err, data)=> {
-      if (err)
+    char.read((err, data)=> {
+      if (err){
         console.log(`Error reading characteristic(${key}): ${err}`)
-      else
+        callback(err, null)
+      } else {
+        this._charValueCache[key] = data
         console.log(`Char read success(${key}): ${data}`)
-      callback(err, data)
+        callback(null, data)
+      }
     })
   }
 

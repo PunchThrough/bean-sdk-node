@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 import BleServices from './services'
 import util from './util'

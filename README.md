@@ -9,14 +9,14 @@ Stand alone tool for updating Bean FW on desktop platforms
 Install and use Node 0.12.7
 
 ```bash
-$ nvm install 0.12.7
-$ nvm use 0.12.7
+nvm install 0.12.7
+nvm use 0.12.7
 ```
 
 Build app dependencies:
 
 ```bash
-$ npm install
+npm install
 ```
 
 Build native dependencies against Electrons headers:
@@ -27,11 +27,20 @@ Build native dependencies against Electrons headers:
 
 __Note:__ This step should be done each time you run `npm install` for _certain_ dependencies...like `noble`...i think?  Not too sure.
 
-
 ## Running
 
 ```bash
-$ npm run dev
+npm run dev
+```
+
+## Testing!
+
+The unit test framework we are using is `Mocha` and all of the tests are under the default directory of `test/`.
+
+Run the unit tests:
+
+```
+npm run test
 ```
 
 ## Build and Release

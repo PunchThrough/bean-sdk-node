@@ -2,21 +2,21 @@
 
 Stand alone tool for updating Bean FW on desktop platforms
 
-![alt text](./docs/img/screenshot_bean_connected.png)
+![Bean Connected](./docs/img/screenshot-bean-connected.png)
 
 ## Development Environment
 
 Install and use Node 0.12.7
 
 ```bash
-$ nvm install 0.12.7
-$ nvm use 0.12.7
+nvm install 0.12.7
+nvm use 0.12.7
 ```
 
 Build app dependencies:
 
 ```bash
-$ npm install
+npm install
 ```
 
 Build native dependencies against Electrons headers:
@@ -27,12 +27,26 @@ Build native dependencies against Electrons headers:
 
 __Note:__ This step should be done each time you run `npm install` for _certain_ dependencies...like `noble`...i think?  Not too sure.
 
-
 ## Running
 
 ```bash
-$ npm run dev
+npm run dev
 ```
+
+## Testing!
+
+The unit test framework we are using is `Mocha` and all of the tests are under the default directory of `test/`.
+
+Run the unit tests from command line:
+
+```
+npm run test
+```
+
+It is also possible to run the unit tests from WebStorm which can be very helpful as you can set breakpoints and walk through your code. To do this you need to setup a Mocha debug configuration, here is an example:
+
+![alt text](./docs/img/mocha-webstorm-config.png)
+
 
 ## Build and Release
 

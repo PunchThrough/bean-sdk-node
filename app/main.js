@@ -4,7 +4,7 @@ import ElectronApp from 'app'
 import BrowserWindow from 'browser-window'
 import LB from './lightblue/lightblue'
 import devices from './lightblue/devices'
-import FirmwareUpdater from './lightblue/firmware'
+import FirmwareUpdater from './lightblue/oad'
 import ipc from 'ipc'
 
 // Constants
@@ -56,21 +56,21 @@ ElectronApp.on('ready', function () {
       } else {
         console.log(`Connected to Bean (${device.getName()}) successfully`)
         device.lookupServices((err)=> {
-          device.getDeviceInformationService().serialize((error, deviceInformation)=>{
+          device.getDeviceInformationService().serialize((error, deviceInformation)=> {
             // TODO: Callback hell is occurring, how do we fix the API?!
             mainWindow.webContents.send('deviceInformationReady', deviceInformation)
           })
         })
       }
     })
-
   })
 
   ipc.on('performFirmwareUpdate', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
-    let fwUpdater = new FirmwareUpdater(device)
-    fwUpdater.start(()=> {
+    let fwUpdater = new FirmwareUpdater()
+    fwUpdater.update(device, (error)=> {
       // callback for fw complete
+      console.log('fw update called back!?')
     })
   })
 

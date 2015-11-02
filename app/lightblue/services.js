@@ -145,6 +145,15 @@ class OADService extends BleService {
         console.log(`Error: ${err}`)
     })
   }
+
+  writeToIdentify(buf, callback) {
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].write(buf, true, callback)
+  }
+
+  writeToBlock(buf, callback) {
+    this._characteristics[UUID_CHAR_OAD_BLOCK].write(buf, true, callback)
+  }
+
 }
 
 class DeviceInformationService extends BleService {

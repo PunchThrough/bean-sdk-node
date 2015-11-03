@@ -40,3 +40,25 @@ gulp.task('package-osx', ['build'], function () {
       console.log('OSX Build success')
   })
 })
+
+gulp.task('package-win', ['build'], function () {
+  /**
+   * Package the application into an OSX .app file ready for distribution
+   */
+
+  packager({
+    dir: '.',
+    name: 'Bean FW Updater',
+    platform: 'win32',
+    arch: 'x64',
+    version: '0.33.7',
+    out: './build/',
+    overwrite: true
+
+  }, function(err, appPath) {
+    if (err)
+      console.log('Error during OSX build: ' + err)
+    else
+      console.log('Windows Build success')
+  })
+})

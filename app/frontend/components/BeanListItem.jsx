@@ -1,8 +1,8 @@
 'use strict'
 
-import React from 'react'
-import Icon from './Icon'
-import actions from '../actions'
+let React = require('react')
+let Icon = require('./Icon')
+let actions = require('../actions')
 
 class BeanListItem extends React.Component {
 

@@ -1,7 +1,7 @@
 'use strict'
 
-import assert from 'assert'
-import devices from '../app/lightblue/devices'
+let assert = require('assert')
+let devices = require('../app/lightblue/devices')
 
 let mockBlePeripheral = {
   uuid: 'ble-uuid',

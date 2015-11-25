@@ -1,9 +1,9 @@
 'use strict'
 
-import services from './services'
-import fs from 'fs'
-import path from 'path'
-import buffer from 'buffer'
+let services = require('./services')
+let fs = require('fs')
+let path = require('path')
+let buffer = require('buffer')
 
 const FW_FILES = path.join(__dirname, '..', 'resources')
 

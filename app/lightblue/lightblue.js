@@ -1,7 +1,7 @@
 'use strict'
 
-import noble from 'noble'
-import devices from './devices'
+let noble = require('noble')
+let devices =  require('./devices')
 
 const NOBLE_STATE_READY = 'poweredOn'
 

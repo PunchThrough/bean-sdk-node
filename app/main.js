@@ -1,11 +1,11 @@
 // Electron entry point and Main Process
 
-import ElectronApp from 'app'
-import BrowserWindow from 'browser-window'
-import LB from './lightblue/lightblue'
-import devices from './lightblue/devices'
-import FirmwareUpdater from './lightblue/oad'
-import ipc from 'ipc'
+let ElectronApp = require('app')
+let BrowserWindow = require('browser-window')
+let LB = require('./lightblue/lightblue')
+let devices = require('./lightblue/devices')
+let FirmwareUpdater = require('./lightblue/oad')
+let ipc = require('ipc')
 
 // Constants
 const INDEX = 'index.html'

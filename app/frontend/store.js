@@ -1,8 +1,8 @@
 'use strict'
 
-import Dispatcher from './dispatcher'
-import events from 'events'
-import actions from './actions'
+let Dispatcher = require('./dispatcher')
+let events = require('events')
+let actions = require('./actions')
 
 // Event's available for registration
 const ANY_CHANGE = 'ANY_CHANGE'

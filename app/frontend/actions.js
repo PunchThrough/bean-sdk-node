@@ -1,7 +1,7 @@
 'use strict'
 
-import Dispatcher from './dispatcher'
-import ipc from 'ipc'
+let Dispatcher = require('./dispatcher')
+let ipc = require('ipc')
 
 // Action constants
 const DEVICE_FOUND = 'DEVICE_FOUND'

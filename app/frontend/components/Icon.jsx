@@ -2,7 +2,7 @@
 
 require("babel/register")
 
-import React from 'react'
+let React = require('react')
 
 class Icon extends React.Component {
   constructor() {

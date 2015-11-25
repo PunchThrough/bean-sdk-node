@@ -1,9 +1,9 @@
 'use strict'
 
-import React from 'react'
-import BeanListItem from './BeanListItem'
-import Store from '../store'
-import actions from '../actions'
+let React = require('react')
+let BeanListItem = require('./BeanListItem')
+let Store = require('../store')
+let actions = require('../actions')
 
 function getDevices() {
   let devices = Store.store.getDevices()

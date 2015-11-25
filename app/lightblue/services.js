@@ -1,8 +1,8 @@
 'use strict'
 
-import util from './util'
-import async from 'async'
-import buffer from 'buffer'
+let util = require('./util')
+let async = require('async')
+let buffer = require('buffer')
 
 // Services
 const UUID_SERVICE_DEVICE_INFORMATION = 0x180A

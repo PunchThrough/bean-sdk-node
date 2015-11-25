@@ -1,8 +1,8 @@
 'use strict'
 
-import React from 'react'
-import Store from '../store'
-import actions from '../actions'
+let React = require('react')
+let Store = require('../store')
+let actions = require('../actions')
 
 class DeviceView extends React.Component {
 

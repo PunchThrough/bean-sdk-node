@@ -1,7 +1,7 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './components/App'
-import actions from './actions'
+let React = require('react')
+let ReactDOM = require('react-dom')
+let App = require('./components/App')
+let actions = require('./actions')
 
 ReactDOM.render(
   <App />,

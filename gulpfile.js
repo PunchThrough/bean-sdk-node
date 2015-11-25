@@ -9,7 +9,7 @@ var shell = require('gulp-run')
 // Variables
 var packageVersion = '0.1'
 var packageName = 'LightBlue-Bean-FW-Updater'
-var electronVersion = '0.33.9' // see package.json
+var electronVersion = '0.30.4' // see package.json
 
 
 function _getBuildOptions(platform) {

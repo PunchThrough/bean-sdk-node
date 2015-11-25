@@ -52,6 +52,15 @@ It is also possible to run the unit tests from WebStorm which can be very helpfu
 
 TBD: Need to document how to build and release this bad boy as a binary file, or installer for Windows (and other platforms)
 
+### Windows
+
+Unfortunately, for now, we need to build this thing on a Windows computer.
+
+Prerequisites:
+
+1. MS Visual Studio 13 express
+2. `npm config set msvs_version 2013 --global`
+
 ## Platform considerations and API
 
 This projects main priority is building a FW updater that runs on Windows. However, there will be effort made to identify and implement pieces of the code that will be reusable for our long term goal of creating a X-Platform JS SDK. Ideally all of our GUI products (loader, LB explorer) will be consumers of the JS SDK and rewritten in Electron/React-Native.

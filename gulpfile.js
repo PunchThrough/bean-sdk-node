@@ -58,13 +58,15 @@ gulp.task('package-osx', ['build'], function () {
 
 gulp.task('package-win', ['build'], function () {
   /**
-   * Package the application into an OSX .app file ready for distribution
+   * Package the application into a Windows .exe file ready for distribution
    */
 
+  // TODO: there is a "bug" here where the 'module_path' and 'module_name' keys duplicate in bindings.gyp
   gulp.src('node_modules/noble/node_modules/bluetooth-hci-socket/node_modules/usb/binding.gyp')
     .pipe(replace("'use_system_libusb%': 'false',", "'use_system_libusb%': 'false',\n'module_name': 'usb_bindings',\n'module_path': './src/binding',"))
     .pipe(gulp.dest('node_modules/noble/node_modules/bluetooth-hci-socket/node_modules/usb/'));
 
+  // Rebuild bluetooth-hci-socket and node-usb modules using node-gyp
   shell('cd node_modules/noble/node_modules/bluetooth-hci-socket/node_modules/usb && node-gyp rebuild --target=' + electronVersion + ' --dist-url=https://atom.io/download/atom-shell').exec();
   shell('cd node_modules/noble/node_modules/bluetooth-hci-socket && node-gyp rebuild --target=' + electronVersion + ' --dist-url=https://atom.io/download/atom-shell').exec();
 

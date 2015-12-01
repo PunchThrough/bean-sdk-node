@@ -50,16 +50,23 @@ It is also possible to run the unit tests from WebStorm which can be very helpfu
 
 ## Build and Release
 
-TBD: Need to document how to build and release this bad boy as a binary file, or installer for Windows (and other platforms)
+Currently we only focus on distributing the app as a binary to Windows. Linux and Mac can run from source for now. 
 
 ### Windows
 
-Unfortunately, for now, we need to build this thing on a Windows computer.
+On a Windows computer, do the following.
 
-Prerequisites:
+1. Install [MS Visual Studio 13 express](https://www.microsoft.com/en-gb/download/details.aspx?id=44914)
+2. Install [Windows SDK for .NET Framework 4](https://www.microsoft.com/en-us/download/details.aspx?id=8279)
+3. Run `npm config set msvs_version 2013 --global`
+4. Run `gulp package-win` 
 
-1. MS Visual Studio 13 express
-2. `npm config set msvs_version 2013 --global`
+The built distribution can be found as a folder here `build/Bean-FW-Updater-win32-x64`.
+
+TODO:
+
+* Add a command line argument to the gulp task for versioning
+* Zip the folder as final task OR wrap the entire dist in an installer
 
 ## Platform considerations and API
 

@@ -46,8 +46,6 @@ class LightBlueSDK {
       } else {
         let device = devices.fromNoblePeripheral(peripheral)
         this._devices[device.getUUID()] = device
-        console.log('Found new device!')
-        console.log(device.toString())
         cb(device)
       }
 

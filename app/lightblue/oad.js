@@ -32,8 +32,6 @@ class FirmwareUpdater{
     oad.registerForNotifications(services.UUID_CHAR_OAD_BLOCK, (data)=> {this._notificationBlock(data)})
   }
 
-  _openAndReadFile
-
   _getNextBlock(blkNo) {
     let offset = blkNo * 16
 

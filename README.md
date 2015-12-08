@@ -27,10 +27,27 @@ Build native dependencies against Electrons headers:
 
 __Note:__ This step should be done each time you run `npm install` for _certain_ dependencies...like `noble`...i think?  Not too sure.
 
-## Running
+## Running the app
 
 ```bash
 npm run dev
+```
+
+## Running examples
+
+We will use `babel` directly to transpile (to es5) and run the example scripts directly.
+
+Install `babel-cli` and the `es2015` preset.
+
+```
+npm install -g babel-cli
+npm install babel-preset-es2015
+```
+
+Run an example:
+
+```
+babel-node examples/<my_example.js>
 ```
 
 ## Testing!

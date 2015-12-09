@@ -45,10 +45,11 @@ class LightBlueSDK {
         }
       } else {
         let device = devices.fromNoblePeripheral(peripheral)
-        this._devices[device.getUUID()] = device
-        cb(device)
+        if (device.getType() == devices.DEVICE_TYPE_LIGHT_BLUE) {
+          this._devices[device.getUUID()] = device
+          cb(device)
+        }
       }
-
     })
   }
 

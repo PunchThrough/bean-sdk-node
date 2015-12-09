@@ -34,7 +34,9 @@ gulp.task('build', [], function () {
 
   gulp.src(['./app/**/*.jsx', './app/**/*.js'])
     .pipe(sourcemaps.init())
-    .pipe(babel())
+    .pipe(babel({
+      presets: ['es2015', 'react']
+    }))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest('./build/'))
 

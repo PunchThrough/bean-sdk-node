@@ -1,7 +1,5 @@
 'use strict'
 
-require("babel/register")
-
 let React = require('react')
 
 class Icon extends React.Component {

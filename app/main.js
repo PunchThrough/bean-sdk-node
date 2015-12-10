@@ -4,7 +4,6 @@ let ElectronApp = require('app')
 let BrowserWindow = require('browser-window')
 let LB = require('./lightblue/lightblue')
 let devices = require('./lightblue/devices')
-let FirmwareUpdater = require('./lightblue/oad')
 let ipc = require('ipc')
 
 // Constants
@@ -67,8 +66,7 @@ ElectronApp.on('ready', function () {
 
   ipc.on('performFirmwareUpdate', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
-    let fwUpdater = new FirmwareUpdater()
-    fwUpdater.update(device, (error)=> {
+    LB.updateFirmware(device, (error)=> {
       // callback for fw complete
       console.log('fw update called back!?')
     })

@@ -2,11 +2,13 @@
 
 let noble = require('noble')
 let devices =  require('./devices')
+let FirmwareUpdater = require('./oad')
 
 const NOBLE_STATE_READY = 'poweredOn'
 
 class LightBlueSDK {
   constructor() {
+    this._fwUpdater = new FirmwareUpdater()
     this._devices = {}
     this._events = {
       discover: (cb) => this._discover(cb)
@@ -37,10 +39,15 @@ class LightBlueSDK {
         if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
           console.log(`Auto reconnecting to ${device.getName()}`)
           this.connectToDevice(peripheral.uuid, (err)=> {
-            if (err)
+            if (err){
               console.log(`Error reconnecting to ${device.getName()}`)
-            else
+            }
+            else {
               console.log(`Auto reconnect to ${device.getName()} success`)
+              if (this._fwUpdater.isInProgress(device)) {
+                this._fwUpdater.continueUpdate()
+              }
+            }
           })
         }
       } else {
@@ -88,6 +95,10 @@ class LightBlueSDK {
 
   on(event, callback) {
     this._events[event](callback)
+  }
+
+  updateFirmware(device, callback) {
+    this._fwUpdater.beginUpdate(device, callback)
   }
 
   connectToDevice(uuid, callback) {

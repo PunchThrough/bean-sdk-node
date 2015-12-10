@@ -102,3 +102,26 @@ This projects main priority is building a FW updater that runs on Windows. Howev
     * Can't connect to any device
 * Serializing everything over IPC is quite cumbersome ... we already have a really nice object model under `/lightblue` and it's a shame we can't use these objects directly in the frontend (React).  If we plan to use Electron long-term we should come up with a clever, generic way to serialize/de-serialze these objects automatically over the wire so that you can call methods directly and if the object is on the client then it knows to rpc over to the server if it needs to.
 * It seems like `redux` is a superior solution to just `flux` ... let's use it in the future.
+
+
+## Firmware Update Information
+
+__Firmware update algorithm:__
+
+1. Connect to Bean
+2. Read firmware version
+3. Infer latest firmware version from filename
+4. If firmware version is up to date, disconnect and stop. Otherwise, continue
+5. Load list of firmware files and sort alphabetically
+6. Subscribe to notifications on OAD Identify and Block characteristics
+7. Read first firmware file into memory and remove from list. If list of firmware is empty, the process has failed.
+8. Skipping the first 4 bytes of the firmware file (crc0 and crc1), write 12 bytes of the firmware header to the OAD Identify characteristic
+9. If a notification is received on the Identify characteristic, the firmware has been rejected. Return to step 7. If a notification is received on the Block characteristic, the device has accepted the firmware.
+10. Transfer firmware (described later.)
+11. Device will disconnect and reset. Return to step 1.
+
+__Firmware transfer:__
+
+* Firmware images are written to the OAD Block characteristic. The firmware sends a notification indicating the next block number it wants as 16-bit int. A notification for block number 0 indicates the firmware offered (via OAD Identify characteristic) has been accepted.
+* Firmware is transferred in 16-byte blocks. Each block is preceded with a 2 byte block number.
+* When the final block has been transferred, the device will verify the new image, disconnect, and reset.

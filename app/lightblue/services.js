@@ -178,7 +178,7 @@ class DeviceInformationService extends BleService {
 
     let char = this._characteristics[key]
     char.read((err, data)=> {
-      if (err){
+      if (err) {
         console.log(`Error reading characteristic(${key}): ${err}`)
         callback(err, null)
       } else {
@@ -216,7 +216,7 @@ class DeviceInformationService extends BleService {
       (cb) => this.getModelNumber(cb),
       (cb) => this.getHardwareVersion(cb),
       (cb) => this.getFirmwareVersion(cb),
-      (cb)=> this.getSoftwareVersion(cb)
+      (cb) => this.getSoftwareVersion(cb)
     ], (err, results) => {
       if (err) {
         console.log(err)

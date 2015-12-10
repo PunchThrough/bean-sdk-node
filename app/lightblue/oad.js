@@ -18,12 +18,13 @@ class FirmwareUpdater{
     this._deviceInProgress = null
     this._completionCallback = null
     this._fileOfferedIndex = -1
+    this._currentFwFile = null
   }
 
-  _loadFwFiles() {
-    /**
-     * Load all of the files into Buffers in memory
-     */
+  _fail(err) {
+    console.log(err)
+    this._completionCallback(err)
+    fs.closeSync(this._currentFwFile)
   }
 
   _registerNotifications(device) {
@@ -32,14 +33,27 @@ class FirmwareUpdater{
     oad.registerForNotifications(services.UUID_CHAR_OAD_BLOCK, (data)=> {this._notificationBlock(data)})
   }
 
-  _getNextBlock(blkNo) {
-    let offset = blkNo * 16
-
-  }
-
   _notificationBlock(buf) {
-    //let blkNo = buf.readUInt16LE(0, 2)
+    let blkNo = buf.readUInt16LE(0, 2)
+    console.log(`Got request for FW block #${blkNo}`)
 
+    // read block from open file
+    let length = 16
+    let fileOffset = blkNo * length
+    let blkBuf = new buffer.Buffer(length)
+    console.log('000')
+    console.log(fileOffset)
+    let bytesRead = fs.readSync(this._currentFwFile, blkBuf, 0, length, fileOffset)
+    if (bytesRead != 16) {
+      return this._fail('Internal error: failed to read FW file')
+    }
+
+    let finalBuf = buffer.Buffer.concat([buf, blkBuf])
+    let oad = this._deviceInProgress.getOADService()
+    oad.writeToBlock(finalBuf, (err)=> {
+      if (err)
+        console.log(`Error writing to block char: ${err}`)
+    })
   }
 
   _notificationIdentify(buf) {
@@ -61,6 +75,7 @@ class FirmwareUpdater{
       if (err) {
         callback(err)
       } else {
+        console.log(`Comparing firmware versions ${this._storedFwVersion} and ${fwVersion}`)
         if (this._storedFwVersion == fwVersion) {
           let err = 'Versions are the same, no update needed'
           callback(err)
@@ -74,22 +89,21 @@ class FirmwareUpdater{
   _offerFile(device, idx) {
     let filename = this._fwfiles[idx]
     let filepath = path.join(FW_FILES, filename)
-    let fd = fs.openSync(filepath, 'r')
     let buf = new buffer.Buffer(12)
 
     // Read bytes 4-16 from the file (12 bytes total)
-    let bytesRead = fs.readSync(fd, buf, 0, 12, 4)
+    this._currentFwFile = fs.openSync(filepath, 'r')
+    let bytesRead = fs.readSync(this._currentFwFile, buf, 0, 12, 4)
     if (bytesRead != 12) {
-      this._completionCallback('Internal error: failed to read FW file')
-      return
+      return this._fail('Internal error: failed to read FW file')
     }
-    fs.closeSync(fd)
 
     console.log(`Offering file: ${filename}`)
 
     let oad = device.getOADService()
-    oad.writeToIdentify(buf, ()=> {
-      console.log('Write CB!!')
+    oad.writeToIdentify(buf, (err)=> {
+      if (err)
+        console.log(`Error writing to identify char: ${err}`)
     })
   }
 

@@ -111,18 +111,18 @@ class FirmwareUpdater{
 
     let filename = this._fwfiles[this._fileOfferedIndex]
     let filepath = path.join(FW_FILES, filename)
-    let buf = new buffer.Buffer(FW_HEADER_LENGTH)
+    let hdrBuf = new buffer.Buffer(FW_HEADER_LENGTH)
 
     // Read bytes 4-16 from the file (12 bytes total)
     this._currentFwFile = fs.openSync(filepath, 'r')
-    let bytesRead = fs.readSync(this._currentFwFile, buf, 0, FW_HEADER_LENGTH, 4)
+    let bytesRead = fs.readSync(this._currentFwFile, hdrBuf, 0, FW_HEADER_LENGTH, 4)
     if (bytesRead != FW_HEADER_LENGTH) {
       return this._fail('Internal error: failed to read FW file')
     }
 
     console.log(`Offering file: ${filename}`)
 
-    this._deviceInProgress.getOADService().writeToIdentify(buf, (err)=> {
+    this._deviceInProgress.getOADService().writeToIdentify(hdrBuf, (err)=> {
       if (err)
         console.log(`Error writing to identify char: ${err}`)
     })

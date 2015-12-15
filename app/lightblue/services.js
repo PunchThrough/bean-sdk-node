@@ -179,11 +179,11 @@ class DeviceInformationService extends BleService {
     let char = this._characteristics[key]
     char.read((err, data)=> {
       if (err) {
-        console.log(`Error reading characteristic(${key}): ${err}`)
+        console.log(`Error reading characteristic(${key.toString(16)}): ${err}`)
         callback(err, null)
       } else {
         this._charValueCache[key] = data
-        console.log(`Char read success(${key}): ${data}`)
+        console.log(`Char read success(${key.toString(16)}): ${data}`)
         callback(null, data)
       }
     })
@@ -223,11 +223,11 @@ class DeviceInformationService extends BleService {
         finalCallback(err, null)
       } else {
         finalCallback(null, {
-          manufacturer_name: results[0].toString('utf8'),
-          model_number: results[1].toString('utf8'),
-          hardware_version: results[2].toString('utf8'),
-          firmware_version: results[3].toString('utf8'),
-          software_version: results[4].toString('utf8')
+          manufacturer_name: results[0] == undefined ? '' : results[0].toString('utf8'),
+          model_number: results[1] == undefined ? '' : results[1].toString('utf8'),
+          hardware_version: results[2] == undefined ? '' : results[2].toString('utf8'),
+          firmware_version: results[3] == undefined ? '' : results[3].toString('utf8'),
+          software_version: results[4] == undefined ? '' : results[4].toString('utf8')
         })
       }
     });

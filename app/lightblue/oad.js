@@ -162,11 +162,8 @@ class FirmwareUpdater{
       return false
     }
 
-    if (device.getUUID() == this._deviceInProgress.getUUID()) {
-      return true
-    }
+    return device.getUUID() == this._deviceInProgress.getUUID();
 
-    return false
   }
 
   continueUpdate() {

@@ -3,6 +3,8 @@
 let React = require('react')
 let Store = require('../store')
 let actions = require('../actions')
+let FirmwareUpdateStatus = require('./FirmwareUpdateStatus')
+
 
 class DeviceView extends React.Component {
 
@@ -41,12 +43,14 @@ class DeviceView extends React.Component {
       <div>
         {(() => {
           switch (this.state.state) {
+
             case Store.STATE_DEVICE_SELECTED:
               return (
                 <div className="text-center">
                   <h3>Loading Information...</h3>
                 </div>
               )
+
             case Store.STATE_DEVICE_INFORMATION_READY:
               return (
                 <div className="text-center">
@@ -80,17 +84,11 @@ class DeviceView extends React.Component {
                     </tr>
                     </tbody>
                   </table>
-                  <div className="pull-down">
-                    <div className="text-center">
-                      <button
-                        className="btn btn-primary"
-                        onClick={this._updateFirmware}
-                      >
-                        Update Firmware
-                      </button>
-                    </div>
-                  </div>
+
+                  <FirmwareUpdateStatus device={this.state.device} />
+
                 </div>
+
               )
             default:
               return (
@@ -101,9 +99,9 @@ class DeviceView extends React.Component {
           }
         })()}
 
+      </div>
+    )
+  }
+}
 
-        )
-        }
-        }
-
-        module.exports = DeviceView
+module.exports = DeviceView

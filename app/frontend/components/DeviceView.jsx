@@ -80,6 +80,16 @@ class DeviceView extends React.Component {
                     </tr>
                     </tbody>
                   </table>
+                  <div className="pull-down">
+                    <div className="text-center">
+                      <button
+                        className="btn btn-primary"
+                        onClick={this._updateFirmware}
+                      >
+                        Update Firmware
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )
             default:
@@ -91,19 +101,9 @@ class DeviceView extends React.Component {
           }
         })()}
 
-        <div className="pull-down">
-          <div className="text-center">
-            <button
-              className="btn btn-primary"
-              onClick={this._updateFirmware}
-              >
-              Update Firmware
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
 
-module.exports = DeviceView
+        )
+        }
+        }
+
+        module.exports = DeviceView

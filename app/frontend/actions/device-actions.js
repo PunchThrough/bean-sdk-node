@@ -1,6 +1,6 @@
 'use strict'
 
-let Dispatcher = require('./dispatcher')
+let Dispatcher = require('../dispatcher')
 let ipc = require('ipc')
 
 // Action constants

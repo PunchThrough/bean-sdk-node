@@ -1,8 +1,8 @@
 'use strict'
 
-let Dispatcher = require('./dispatcher')
+let Dispatcher = require('../dispatcher')
 let events = require('events')
-let actions = require('./actions')
+let actions = require('../actions/device-actions')
 
 // Event's available for registration
 const ANY_CHANGE = 'ANY_CHANGE'

@@ -2,7 +2,7 @@
 
 let React = require('react')
 let Icon = require('./Icon')
-let actions = require('../actions')
+let actions = require('../actions/device-actions')
 
 class BeanListItem extends React.Component {
 

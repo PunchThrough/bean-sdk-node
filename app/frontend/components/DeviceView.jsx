@@ -1,8 +1,8 @@
 'use strict'
 
 let React = require('react')
-let Store = require('../store')
-let actions = require('../actions')
+let Store = require('../stores/device-store')
+let actions = require('../actions/device-actions')
 let FirmwareUpdateStatus = require('./FirmwareUpdateStatus')
 
 

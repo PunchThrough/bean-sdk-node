@@ -1,12 +1,18 @@
 'use strict'
 
 let React = require('react')
-let actions = require('../actions')
+let actions = require('../actions/device-actions')
 
 class FirmwareUpdateStatus extends React.Component {
 
   constructor() {
     super()
+
+    this.state = {
+      state: null,
+      accepted_fw_file: null,
+
+    }
 
     this._updateFirmware = ()=> {
       actions.Actions.performFirmwareUpdate(this.props.device.uuid)

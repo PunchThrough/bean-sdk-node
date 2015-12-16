@@ -41,6 +41,8 @@ class FirmwareUpdater{
     this._completionCallback = null
     this._fileOfferedIndex = -1
     this._currentFwFile = null
+    this._lastBlock = 0
+    this._totalBlocks = null
   }
 
   _fail(err) {
@@ -75,11 +77,13 @@ class FirmwareUpdater{
      */
 
     let blkNo = buf.readUInt16LE(0, 2)
+    this._lastBlock = blkNo
     console.log(`Got request for FW block #${blkNo}`)
 
     if (blkNo == 0) {
       // calculate size of image to get total blocks
-      //fs.statSync(this._)
+      let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
+      this._totalBlocks = fwFileStats.size / BLOCK_LENGTH
     }
 
     // read block from open file
@@ -152,6 +156,14 @@ class FirmwareUpdater{
         }
       }
     })
+  }
+
+  getState() {
+    return {
+      accepted_fw_file: this._fwfiles[this._fileOfferedIndex],
+      last_block: this._lastBlock,
+      total_blocks: this._totalBlocks
+    }
   }
 
   isInProgress(device) {

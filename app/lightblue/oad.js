@@ -141,8 +141,11 @@ class FirmwareUpdater{
       if (err) {
         callback(err)
       } else {
-        console.log(`Comparing firmware versions ${this._storedFwVersion} and ${fwVersion}`)
-        if (this._storedFwVersion == fwVersion) {
+        let v = ''
+        if (buffer.Buffer.isBuffer(fwVersion))
+          v = fwVersion.toString('utf8').split(' ')[0]
+        console.log(`Comparing firmware versions ${this._storedFwVersion} and ${v}`)
+        if (this._storedFwVersion == v) {
           callback('Versions are the same, no update needed')
         } else {
           callback(null)

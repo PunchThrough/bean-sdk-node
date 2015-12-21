@@ -84,8 +84,11 @@ class FirmwareUpdater{
     if (blkNo == 0) {
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
-      this._totalBlocks = fwFileStats.size / BLOCK_LENGTH
+      this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
       this._fwBeginTime = Math.round(+new Date() / 1000)
+      console.log(`First block @ ${this._fwBeginTime}`)
+      console.log(`Total blocks: ${this._totalBlocks}`)
+      console.log(`FW file size: ${fwFileStats.size}`)
     }
 
     // read block from open file

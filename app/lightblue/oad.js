@@ -43,6 +43,7 @@ class FirmwareUpdater{
     this._currentFwFile = null
     this._lastBlock = 0
     this._totalBlocks = null
+    this._fwBeginTime = null
   }
 
   _fail(err) {
@@ -84,6 +85,7 @@ class FirmwareUpdater{
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = fwFileStats.size / BLOCK_LENGTH
+      this._fwBeginTime = Math.round(+new Date() / 1000)
     }
 
     // read block from open file
@@ -99,6 +101,13 @@ class FirmwareUpdater{
       if (err)
         console.log(`Error writing to block char: ${err}`)
     })
+
+    if (blkNo === this._totalBlocks) {
+      console.log('Last block!!!!!!!')
+      let end = Math.round(+new Date() / 1000)
+      let sum = end - this._fwBeginTime
+      console.log(sum)
+    }
   }
 
   _notificationIdentify(buf) {

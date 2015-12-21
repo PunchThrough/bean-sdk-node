@@ -1,7 +1,7 @@
 'use strict'
 
 let noble = require('noble')
-let devices =  require('./devices')
+let devices = require('./devices')
 let FirmwareUpdater = require('./oad')
 
 const NOBLE_STATE_READY = 'poweredOn'
@@ -29,17 +29,21 @@ class LightBlueSDK {
   }
 
   _discover(cb) {
+    /**
+     * A new BLE peripheral device has been discovered (from Noble)
+     */
     noble.on('discover', (peripheral) => {
 
       if (this._devices[peripheral.uuid]) {
         // We already have a record of this device
-        let device = this._devices[peripheral.uuid]
+
+        let device = devices.fromExistingDevice(this._devices[peripheral.uuid], peripheral)
 
         // Check and handle Auto-reconnect cases
         if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
           console.log(`Auto reconnecting to ${device.getName()}`)
           this.connectToDevice(peripheral.uuid, (err)=> {
-            if (err){
+            if (err) {
               console.log(`Error reconnecting to ${device.getName()}`)
             }
             else {
@@ -51,6 +55,8 @@ class LightBlueSDK {
           })
         }
       } else {
+        // We don't have a record of this device
+
         let device = devices.fromNoblePeripheral(peripheral)
         if (device.getType() == devices.DEVICE_TYPE_LIGHT_BLUE) {
           this._devices[device.getUUID()] = device

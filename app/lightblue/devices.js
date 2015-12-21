@@ -9,13 +9,25 @@ const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
 const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
 
 
+function fromExistingDevice(existingDevice, peripheral) {
+  /**
+   * Return the same `existingDevice` instance, with updated info from peripheral
+   */
+
+  // Kind of hacky...altering "protected" state within the existingDevice
+  let adv = peripheral.advertisement
+  existingDevice._name = adv.localName ? adv.localName : ''
+  existingDevice._noblePeripheral = peripheral
+  return existingDevice
+}
+
 function fromNoblePeripheral(peripheral) {
   /**
    * Return a Device class given a Noble peripheral object
    */
 
-  var adv = peripheral.advertisement
-  var name = adv.localName ? adv.localName : ''
+  let adv = peripheral.advertisement
+  let name = adv.localName ? adv.localName : ''
   if (adv.serviceUuids.indexOf(BEAN_UUID) == -1) {
     return new BleDevice(peripheral.uuid, name, peripheral)
   } else {
@@ -159,6 +171,7 @@ class LightBlueDevice extends BleDevice {
 
 module.exports = {
   fromNoblePeripheral: fromNoblePeripheral,
+  fromExistingDevice: fromExistingDevice,
   BleDevice: BleDevice,
   LightBlueDevice: LightBlueDevice,
   DEVICE_TYPE_LIGHT_BLUE: DEVICE_TYPE_LIGHT_BLUE,

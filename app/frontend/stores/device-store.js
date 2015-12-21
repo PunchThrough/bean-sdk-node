@@ -13,8 +13,6 @@ const STATE_NO_DEVICE = 'STATE_NO_DEVICE'
 const STATE_DEVICE_SELECTED = 'STATE_DEVICE_SELECTED'
 const STATE_DEVICE_INFORMATION_READY = 'STATE_DEVICE_INFORMATION_READY'
 
-let EventEmitter = events.EventEmitter
-
 let _devices = {}
 let _deviceState = STATE_NO_DEVICE
 let _currentlySelectedUUID = null
@@ -27,7 +25,7 @@ function clearState() {
   _currentlySelectedDeviceInformation = null
 }
 
-class Store extends EventEmitter {
+class Store extends events.EventEmitter {
   constructor() {
     super()
   }

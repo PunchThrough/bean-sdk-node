@@ -141,6 +141,7 @@ class FirmwareUpdater{
      */
 
     let dis = device.getDeviceInformationService()
+    dis.resetCache()
     dis.getFirmwareVersion((err, fwVersion)=> {
       if (err) {
         callback(err)

@@ -28,6 +28,29 @@ class LightBlueSDK {
     }
   }
 
+  _autoReconnect(device) {
+    console.log(`Auto reconnecting to ${device.getName()}`)
+    device.connect((err)=> {
+      if (err) {
+        console.log(`Error reconnecting to ${device.getName()}`)
+      }
+      else {
+        console.log(`Auto reconnect to ${device.getName()} success`)
+        if (this._fwUpdater.isInProgress(device)) {
+          console.log('Auto-reconnected to device in middle of FW update')
+
+          device.lookupServices((err)=> {
+            let oad = device.getOADService()
+            oad.triggerIdentifyHeaderNotification()
+            oad.setupNotifications()
+            this._fwUpdater.continueUpdate()
+          })
+
+        }
+      }
+    })
+  }
+
   _discover(cb) {
     /**
      * A new BLE peripheral device has been discovered (from Noble)
@@ -38,22 +61,10 @@ class LightBlueSDK {
         // We already have a record of this device
 
         let device = devices.fromExistingDevice(this._devices[peripheral.uuid], peripheral)
-
-        // Check and handle Auto-reconnect cases
         if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
-          console.log(`Auto reconnecting to ${device.getName()}`)
-          this.connectToDevice(peripheral.uuid, (err)=> {
-            if (err) {
-              console.log(`Error reconnecting to ${device.getName()}`)
-            }
-            else {
-              console.log(`Auto reconnect to ${device.getName()} success`)
-              if (this._fwUpdater.isInProgress(device)) {
-                this._fwUpdater.continueUpdate()
-              }
-            }
-          })
+          this._autoReconnect(device)
         }
+
       } else {
         // We don't have a record of this device
 

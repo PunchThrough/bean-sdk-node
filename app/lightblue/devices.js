@@ -14,7 +14,7 @@ function fromExistingDevice(existingDevice, peripheral) {
    * Return the same `existingDevice` instance, with updated info from peripheral
    */
 
-  // Kind of hacky...altering "protected" state within the existingDevice
+  // Kind of hacky...altering "protected" state within the `existingDevice`
   let adv = peripheral.advertisement
   existingDevice._name = adv.localName ? adv.localName : ''
   existingDevice._noblePeripheral = peripheral
@@ -142,9 +142,19 @@ class BleDevice {
         completionCallback(err)
       } else {
         for (let i in services) {
-          let s = BleServices.fromNobleService(services[i])
-          this._services[util.normalizeUUID(s.getUUID())] = s
-          console.log(`Found service: ${s.getName()}`)
+          let nobleService = services[i]
+          let sUUID = util.normalizeUUID(nobleService.uuid)
+          let service = null
+          if (this._services[sUUID]) {
+            // Service exists
+            service = BleServices.fromExistingService(this._services[sUUID], nobleService)
+          } else {
+            // New service
+            service = BleServices.fromNobleService(nobleService)
+          }
+          this._services[sUUID] = service
+          console.log(`Found service: ${service.getName()}`)
+
         }
         completionCallback()
       }

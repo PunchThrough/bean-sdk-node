@@ -29,6 +29,13 @@ function _charListToObject(charList) {
   return chars
 }
 
+function fromExistingService(existingService, nobleService) {
+  existingService._characteristics = _charListToObject(nobleService.characteristics)
+  existingService._nobleService = nobleService
+  existingService._notificationsReady = false
+  return existingService
+}
+
 function fromNobleService(nobleService) {
   /**
    * Given a noble service object, translate it into one of our services
@@ -89,26 +96,14 @@ class OADService extends BleService {
   constructor(characteristics, nobleService) {
     super(characteristics, nobleService)
 
-    // Object that holds arrays of callbacks, keyed by the attribute value
+    // Object that holds arrays of callbacks, keyed by the attribute value (UUID)
     this._registeredNotificationCallbacks = {}
     this._registeredNotificationCallbacks[UUID_CHAR_OAD_BLOCK] = []     // default empty array
     this._registeredNotificationCallbacks[UUID_CHAR_OAD_IDENTIFY] = []  // default empty array
 
-    // Setup notifications IDENTIFY
-    this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
-      if (err) console.log(err)
-    })
-    this._characteristics[UUID_CHAR_OAD_IDENTIFY].on('read', (data, isNotification)=> {
-      if (isNotification) this._onIdentifyNotification(data)
-    })
-
-    // Setup notifications BLOCK
-    this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
-      if (err) console.log(err)
-    })
-    this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
-      if (isNotification) this._onBlockNotification(data)
-    })
+    this._notificationsReady = false
+    this._triggerIdentifyNotification = false
+    this.setupNotifications()
   }
 
   _fireCBs(key, data) {
@@ -128,7 +123,58 @@ class OADService extends BleService {
     this._fireCBs(UUID_CHAR_OAD_BLOCK, data)
   }
 
+  _writeZerosToIdentify() {
+    let zeros = new buffer.Buffer(16).fill(0)
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].write(zeros, true, (err)=> {
+      if (err) {
+        console.log(`Error: ${err}`)
+      } else {
+        console.log('Triggered a notification on Identify char')
+      }
+    })
+  }
+
+  setupNotifications() {
+    console.log('Setting up IDENTIFY and BLOCK notifications')
+
+    // Setup notifications IDENTIFY
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('IDENTIFY notifications ready')
+        this._notificationsReady = true
+        if (this._triggerIdentifyNotification) {
+          this._writeZerosToIdentify()
+          this._triggerIdentifyNotification = false
+        }
+      }
+    })
+    this._characteristics[UUID_CHAR_OAD_IDENTIFY].on('read', (data, isNotification)=> {
+      if (isNotification) this._onIdentifyNotification(data)
+    })
+
+    // Setup notifications BLOCK
+    this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('BLOCK notifications ready')
+      }
+    })
+    this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
+      if (isNotification) this._onBlockNotification(data)
+    })
+  }
+
   registerForNotifications(key, cb) {
+    /**
+     * Register to be called-back on receipt of a notification
+     *
+     * @param key The characteristic UUID
+     * @param cb Function to be called back
+     */
+
     this._registeredNotificationCallbacks[key].push(cb)
   }
 
@@ -137,11 +183,11 @@ class OADService extends BleService {
   }
 
   triggerIdentifyHeaderNotification() {
-    let zeros = new buffer.Buffer(16).fill(0)
-    this._characteristics[UUID_CHAR_OAD_IDENTIFY].write(zeros, true, (err)=> {
-      if (err)
-        console.log(`Error: ${err}`)
-    })
+    if (this._notificationsReady) {
+      this._writeZerosToIdentify()
+    } else {
+      this._triggerIdentifyNotification = true
+    }
   }
 
   writeToIdentify(buf, callback) {
@@ -234,6 +280,7 @@ class DeviceInformationService extends BleService {
 
 module.exports = {
   fromNobleService: fromNobleService,
+  fromExistingService: fromExistingService,
   UUID_SERVICE_DEVICE_INFORMATION: UUID_SERVICE_DEVICE_INFORMATION,
   UUID_SERVICE_OAD: UUID_SERVICE_OAD,
   UUID_CHAR_OAD_IDENTIFY: UUID_CHAR_OAD_IDENTIFY,

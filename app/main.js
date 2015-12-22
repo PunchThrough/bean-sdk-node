@@ -75,6 +75,7 @@ ElectronApp.on('ready', function () {
   LB.on('discover', (device)=> {
     if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
       mainWindow.webContents.send('deviceFound', device.serialize())
+      console.log(device.toString())
     }
   })
 

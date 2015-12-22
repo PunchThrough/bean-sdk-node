@@ -69,7 +69,7 @@ class LightBlueSDK {
         // We don't have a record of this device
 
         let device = devices.fromNoblePeripheral(peripheral)
-        if (device.getType() == devices.DEVICE_TYPE_LIGHT_BLUE) {
+        if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
           this._devices[device.getUUID()] = device
           cb(device)
         }
@@ -135,7 +135,7 @@ class LightBlueSDK {
       let originalScanningState = this._scanning
       this.stopScanning()
       d.connect((err)=> {
-        if (originalScanningState == true)
+        if (originalScanningState === true)
           this.startScanning()
         callback(err)
       })

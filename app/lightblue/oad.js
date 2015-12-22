@@ -81,7 +81,7 @@ class FirmwareUpdater{
     this._lastBlock = blkNo
     console.log(`Got request for FW block #${blkNo}`)
 
-    if (blkNo == 0) {
+    if (blkNo === 0) {
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
@@ -162,7 +162,7 @@ class FirmwareUpdater{
         if (buffer.Buffer.isBuffer(fwVersion))
           v = fwVersion.toString('utf8').split(' ')[0]
         console.log(`Comparing firmware versions ${this._storedFwVersion} and ${v}`)
-        if (this._storedFwVersion == v) {
+        if (this._storedFwVersion === v) {
           callback('Versions are the same, no update needed')
         } else {
           callback(null)
@@ -186,11 +186,11 @@ class FirmwareUpdater{
      * @param device a LB Device object
      */
 
-    if (this._deviceInProgress == null) {
+    if (this._deviceInProgress === null) {
       return false
     }
 
-    return device.getUUID() == this._deviceInProgress.getUUID();
+    return device.getUUID() === this._deviceInProgress.getUUID();
 
   }
 

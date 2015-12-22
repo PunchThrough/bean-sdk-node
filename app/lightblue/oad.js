@@ -110,6 +110,9 @@ class FirmwareUpdater{
       let end = Math.round(+new Date() / 1000)
       let sum = end - this._fwBeginTime
       console.log(sum)
+
+      // reset fileOfferedIndex
+      this._fileOfferedIndex = -1
     }
   }
 

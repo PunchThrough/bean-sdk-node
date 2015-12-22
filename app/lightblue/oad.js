@@ -79,9 +79,12 @@ class FirmwareUpdater{
 
     let blkNo = buf.readUInt16LE(0, 2)
     this._lastBlock = blkNo
-    console.log(`Got request for FW block #${blkNo}`)
+
+    if (blkNo % 200 === 0)
+      console.log(`Got request for FW block #${blkNo}`)
 
     if (blkNo === 0) {
+      console.log('Got request for the first BLOCK of FW')
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
@@ -109,10 +112,12 @@ class FirmwareUpdater{
       console.log('Last block!!!!!!!')
       let end = Math.round(+new Date() / 1000)
       let sum = end - this._fwBeginTime
-      console.log(sum)
+      console.log(`Transferred ${this._totalBlocks} in ${sum} seconds`)
 
       // reset fileOfferedIndex
       this._fileOfferedIndex = -1
+
+      console.log(`Waiting for device to reset\n${this._deviceInProgress.toString()}`)
     }
   }
 
@@ -125,6 +130,8 @@ class FirmwareUpdater{
      *
      * @param buf Unused
      */
+
+    console.log('Notification on IDENTIFY!')
 
     this._fileOfferedIndex++
 
@@ -189,6 +196,9 @@ class FirmwareUpdater{
      * @param device a LB Device object
      */
 
+    console.log('Checking if device is in progress...')
+    console.log(`Current device in progress:\n${this._deviceInProgress}`)
+    console.log(`Questionable device:\n${device}`) 
     if (this._deviceInProgress === null) {
       return false
     }
@@ -201,6 +211,9 @@ class FirmwareUpdater{
     /**
      * Continue an update procedure for `device` assuming it passes FW version check
      */
+
+    console.log('Continue update called')
+    console.log(`Device in progress:\n${this._deviceInProgress}`)
 
     this._checkFirmwareVersion(this._deviceInProgress, (err)=> {
       if (err) {
@@ -220,6 +233,9 @@ class FirmwareUpdater{
      * @param device A LightBlue device object
      * @param callback A callback function that takes one param, an error
      */
+
+    console.log('Being update called')
+    console.log(`Device in progress:\n${this._deviceInProgress}`)
 
     this._checkFirmwareVersion(device, (err)=> {
       if (err) {

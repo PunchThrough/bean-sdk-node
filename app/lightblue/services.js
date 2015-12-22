@@ -114,12 +114,10 @@ class OADService extends BleService {
   }
 
   _onIdentifyNotification(data) {
-    console.log('Got Notification - IDENTIFY')
     this._fireCBs(UUID_CHAR_OAD_IDENTIFY, data)
   }
 
   _onBlockNotification(data) {
-    console.log('Got Notification - BLOCK')
     this._fireCBs(UUID_CHAR_OAD_BLOCK, data)
   }
 

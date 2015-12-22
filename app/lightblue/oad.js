@@ -217,8 +217,13 @@ class FirmwareUpdater{
 
     this._checkFirmwareVersion(this._deviceInProgress, (err)=> {
       if (err) {
-        console.log(`Error checking FW version: ${err}`)
-        callback(err)
+        console.log(`Checking FW version: ${err}`)
+        if (this._completionCallback) {
+          console.log('FW update completed')
+          this._deviceInProgress = null
+          this._completionCallback(null, err)  // This should mean we are done!!
+        }
+
       } else {
         console.log(`Continuing FW update for device ${this._deviceInProgress.getName()}`)
         this._deviceInProgress.getOADService().triggerIdentifyHeaderNotification()

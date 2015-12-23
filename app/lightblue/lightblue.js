@@ -40,9 +40,7 @@ class LightBlueSDK {
           console.log('Auto-reconnected to device in middle of FW update')
 
           device.lookupServices((err)=> {
-            let oad = device.getOADService()
-            oad.triggerIdentifyHeaderNotification()
-            oad.setupNotifications()
+            device.getOADService().setupNotifications()
             this._fwUpdater.continueUpdate()
           })
 

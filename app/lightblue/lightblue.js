@@ -3,19 +3,32 @@
 let noble = require('noble')
 let devices = require('./devices')
 let FirmwareUpdater = require('./oad')
+let events = require('events')
 
 const NOBLE_STATE_READY = 'poweredOn'
 
-class LightBlueSDK {
+
+class LightBlueSDK extends events.EventEmitter {
+  /**
+   * Core LightBlue SDK class
+   *
+   * This class implements the EventEmitter which allows clients to register for
+   * certain events including:
+   *    - discover
+   *
+   */
   constructor() {
+    super()
+
     this._fwUpdater = new FirmwareUpdater()
-    this._devices = {}
-    this._events = {
-      discover: (cb) => this._discover(cb)
-    }
 
     // State
+    this._devices = {}
     this._scanning = false
+
+    noble.on('discover', (peripheral)=> {
+      this._discover(peripheral)
+    })
   }
 
   _disconnectDevices() {
@@ -49,30 +62,29 @@ class LightBlueSDK {
     })
   }
 
-  _discover(cb) {
+  _discover(peripheral) {
     /**
      * A new BLE peripheral device has been discovered (from Noble)
      */
-    noble.on('discover', (peripheral) => {
 
-      if (this._devices[peripheral.uuid]) {
-        // We already have a record of this device
+    if (this._devices[peripheral.uuid]) {
+      // We already have a record of this device
 
-        let device = devices.fromExistingDevice(this._devices[peripheral.uuid], peripheral)
-        if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
-          this._autoReconnect(device)
-        }
-
-      } else {
-        // We don't have a record of this device
-
-        let device = devices.fromNoblePeripheral(peripheral)
-        if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
-          this._devices[device.getUUID()] = device
-          cb(device)
-        }
+      let device = devices.fromExistingDevice(this._devices[peripheral.uuid], peripheral)
+      if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
+        this._autoReconnect(device)
       }
-    })
+
+    } else {
+      // We don't have a record of this device
+
+      let device = devices.fromNoblePeripheral(peripheral)
+      if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
+        this._devices[device.getUUID()] = device
+        this.emit('discover', device)
+      }
+    }
+
   }
 
   reset() {
@@ -107,10 +119,6 @@ class LightBlueSDK {
 
   getDeviceForUUID(uuid) {
     return this._devices[uuid]
-  }
-
-  on(event, callback) {
-    this._events[event](callback)
   }
 
   updateFirmware(device, callback) {

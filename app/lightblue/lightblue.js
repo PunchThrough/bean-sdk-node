@@ -82,6 +82,7 @@ class LightBlueSDK {
     this._disconnectDevices()
     console.log('Clearing device cache!')
     this._devices = {}
+    this._fwUpdater.resetState()
   }
 
   startScanning() {

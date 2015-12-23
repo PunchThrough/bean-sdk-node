@@ -35,8 +35,15 @@ class FirmwareUpdater{
     this._fwfiles = fs.readdirSync(FW_FILES).sort()  // alphabetized
     this._storedFwVersion = this._fwfiles[0].split('_')[0]
 
-    // State
-    // TODO: this state is obviously for ONE device, and this class was designed to update many devices
+    this.resetState()
+  }
+
+  resetState(){
+    /**
+     * Reset or instantiate all FW state
+     * TODO: this state is obviously for ONE device, and this class was designed to update many devices
+     */
+    console.log('Resetting FW State')
     this._deviceInProgress = null
     this._completionCallback = null
     this._fileOfferedIndex = -1

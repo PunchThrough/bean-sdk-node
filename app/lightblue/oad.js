@@ -51,6 +51,7 @@ class FirmwareUpdater{
     this._lastBlock = 0
     this._totalBlocks = null
     this._fwBeginTime = null
+    this._step = null
   }
 
   _fail(err) {
@@ -192,7 +193,8 @@ class FirmwareUpdater{
     return {
       accepted_fw_file: this._fwfiles[this._fileOfferedIndex],
       last_block: this._lastBlock,
-      total_blocks: this._totalBlocks
+      total_blocks: this._totalBlocks,
+      step: this._step
     }
   }
 

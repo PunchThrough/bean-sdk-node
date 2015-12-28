@@ -86,7 +86,7 @@ class BleDevice {
     return this._lookupService(BleServices.UUID_SERVICE_DEVICE_INFORMATION)
   }
 
-  toString() {
+  describe() {
     let adv = this._noblePeripheral.advertisement
     let out = `${this.getType()}:\n`
     out += `    Name: ${this._name}\n`
@@ -100,6 +100,10 @@ class BleDevice {
       out += `        None\n`
     }
     return out
+  }
+
+  toString() {
+    return `${this._name}(${this._uuid})`
   }
 
   serialize() {

@@ -124,7 +124,7 @@ class FirmwareUpdater{
       // reset fileOfferedIndex
       this._fileOfferedIndex = -1
 
-      console.log(`Waiting for device to reset\n${this._deviceInProgress.toString()}`)
+      console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
     }
   }
 
@@ -204,12 +204,14 @@ class FirmwareUpdater{
      */
 
     console.log('Checking if device is in progress...')
-    console.log(`Current device in progress:\n${this._deviceInProgress}`)
-    console.log(`Questionable device:\n${device}`) 
+     
     if (this._deviceInProgress === null) {
+      console.log('No device is in progress!')
       return false
     }
 
+    console.log(`Current device in progress: ${this._deviceInProgress.toString()}`)
+    console.log(`Questionable device: ${device.toString()}`)
     return device.getUUID() === this._deviceInProgress.getUUID();
 
   }
@@ -220,19 +222,18 @@ class FirmwareUpdater{
      */
 
     console.log('Continue update called')
-    console.log(`Device in progress:\n${this._deviceInProgress}`)
 
     this._checkFirmwareVersion(this._deviceInProgress, (err)=> {
       if (err) {
         console.log(`Checking FW version: ${err}`)
         if (this._completionCallback) {
-          console.log('FW update completed')
+          console.log(`FW update COMPLETED for ${this._deviceInProgress.toString()}`)
           this._deviceInProgress = null
           this._completionCallback(null, err)  // This should mean we are done!!
         }
 
       } else {
-        console.log(`Continuing FW update for device ${this._deviceInProgress.getName()}`)
+        console.log(`Continuing FW update for device ${this._deviceInProgress.toString()}`)
         this._deviceInProgress.getOADService().triggerIdentifyHeaderNotification()
       }
     })
@@ -246,17 +247,16 @@ class FirmwareUpdater{
      * @param callback A callback function that takes one param, an error
      */
 
-    console.log('Being update called')
-    console.log(`Device in progress:\n${this._deviceInProgress}`)
+    console.log('Begin update called')
 
     this._checkFirmwareVersion(device, (err)=> {
       if (err) {
         console.log(`Error checking FW version: ${err}`)
         callback(err)
       } else {
-        console.log(`Starting FW update for device ${device.getName()}`)
+        console.log(`Starting FW update for device ${device.toString()}`)
         this._deviceInProgress = device
-        this._completionCallback = callback
+        this._completionCallback = callbackwa
         device.setAutoReconnect(true)
         this._registerNotifications(device)
         device.getOADService().triggerIdentifyHeaderNotification()

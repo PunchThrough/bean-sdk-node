@@ -97,8 +97,6 @@ class FirmwareUpdater {
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
-      this._fwBeginTime = Math.round(+new Date() / 1000)
-      console.log(`First block @ ${this._fwBeginTime}`)
       console.log(`Total blocks: ${this._totalBlocks}`)
       console.log(`FW file size: ${fwFileStats.size}`)
       this._lb.stopScanning()
@@ -120,9 +118,6 @@ class FirmwareUpdater {
 
     if (blkNo === this._totalBlocks) {
       console.log('Last block!!!!!!!')
-      let end = Math.round(+new Date() / 1000)
-      let sum = end - this._fwBeginTime
-      console.log(`Transferred ${this._totalBlocks} in ${sum} seconds`)
 
       // reset fileOfferedIndex
       this._fileOfferedIndex = -1
@@ -233,6 +228,9 @@ class FirmwareUpdater {
         console.log(`Checking FW version: ${err}`)
         if (this._completionCallback) {
           console.log(`FW update COMPLETED for ${this._deviceInProgress.toString()}`)
+          let end = Math.round(+new Date() / 1000)
+          let sum = end - this._fwBeginTime
+          console.log(`FW update process took ${sum} seconds`)
           this._deviceInProgress = null
           this._completionCallback(null, err)  // This should mean we are done!!
         }
@@ -264,6 +262,8 @@ class FirmwareUpdater {
         this._completionCallback = callback
         device.setAutoReconnect(true)
         this._registerNotifications(device)
+        this._fwBeginTime = Math.round(+new Date() / 1000)
+        console.log(`Begin FW @ ${this._fwBeginTime}`)
         device.getOADService().triggerIdentifyHeaderNotification()
       }
     })

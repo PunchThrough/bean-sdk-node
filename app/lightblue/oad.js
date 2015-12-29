@@ -31,7 +31,8 @@ const FW_HEADER_LENGTH = 12
 
 class FirmwareUpdater {
 
-  constructor() {
+  constructor(lb) {
+    this._lb = lb  // Dirty hack, this is technically a circular dependency
     this._fwfiles = fs.readdirSync(FW_FILES).sort()  // alphabetized
     this._storedFwVersion = this._fwfiles[0].split('_')[0]
 
@@ -100,7 +101,7 @@ class FirmwareUpdater {
       console.log(`First block @ ${this._fwBeginTime}`)
       console.log(`Total blocks: ${this._totalBlocks}`)
       console.log(`FW file size: ${fwFileStats.size}`)
-
+      this._lb.stopScanning()
     }
 
     // read block from open file
@@ -126,6 +127,7 @@ class FirmwareUpdater {
       // reset fileOfferedIndex
       this._fileOfferedIndex = -1
 
+      this._lb.startScanning()
       console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
     }
   }
@@ -259,7 +261,7 @@ class FirmwareUpdater {
       } else {
         console.log(`Starting FW update for device ${device.toString()}`)
         this._deviceInProgress = device
-        this._completionCallback = callbackwa
+        this._completionCallback = callback
         device.setAutoReconnect(true)
         this._registerNotifications(device)
         device.getOADService().triggerIdentifyHeaderNotification()

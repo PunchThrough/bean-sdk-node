@@ -20,7 +20,7 @@ class LightBlueSDK extends events.EventEmitter {
   constructor() {
     super()
 
-    this._fwUpdater = new FirmwareUpdater()
+    this._fwUpdater = new FirmwareUpdater(this)
 
     // State
     this._devices = {}

@@ -99,6 +99,8 @@ class FirmwareUpdater {
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
       console.log(`Total blocks: ${this._totalBlocks}`)
       console.log(`FW file size: ${fwFileStats.size}`)
+      this._step += 1
+      console.log(`Starting step #${this._step}!`)
       this._lb.stopScanning()
     }
 
@@ -231,8 +233,8 @@ class FirmwareUpdater {
           let end = Math.round(+new Date() / 1000)
           let sum = end - this._fwBeginTime
           console.log(`FW update process took ${sum} seconds`)
-          this._deviceInProgress = null
           this._completionCallback(null, err)  // This should mean we are done!!
+          this.resetState()
         }
 
       } else {

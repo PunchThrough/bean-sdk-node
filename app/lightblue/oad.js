@@ -29,7 +29,7 @@ const FW_HEADER_LENGTH = 12
 //  }
 //}
 
-class FirmwareUpdater{
+class FirmwareUpdater {
 
   constructor() {
     this._fwfiles = fs.readdirSync(FW_FILES).sort()  // alphabetized
@@ -38,7 +38,7 @@ class FirmwareUpdater{
     this.resetState()
   }
 
-  resetState(){
+  resetState() {
     /**
      * Reset or instantiate all FW state
      * TODO: this state is obviously for ONE device, and this class was designed to update many devices
@@ -100,6 +100,7 @@ class FirmwareUpdater{
       console.log(`First block @ ${this._fwBeginTime}`)
       console.log(`Total blocks: ${this._totalBlocks}`)
       console.log(`FW file size: ${fwFileStats.size}`)
+
     }
 
     // read block from open file

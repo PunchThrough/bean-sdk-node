@@ -28,6 +28,11 @@ ElectronApp.on('window-all-closed', function () {
   quit()
 })
 
+process.on('SIGINT', function() {
+  console.log("Caught interrupt signal")
+  quit()
+});
+
 ElectronApp.on('ready', function () {
 
   mainWindow = new BrowserWindow({
@@ -82,7 +87,7 @@ ElectronApp.on('ready', function () {
   mainWindow.loadUrl(`file://${__dirname}/frontend/${INDEX}`)
 
   mainWindow.on('closed', function () {
-    quit()
+    console.log('Window closed')
   })
 
 })

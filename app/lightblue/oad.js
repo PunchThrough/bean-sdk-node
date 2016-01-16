@@ -29,6 +29,21 @@ const FW_HEADER_LENGTH = 12
 //  }
 //}
 
+
+// OAD state machine
+// - These are states related the "global" OAD state
+const OAD_STATE_IN_PROGRESS = 'OAD_STATE_IN_PROGRESS'
+const OAD_STATE_NOT_IN_PROGRESS = 'OAD_STATE_NOT_IN_PROGRESS'
+
+// OAD step state machine
+// - These are states related to a given "step" of the OAD update process.
+//   A new step begins when the Bean power-cycles.
+const OAD_STEP_STATE_CHECKING_FW = 'OAD_STEP_STATE_CHECKING_FW'
+const OAD_STEP_STATE_OFFERING_FILES = 'OAD_STEP_STATE_OFFERING_FILES'
+const OAD_STEP_STATE_BLOCK_XFER = 'OAD_STEP_STATE_BLOCK_XFER'
+const OAD_STEP_STATE_REBOOTING = 'OAD_STEP_STATE_REBOOTING'
+
+
 class FirmwareUpdater {
 
   constructor(lb) {
@@ -42,7 +57,8 @@ class FirmwareUpdater {
   resetState() {
     /**
      * Reset or instantiate all FW state
-     * TODO: this state is obviously for ONE device, and this class was designed to update many devices
+     * TODO: This state is for ONE device, eventually this class should be
+     *       capable of updating many devices simultaneously
      */
     console.log('Resetting FW State')
     this._deviceInProgress = null
@@ -53,6 +69,8 @@ class FirmwareUpdater {
     this._totalBlocks = null
     this._fwBeginTime = null
     this._step = null
+    this._stateGlobal = OAD_STATE_NOT_IN_PROGRESS
+    this._stateStep = null
   }
 
   _fail(err) {
@@ -63,6 +81,7 @@ class FirmwareUpdater {
     console.log(err)
     this._completionCallback(err)
     fs.closeSync(this._currentFwFile)
+    this.resetState()
   }
 
   _registerNotifications(device) {
@@ -94,6 +113,8 @@ class FirmwareUpdater {
 
     if (blkNo === 0) {
       console.log('Got request for the first BLOCK of FW')
+      this._stateStep = OAD_STEP_STATE_BLOCK_XFER
+
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
@@ -119,12 +140,13 @@ class FirmwareUpdater {
     })
 
     if (blkNo === this._totalBlocks) {
-      console.log('Last block!!!!!!!')
+      console.log('Last block!')
 
       // reset fileOfferedIndex
       this._fileOfferedIndex = -1
 
       this._lb.startScanning()
+      this._stateStep = OAD_STEP_STATE_REBOOTING
       console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
     }
   }
@@ -140,6 +162,7 @@ class FirmwareUpdater {
      */
 
     console.log('Notification on IDENTIFY!')
+    this._stateStep = OAD_STEP_STATE_OFFERING_FILES
 
     this._fileOfferedIndex++
 
@@ -172,6 +195,7 @@ class FirmwareUpdater {
 
     let dis = device.getDeviceInformationService()
     dis.resetCache()
+    this._stateStep = OAD_STEP_STATE_CHECKING_FW
     dis.getFirmwareVersion((err, fwVersion)=> {
       if (err) {
         callback(err)
@@ -206,7 +230,7 @@ class FirmwareUpdater {
      */
 
     console.log('Checking if device is in progress...')
-     
+
     if (this._deviceInProgress === null) {
       console.log('No device is in progress!')
       return false
@@ -214,7 +238,7 @@ class FirmwareUpdater {
 
     console.log(`Current device in progress: ${this._deviceInProgress.toString()}`)
     console.log(`Questionable device: ${device.toString()}`)
-    return device.getUUID() === this._deviceInProgress.getUUID();
+    return device.getUUID() === this._deviceInProgress.getUUID()
 
   }
 
@@ -227,14 +251,16 @@ class FirmwareUpdater {
 
     this._checkFirmwareVersion(this._deviceInProgress, (err)=> {
       if (err) {
-        console.log(`Checking FW version: ${err}`)
         if (this._completionCallback) {
+          console.log(`${err}`)
           console.log(`FW update COMPLETED for ${this._deviceInProgress.toString()}`)
           let end = Math.round(+new Date() / 1000)
           let sum = end - this._fwBeginTime
           console.log(`FW update process took ${sum} seconds`)
           this._completionCallback(null, err)  // This should mean we are done!!
           this.resetState()
+        } else {
+          console.log(`FW Version Error: ${err}`)
         }
 
       } else {
@@ -256,10 +282,11 @@ class FirmwareUpdater {
 
     this._checkFirmwareVersion(device, (err)=> {
       if (err) {
-        console.log(`Error checking FW version: ${err}`)
+        console.log(`FW Version Error: ${err}`)
         callback(err)
       } else {
         console.log(`Starting FW update for device ${device.toString()}`)
+        this._stateGlobal = OAD_STATE_IN_PROGRESS
         this._deviceInProgress = device
         this._completionCallback = callback
         device.setAutoReconnect(true)

@@ -92,6 +92,7 @@ class FirmwareUpdater {
       console.log(`Got request for FW block #${blkNo}`)
 
     if (blkNo === 0) {
+      console.log('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
       console.log('Got request for the first BLOCK of FW')
       this._stateStep = OAD_STEP_STATE_BLOCK_XFER
 
@@ -141,7 +142,10 @@ class FirmwareUpdater {
      * @param buf Unused
      */
 
-    console.log('Notification on IDENTIFY!')
+    if (this._fileOfferedIndex != -1) {
+      console.log('REJECTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+    }
+
     this._stateStep = OAD_STEP_STATE_OFFERING_FILES
 
     this._fileOfferedIndex++
@@ -157,7 +161,7 @@ class FirmwareUpdater {
       return this._fail('Internal error: failed to read FW file')
     }
 
-    console.log(`Offering file: ${filename}`)
+    console.log(`Offering image: ${filename}`)
 
     this._deviceInProgress.getOADService().writeToIdentify(hdrBuf, (err)=> {
       if (err)

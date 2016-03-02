@@ -5,30 +5,10 @@ let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
 
-const FW_FILES = path.join(__dirname, '..', 'resources')
+const FW_VERSION = '20151027'
+const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
-
-
-// TODO: The following commented out code is a WIP ... may or may not implement
-//class FirmwareUpdateProcess {
-//  /**
-//   * Encapsulation of a single firmware update procedure for a single device
-//   */
-//
-//  constructor(device, files, onComplete) {
-//    this._device = device
-//    this._files = files
-//    this._onComplete = onComplete
-//
-//    // Some more state
-//    this._storedFwVersion = this._fwfiles[0].split('_')[0]
-//    this._acceptedFile = null
-//    this._fileOfferedIndex = -1
-//
-//  }
-//}
-
 
 // OAD state machine
 // - These are states related the "global" OAD state

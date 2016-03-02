@@ -123,6 +123,11 @@ class BleDevice {
   }
 
   connect(callback) {
+    /**
+     * Connect to the device
+     *
+     * @param callback Callback function that takes an error argument
+     */
     console.log(`Connecting to device: ${this._name}`)
     if (this.isConnected()) {
       console.log('Already connected.')

@@ -5,7 +5,7 @@ let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
 
-const FW_VERSION = '20160328'
+const FW_VERSION = '20160329'
 const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
@@ -53,7 +53,8 @@ class FirmwareUpdater {
     this._step = null
     this._stateGlobal = OAD_STATE_NOT_IN_PROGRESS
     this._stateStep = null
-    this._nextBlockNoToSent = 0
+    this._nextBlock = 0
+    this._blockTransferStartTime = null;
   }
 
   _fail(err) {
@@ -90,64 +91,64 @@ class FirmwareUpdater {
 
     let blkNoRequested = buf.readUInt16LE(0, 2)
 
-    while (this._nextBlockNoToSent < (blkNoRequested + PKT_DIFF_PER_SENT_AND_REQUESTED) && this._stateStep != OAD_STEP_STATE_REBOOTING )
-    {
-      let blkDifference = PKT_DIFF_PER_SENT_AND_REQUESTED - (this._nextBlockNoToSent - blkNoRequested)
-      //console.log('_nextBlockNoToSent = %s, block requested = %s, block diff = %s',this._nextBlockNoToSent, blkNoRequested,  blkDifference )
-      let blkNo = this._nextBlockNoToSent
+    if (blkNoRequested === 0) {
+      console.log('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      console.log('Got request for the first BLOCK of FW')
+      this._stateStep = OAD_STEP_STATE_BLOCK_XFER
 
-      if (blkNo % 512 === 0)
-        console.log(`Got request for FW block #${blkNo} or %s`, blkNo*BLOCK_LENGTH)
+      // calculate size of image to get total blocks
+      let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
+      this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
+      console.log(`Total blocks: ${this._totalBlocks}`)
+      console.log(`FW file size: ${fwFileStats.size}`)
+      this._step += 1
+      console.log(`Starting step #${this._step}!`)
+      this._lb.stopScanning()
+      this._blockTransferStartTime = Math.round(+new Date() / 1000)
+    }
 
-      if (blkNo === 0) {
-        console.log('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
-        console.log('Got request for the first BLOCK of FW')
-        this._stateStep = OAD_STEP_STATE_BLOCK_XFER
+    // if (blkNoRequested % 512 === 0)
+    //   console.log(`Got request for FW block ${blkNoRequested}`)
 
-        // calculate size of image to get total blocks
-        let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
-        this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
-        console.log(`Total blocks: ${this._totalBlocks}`)
-        console.log(`FW file size: ${fwFileStats.size}`)
-        this._step += 1
-        console.log(`Starting step #${this._step}!`)
-        this._lb.stopScanning()
-      }
-      else {
-          //console.log('FAILE--D IMAGE: %s', this._currentFwFile)
-      }
+    console.log(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
+
+    while (this._stateStep == OAD_STEP_STATE_BLOCK_XFER &&
+           this._nextBlock <= this._totalBlocks &&
+           this._nextBlock < (blkNoRequested + PKT_DIFF_PER_SENT_AND_REQUESTED)) {
 
       // read block from open file
-      let fileOffset = blkNo * BLOCK_LENGTH
+      let fileOffset = this._nextBlock * BLOCK_LENGTH
       let blkBuf = new buffer.Buffer(BLOCK_LENGTH)
       let bytesRead = fs.readSync(this._currentFwFile, blkBuf, 0, BLOCK_LENGTH, fileOffset)
       if (bytesRead != BLOCK_LENGTH) {
         return this._fail('Internal error: failed to read FW file...')
       }
-      //Kianoosh: Begin
+
       let blockAddr = new buffer.Buffer(2)
-      blockAddr[0] =  blkNo & 0xFF
-      blockAddr[1] = (blkNo >> 8) & 0xFF
+      blockAddr[0] =  this._nextBlock & 0xFF
+      blockAddr[1] = (this._nextBlock >> 8) & 0xFF
       let finalBuf = buffer.Buffer.concat([blockAddr, blkBuf])
       this._deviceInProgress.getOADService().writeToBlock(finalBuf, (err)=> {
         if (err)
           console.log(`Error writing to block char: ${err}`)
       })
 
-      if (blkNo === this._totalBlocks) {
-        console.log('Last block!')
-        this._nextBlockNoToSent = 0 // Reset Back to 0 for new file or done FWU!
-        // reset fileOfferedIndex
-        this._fileOfferedIndex = -1
-
-        this._lb.startScanning()
-        this._stateStep = OAD_STEP_STATE_REBOOTING
-        console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
-      }
-      else {
-        this._nextBlockNoToSent += 1
-      }
+      console.log(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
+      this._nextBlock += 1
     }
+
+    if (this._nextBlock > this._totalBlocks) {
+      console.log('Last block Sent')
+      let blockEndTime = Math.round(+new Date() / 1000)
+      console.log(`Sent ${this._totalBlocks} in ${blockEndTime - this._blockTransferStartTime} seconds`)
+      this._nextBlock = 0  // Reset Back to 0 for new file or done FWU!
+      this._fileOfferedIndex = -1  // reset fileOfferedIndex
+
+      this._lb.startScanning()
+      this._stateStep = OAD_STEP_STATE_REBOOTING
+      console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
+    }
+
   }
 
   _notificationIdentify(buf) {
@@ -180,18 +181,7 @@ class FirmwareUpdater {
     }
 
     console.log(`Offering image: ${filename}`)
-    //Kianoosh: Begin
-    console.log(hdrBuf.toString('hex'))
-    console.log('Kianoosh: Header[0]: %s', hdrBuf[0])
-    console.log('Kianoosh: Header[1]: %x', hdrBuf[1])
-    console.log('Kianoosh: Header[2]: %x', hdrBuf[2])
-    console.log('Kianoosh: Header[3]: %x', hdrBuf[3])
-    console.log('Kianoosh: Header[4]: %s', hdrBuf[4])
-    console.log('Kianoosh: Header[5]: %x', hdrBuf[5])
-    console.log('Kianoosh: Header[6]: %x', hdrBuf[6])
-    console.log('Kianoosh: Header[7]: %x', hdrBuf[7])
 
-    //Kianoosh: End
     this._deviceInProgress.getOADService().writeToIdentify(hdrBuf, (err)=> {
       if (err)
         console.log(`Error writing to identify char: ${err}`)
@@ -216,7 +206,7 @@ class FirmwareUpdater {
         let v = ''
         if (buffer.Buffer.isBuffer(fwVersion))
           v = fwVersion.toString('utf8').split(' ')[0]
-        console.log(`Comparing firmware versions stored version ${this._storedFwVersion} and Read Version ${v}`)
+        console.log(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
         if (this._storedFwVersion === v && this._deviceInProgress != null) {
           callback('Versions are the same, no update needed')
         } else {

@@ -9,6 +9,8 @@ const FW_VERSION = '20160329'
 const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
+const MAX_BLOCKS_IN_AIR = 8
+const DEBUG = false
 
 // OAD state machine
 // - These are states related the "global" OAD state
@@ -22,8 +24,6 @@ const OAD_STEP_STATE_CHECKING_FW = 'OAD_STEP_STATE_CHECKING_FW'
 const OAD_STEP_STATE_OFFERING_FILES = 'OAD_STEP_STATE_OFFERING_FILES'
 const OAD_STEP_STATE_BLOCK_XFER = 'OAD_STEP_STATE_BLOCK_XFER'
 const OAD_STEP_STATE_REBOOTING = 'OAD_STEP_STATE_REBOOTING'
-
-const PKT_DIFF_PER_SENT_AND_REQUESTED = 8
 
 
 class FirmwareUpdater {
@@ -107,14 +107,15 @@ class FirmwareUpdater {
       this._blockTransferStartTime = Math.round(+new Date() / 1000)
     }
 
-    // if (blkNoRequested % 512 === 0)
-    //   console.log(`Got request for FW block ${blkNoRequested}`)
+    if (blkNoRequested % 512 === 0)
+      console.log(`Got request for FW block ${blkNoRequested}`)
 
-    console.log(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
+    if (DEBUG)
+      console.log(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
 
     while (this._stateStep == OAD_STEP_STATE_BLOCK_XFER &&
            this._nextBlock <= this._totalBlocks &&
-           this._nextBlock < (blkNoRequested + PKT_DIFF_PER_SENT_AND_REQUESTED)) {
+           this._nextBlock < (blkNoRequested + MAX_BLOCKS_IN_AIR)) {
 
       // read block from open file
       let fileOffset = this._nextBlock * BLOCK_LENGTH
@@ -133,7 +134,9 @@ class FirmwareUpdater {
           console.log(`Error writing to block char: ${err}`)
       })
 
-      console.log(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
+      if (DEBUG)
+        console.log(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
+
       this._nextBlock += 1
     }
 

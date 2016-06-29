@@ -5,7 +5,7 @@ let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
 
-const FW_VERSION = '20160329'
+const FW_VERSION = '201606030000'
 const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12

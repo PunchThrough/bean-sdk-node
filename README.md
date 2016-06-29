@@ -1,6 +1,6 @@
-# Bean FW Updater
+# Cross Platform (X) Bean Loader by Punch Through
 
-Stand alone tool for updating Bean FW on desktop platforms
+This repo contains the source code for the cross-platform Bean Loader by Punch Through. It is based on Node.js and Electron.js. 
 
 ![Bean Connected](./docs/img/screenshot-bean-connected.png)
 
@@ -80,18 +80,15 @@ On a Windows computer, do the following.
 
 The built distribution can be found as a folder here `build/Bean-FW-Updater-win32-x64`.
 
-TODO:
-
-* Add a command line argument to the gulp task for versioning
-* Zip the folder as final task OR wrap the entire dist in an installer
-
 ## Platform considerations and API
 
 This projects main priority is building a FW updater that runs on Windows. However, there will be effort made to identify and implement pieces of the code that will be reusable for our long term goal of creating a X-Platform JS SDK. Ideally all of our GUI products (loader, LB explorer) will be consumers of the JS SDK and rewritten in Electron/React-Native.
 
-### TODOs
+## TODOs
 
 * API to discover by device name or UUID
+* Add a command line argument to the gulp task for versioning
+* Zip the folder as final task OR wrap the entire dist in an installer
 
 ## Knowledge Base
 
@@ -102,26 +99,7 @@ This projects main priority is building a FW updater that runs on Windows. Howev
     * Can't connect to any device
 * Serializing everything over IPC is quite cumbersome ... we already have a really nice object model under `/lightblue` and it's a shame we can't use these objects directly in the frontend (React).  If we plan to use Electron long-term we should come up with a clever, generic way to serialize/de-serialze these objects automatically over the wire so that you can call methods directly and if the object is on the client then it knows to rpc over to the server if it needs to.
 * It seems like `redux` is a superior solution to just `flux` ... let's use it in the future.
-
-
-## Firmware Update Information
-
-__Firmware update algorithm:__
-
-1. Connect to Bean
-2. Read firmware version
-3. Infer latest firmware version from filename
-4. If firmware version is up to date, disconnect and stop. Otherwise, continue
-5. Load list of firmware files and sort alphabetically
-6. Subscribe to notifications on OAD Identify and Block characteristics
-7. Read first firmware file into memory and remove from list. If list of firmware is empty, the process has failed.
-8. Skipping the first 4 bytes of the firmware file (crc0 and crc1), write 12 bytes of the firmware header to the OAD Identify characteristic
-9. If a notification is received on the Identify characteristic, the firmware has been rejected. Return to step 7. If a notification is received on the Block characteristic, the device has accepted the firmware.
-10. Transfer firmware (described later.)
-11. Device will disconnect and reset. Return to step 1.
-
-__Firmware transfer:__
-
-* Firmware images are written to the OAD Block characteristic. The firmware sends a notification indicating the next block number it wants as 16-bit int. A notification for block number 0 indicates the firmware offered (via OAD Identify characteristic) has been accepted.
-* Firmware is transferred in 16-byte blocks. Each block is preceded with a 2 byte block number.
-* When the final block has been transferred, the device will verify the new image, disconnect, and reset.
+* We don't use `;` to terminate lines in ES6. Turn off the WebStorm warnings. Un-check the following option:
+    
+    > `WebStorm > Preferences > Editor > Inspections > JavaScript > Code style issues > Unterminated statement`
+  

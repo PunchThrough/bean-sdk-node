@@ -1,7 +1,7 @@
 {
-  "name": "bean-js-fw-updater",
-  "version": "1.0.0",
-  "description": "Bean FW Updater written in JS",
+  "name": "bean-loader-x",
+  "version": "0.0.1",
+  "description": "Cross platform Bean Loader by Punch Through",
   "main": "build/main.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel-register",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PunchThrough/Bean-JS-FW-Updater.git"
+    "url": "git+https://github.com/PunchThrough/bean-loader-x.git"
   },
   "author": "Stephen Stack",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PunchThrough/Bean-JS-FW-Updater/issues"
+    "url": "https://github.com/PunchThrough/bean-loader-x/issues"
   },
-  "homepage": "https://github.com/PunchThrough/Bean-JS-FW-Updater#readme",
+  "homepage": "https://github.com/PunchThrough/bean-loader-x#readme",
   "dependencies": {
     "async": "^1.5.0",
     "flux": "^2.1.1",
@@ -30,7 +30,7 @@
     "babel-register": "^6.3.13",
     "commander": "^2.9.0",
     "electron-packager": "^5.1.0",
-    "electron-prebuilt": "0.30.4",
+    "electron-prebuilt": "^1.2.5",
     "electron-rebuild": "^1.0.1",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.0.0",

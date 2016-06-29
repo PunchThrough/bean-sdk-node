@@ -6,11 +6,10 @@ This repo contains the source code for the cross-platform Bean Loader by Punch T
 
 ## Development Environment
 
-Install and use Node 0.12.7
+Install and use the Node version specified in `.nvmrc`
 
 ```bash
-nvm install 0.12.7
-nvm use 0.12.7
+nvm install $(cat .nvmrc) && nvm use
 ```
 
 Build app dependencies:

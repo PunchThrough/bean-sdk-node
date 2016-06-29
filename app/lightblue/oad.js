@@ -5,10 +5,12 @@ let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
 
-const FW_VERSION = '20151027'
+const FW_VERSION = '201606030000'
 const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
+const MAX_BLOCKS_IN_AIR = 8
+const DEBUG = false
 
 // OAD state machine
 // - These are states related the "global" OAD state
@@ -51,6 +53,8 @@ class FirmwareUpdater {
     this._step = null
     this._stateGlobal = OAD_STATE_NOT_IN_PROGRESS
     this._stateStep = null
+    this._nextBlock = 0
+    this._blockTransferStartTime = null;
   }
 
   _fail(err) {
@@ -85,13 +89,9 @@ class FirmwareUpdater {
      * @param buf 2 byte Buffer containing the block number
      */
 
-    let blkNo = buf.readUInt16LE(0, 2)
-    this._lastBlock = blkNo
+    let blkNoRequested = buf.readUInt16LE(0, 2)
 
-    if (blkNo % 200 === 0)
-      console.log(`Got request for FW block #${blkNo}`)
-
-    if (blkNo === 0) {
+    if (blkNoRequested === 0) {
       console.log('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
       console.log('Got request for the first BLOCK of FW')
       this._stateStep = OAD_STEP_STATE_BLOCK_XFER
@@ -104,32 +104,54 @@ class FirmwareUpdater {
       this._step += 1
       console.log(`Starting step #${this._step}!`)
       this._lb.stopScanning()
+      this._blockTransferStartTime = Math.round(+new Date() / 1000)
     }
 
-    // read block from open file
-    let fileOffset = blkNo * BLOCK_LENGTH
-    let blkBuf = new buffer.Buffer(BLOCK_LENGTH)
-    let bytesRead = fs.readSync(this._currentFwFile, blkBuf, 0, BLOCK_LENGTH, fileOffset)
-    if (bytesRead != BLOCK_LENGTH) {
-      return this._fail('Internal error: failed to read FW file')
+    if (blkNoRequested % 512 === 0)
+      console.log(`Got request for FW block ${blkNoRequested}`)
+
+    if (DEBUG)
+      console.log(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
+
+    while (this._stateStep == OAD_STEP_STATE_BLOCK_XFER &&
+           this._nextBlock <= this._totalBlocks &&
+           this._nextBlock < (blkNoRequested + MAX_BLOCKS_IN_AIR)) {
+
+      // read block from open file
+      let fileOffset = this._nextBlock * BLOCK_LENGTH
+      let blkBuf = new buffer.Buffer(BLOCK_LENGTH)
+      let bytesRead = fs.readSync(this._currentFwFile, blkBuf, 0, BLOCK_LENGTH, fileOffset)
+      if (bytesRead != BLOCK_LENGTH) {
+        return this._fail('Internal error: failed to read FW file...')
+      }
+
+      let blockAddr = new buffer.Buffer(2)
+      blockAddr[0] =  this._nextBlock & 0xFF
+      blockAddr[1] = (this._nextBlock >> 8) & 0xFF
+      let finalBuf = buffer.Buffer.concat([blockAddr, blkBuf])
+      this._deviceInProgress.getOADService().writeToBlock(finalBuf, (err)=> {
+        if (err)
+          console.log(`Error writing to block char: ${err}`)
+      })
+
+      if (DEBUG)
+        console.log(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
+
+      this._nextBlock += 1
     }
 
-    let finalBuf = buffer.Buffer.concat([buf, blkBuf])
-    this._deviceInProgress.getOADService().writeToBlock(finalBuf, (err)=> {
-      if (err)
-        console.log(`Error writing to block char: ${err}`)
-    })
-
-    if (blkNo === this._totalBlocks) {
-      console.log('Last block!')
-
-      // reset fileOfferedIndex
-      this._fileOfferedIndex = -1
+    if (this._nextBlock > this._totalBlocks) {
+      console.log('Last block Sent')
+      let blockEndTime = Math.round(+new Date() / 1000)
+      console.log(`Sent ${this._totalBlocks} in ${blockEndTime - this._blockTransferStartTime} seconds`)
+      this._nextBlock = 0  // Reset Back to 0 for new file or done FWU!
+      this._fileOfferedIndex = -1  // reset fileOfferedIndex
 
       this._lb.startScanning()
       this._stateStep = OAD_STEP_STATE_REBOOTING
       console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
     }
+
   }
 
   _notificationIdentify(buf) {
@@ -187,7 +209,7 @@ class FirmwareUpdater {
         let v = ''
         if (buffer.Buffer.isBuffer(fwVersion))
           v = fwVersion.toString('utf8').split(' ')[0]
-        console.log(`Comparing firmware versions ${this._storedFwVersion} and ${v}`)
+        console.log(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
         if (this._storedFwVersion === v && this._deviceInProgress != null) {
           callback('Versions are the same, no update needed')
         } else {

@@ -1,17 +1,18 @@
-// Electron entry point and Main Process
+const electron = require('electron')
+const {app} = electron
+const {BrowserWindow} = electron
+const {ipcMain} = electron
+const LB = require('./lightblue/lightblue')
+const devices = require('./lightblue/devices')
 
-let ElectronApp = require('app')
-let BrowserWindow = require('browser-window')
-let LB = require('./lightblue/lightblue')
-let devices = require('./lightblue/devices')
-let ipc = require('ipc')
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win
 
 // Constants
-const INDEX = 'index.html'
-const GUI_WIDTH = 550
-const GUI_HEIGHT = 400
-
-let mainWindow = null
+const INDEX = 'frontend/index.html'
+const WINDOW_WIDTH = 550
+const WINDOW_HEIGHT = 400
 
 function quit() {
   /**
@@ -19,40 +20,40 @@ function quit() {
    */
 
   console.log('Goodbye')
-  mainWindow = null
+  win = null
   LB.quitGracefully()
-  ElectronApp.quit()  // Call this last!!!
+  app.quit()  // Call this last!!!
 }
 
-ElectronApp.on('window-all-closed', function () {
-  quit()
-})
+function createWindow() {
 
-process.on('SIGINT', function() {
-  console.log("Caught interrupt signal")
-  quit()
-});
+  win = new BrowserWindow({width: WINDOW_WIDTH, height: WINDOW_HEIGHT})
+  win.loadURL(`file://${__dirname}/${INDEX}`)
 
-ElectronApp.on('ready', function () {
-
-  mainWindow = new BrowserWindow({
-    width: GUI_WIDTH,
-    height: GUI_HEIGHT
+  // Emitted when the window is closed.
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null
   })
 
-  ipc.on('startScanning', (event, args)=> {
+}
+
+function setup() {
+  ipcMain.on('startScanning', (event, args)=> {
     LB.startScanning()
   })
 
-  ipc.on('stopScanning', (event, args)=> {
+  ipcMain.on('stopScanning', (event, args)=> {
     LB.stopScanning()
   })
 
-  ipc.on('clearDevices', (event, args)=> {
+  ipcMain.on('clearDevices', (event, args)=> {
     LB.reset()
   })
 
-  ipc.on('connectToDevice', (event, uuid)=> {
+  ipcMain.on('connectToDevice', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
     LB.connectToDevice(uuid, (err)=> {
       if (err) {
@@ -62,14 +63,14 @@ ElectronApp.on('ready', function () {
         device.lookupServices((err)=> {
           device.getDeviceInformationService().serialize((error, deviceInformation)=> {
             // TODO: Callback hell is occurring, how do we fix the API?!
-            mainWindow.webContents.send('deviceInformationReady', deviceInformation)
+            win.webContents.send('deviceInformationReady', deviceInformation)
           })
         })
       }
     })
   })
 
-  ipc.on('performFirmwareUpdate', (event, uuid)=> {
+  ipcMain.on('performFirmwareUpdate', (event, uuid)=> {
     let device = LB.getDeviceForUUID(uuid)
     LB.updateFirmware(device, (error)=> {
       // callback for fw complete
@@ -79,15 +80,42 @@ ElectronApp.on('ready', function () {
 
   LB.on('discover', (device)=> {
     if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
-      mainWindow.webContents.send('deviceFound', device.serialize())
+      win.webContents.send('deviceFound', device.serialize())
       console.log(device.describe())
     }
   })
+}
 
-  mainWindow.loadUrl(`file://${__dirname}/frontend/${INDEX}`)
+function startApp() {
+  createWindow()
+  setup()
+}
 
-  mainWindow.on('closed', function () {
-    console.log('Window closed')
-  })
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', startApp)
 
+// Quit when all windows are closed.
+app.on('window-all-closed', () => {
+
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    quit()
+  }
+
+})
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (win === null) {
+    createWindow()
+  }
+})
+
+process.on('SIGINT', function() {
+  console.log("Caught interrupt signal")
+  quit()
 })

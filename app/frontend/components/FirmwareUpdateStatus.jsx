@@ -10,7 +10,7 @@ class FirmwareUpdateStatus extends React.Component {
 
     this.state = {
       state: null,
-      accepted_fw_file: null,
+      accepted_fw_file: null
 
     }
 

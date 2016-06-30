@@ -1,7 +1,7 @@
 'use strict'
 
 let Dispatcher = require('../dispatcher')
-let ipc = require('ipc')
+const {ipcRenderer} = require('electron')
 
 // Action constants
 const DEVICE_FOUND = 'DEVICE_FOUND'
@@ -11,11 +11,12 @@ const DEVICE_INFORMATION_READY = 'DEVICE_INFORMATION_READY'
 const PERFORM_FIRMWARE_UPDATE = 'PERFORM_FIRMWARE_UPDATE'
 
 
-ipc.on('deviceFound', function (device) {
+ipcRenderer.on('deviceFound', (event, device) => {
+  console.log(device)
   Actions.deviceFound(device)
 })
 
-ipc.on('deviceInformationReady', function (deviceInformation) {
+ipcRenderer.on('deviceInformationReady', (event, deviceInformation) => {
   Actions.deviceInformationReady(deviceInformation)
 })
 
@@ -29,18 +30,18 @@ let Actions = {
   },
 
   clearDevices: () => {
-    ipc.send('clearDevices')
+    ipcRenderer.send('clearDevices')
     Dispatcher.dispatch({
       actionType: CLEAR_DEVICES
     })
   },
 
   startScanning: () => {
-    ipc.send('startScanning')
+    ipcRenderer.send('startScanning')
   },
 
   stopScanning: () => {
-    ipc.send('stopScanning')
+    ipcRenderer.send('stopScanning')
   },
 
   refreshDeviceList: () => {
@@ -50,7 +51,7 @@ let Actions = {
   },
 
   selectDevice: (uuid) => {
-    ipc.send('connectToDevice', uuid)
+    ipcRenderer.send('connectToDevice', uuid)
     Dispatcher.dispatch({
       actionType: SELECT_DEVICE,
       uuid: uuid
@@ -65,7 +66,7 @@ let Actions = {
   },
 
   performFirmwareUpdate: (uuid) => {
-    ipc.send('performFirmwareUpdate', uuid)
+    ipcRenderer.send('performFirmwareUpdate', uuid)
     Dispatcher.dispatch({
       actionType: PERFORM_FIRMWARE_UPDATE,
       uuid: uuid

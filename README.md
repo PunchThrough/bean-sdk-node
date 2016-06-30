@@ -18,14 +18,6 @@ Build app dependencies:
 npm install
 ```
 
-Build native dependencies against Electrons headers:
-
-```bash
-./node_modules/.bin/electron-rebuild
-```
-
-__Note:__ This step should be done each time you run `npm install` for _certain_ dependencies...like `noble`...i think?  Not too sure.
-
 ## Running the app
 
 ```bash
@@ -49,7 +41,7 @@ Run an example:
 babel-node examples/<my_example.js>
 ```
 
-## Testing!
+## Testing
 
 The unit test framework we are using is `Mocha` and all of the tests are under the default directory of `test/`.
 
@@ -101,4 +93,5 @@ This projects main priority is building a FW updater that runs on Windows. Howev
 * We don't use `;` to terminate lines in ES6. Turn off the WebStorm warnings. Un-check the following option:
     
     > `WebStorm > Preferences > Editor > Inspections > JavaScript > Code style issues > Unterminated statement`
-  
+
+* Sometimes you need to run `./node_modules/.bin/electron-rebuild` to build "native dependencies" against Electron headers.

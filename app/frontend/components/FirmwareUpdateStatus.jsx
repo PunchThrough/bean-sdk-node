@@ -24,14 +24,18 @@ class FirmwareUpdateStatus extends React.Component {
       <div className="pull-down fw-update-status">
         No Update In Progress
 
-        <div className="text-center pull-down">
-          <button
-            className="btn btn-primary"
-            onClick={this._updateFirmware}
-          >
-            Update Firmware
+        <div className="dropdown pull-down">
+          <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Actions
+            <span className="caret"></span>
           </button>
+          <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a href="#">Update Firmware</a></li>
+            <li><a href="#">Upload Sketch</a></li>
+          </ul>
         </div>
+
+
       </div>
     )
   }

@@ -30,6 +30,14 @@ program
 
 
 program
+  .command('scan')
+  .description('Scan for LightBlue devices')
+  .action((options)=> {
+    commands.startScan(new LightBlueSDK())
+  })
+
+
+program
   .command('program_firmware')
   .description('Program bean firmware')
   .option('-b, --bean [bean]', 'Bean name')

@@ -8,7 +8,6 @@ const DEVICE_FOUND = 'DEVICE_FOUND'
 const CLEAR_DEVICES = 'CLEAR_DEVICES'
 const SELECT_DEVICE = 'SELECT_DEVICE'
 const DEVICE_INFORMATION_READY = 'DEVICE_INFORMATION_READY'
-const PERFORM_FIRMWARE_UPDATE = 'PERFORM_FIRMWARE_UPDATE'
 
 
 ipcRenderer.on('deviceFound', (event, device) => {
@@ -67,10 +66,10 @@ let Actions = {
 
   performFirmwareUpdate: (uuid) => {
     ipcRenderer.send('performFirmwareUpdate', uuid)
-    Dispatcher.dispatch({
-      actionType: PERFORM_FIRMWARE_UPDATE,
-      uuid: uuid
-    })
+  },
+
+  performSketchUpload: (uuid) => {
+    ipcRenderer.send('performSketchUpload', uuid)
   }
 }
 

@@ -2,7 +2,7 @@
 
 let noble = require('noble')
 let devices = require('./devices')
-let FirmwareUpdater = require('./oad')
+let oad = require('./oad')
 let events = require('events')
 
 const NOBLE_STATE_READY = 'poweredOn'
@@ -20,7 +20,7 @@ class LightBlueSDK extends events.EventEmitter {
   constructor() {
     super()
 
-    this._fwUpdater = new FirmwareUpdater(this)
+    this._fwUpdater = new oad.FirmwareUpdater(this)
 
     // State
     this._devices = {}
@@ -158,4 +158,4 @@ class LightBlueSDK extends events.EventEmitter {
   }
 }
 
-module.exports = new LightBlueSDK()
+module.exports = LightBlueSDK

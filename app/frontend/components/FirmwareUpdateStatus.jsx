@@ -15,7 +15,12 @@ class FirmwareUpdateStatus extends React.Component {
     }
 
     this._updateFirmware = ()=> {
+      console.log('Updating firmware')
       actions.Actions.performFirmwareUpdate(this.props.device.uuid)
+    }
+
+    this._uploadSketch = ()=> {
+      console.log('Uploading sketch')
     }
   }
 
@@ -30,11 +35,10 @@ class FirmwareUpdateStatus extends React.Component {
             <span className="caret"></span>
           </button>
           <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><a href="#">Update Firmware</a></li>
-            <li><a href="#">Upload Sketch</a></li>
+            <li onClick={this._updateFirmware}>Update Firmware</li>
+            <li onClick={this._uploadSketch}>Upload Sketch</li>
           </ul>
         </div>
-
 
       </div>
     )

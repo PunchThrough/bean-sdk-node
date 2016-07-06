@@ -2,12 +2,13 @@ const electron = require('electron')
 const {app} = electron
 const {BrowserWindow} = electron
 const {ipcMain} = electron
-const LB = require('./lightblue/lightblue')
+const LightBlueSDK = require('./lightblue/lightblue.js')
 const devices = require('./lightblue/devices')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+let LB = new LightBlueSDK()
 
 // Constants
 const INDEX = 'frontend/index.html'

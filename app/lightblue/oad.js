@@ -26,6 +26,11 @@ const OAD_STEP_STATE_BLOCK_XFER = 'OAD_STEP_STATE_BLOCK_XFER'
 const OAD_STEP_STATE_REBOOTING = 'OAD_STEP_STATE_REBOOTING'
 
 
+function bakedFirmwareVersion() {
+  return FW_VERSION
+}
+
+
 class FirmwareUpdater {
 
   constructor(lb) {
@@ -305,4 +310,7 @@ class FirmwareUpdater {
   }
 }
 
-module.exports = FirmwareUpdater
+module.exports = {
+  FirmwareUpdater: FirmwareUpdater,
+  bakedFirmwareVersion: bakedFirmwareVersion
+}

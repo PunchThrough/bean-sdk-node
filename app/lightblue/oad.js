@@ -183,6 +183,10 @@ class FirmwareUpdater {
 
     this._fileOfferedIndex++
 
+    if (this._fileOfferedIndex >= this._fwfiles.length) {
+      this._fail("All firmware images have been rejected")
+    }
+
     let filename = this._fwfiles[this._fileOfferedIndex]
     let filepath = path.join(FW_FILES, filename)
     let hdrBuf = new buffer.Buffer(FW_HEADER_LENGTH)

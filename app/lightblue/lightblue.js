@@ -1,9 +1,10 @@
 'use strict'
 
-let noble = require('noble')
-let devices = require('./devices')
-let oad = require('./oad')
-let events = require('events')
+const noble = require('noble')
+const devices = require('./devices')
+const oad = require('./oad')
+const events = require('events')
+const timers = require('timers')
 
 const NOBLE_STATE_READY = 'poweredOn'
 
@@ -95,7 +96,16 @@ class LightBlueSDK extends events.EventEmitter {
     this._fwUpdater.resetState()
   }
 
-  startScanning() {
+  startScanning(timeoutSeconds=30, timeoutCallback=null) {
+    /**
+     * Start a BLE scan for a given period of time
+     *
+     * @param timeout int Number of seconds to scan
+     * @param timeoutCallback Function called back after scan timeout
+     */
+
+    let ctx = this
+
     if (noble.state === NOBLE_STATE_READY) {
       console.log('Starting to scan...')
       noble.startScanning([], true)
@@ -109,6 +119,15 @@ class LightBlueSDK extends events.EventEmitter {
         }
       })
     }
+
+    console.log(`Setting scan timeout: ${timeoutSeconds} seconds`)
+    timers.setTimeout(()=> {
+      console.log("Scan timeout!")
+      ctx.stopScanning()
+      if (timeoutCallback) {
+        timeoutCallback()
+      }
+    }, timeoutSeconds * 1000)
   }
 
   stopScanning() {

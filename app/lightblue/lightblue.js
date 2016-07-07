@@ -18,6 +18,7 @@ class LightBlueSDK extends events.EventEmitter {
    *    - discover
    *
    */
+  
   constructor() {
     super()
 

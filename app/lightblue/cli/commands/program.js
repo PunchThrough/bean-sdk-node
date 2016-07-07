@@ -3,45 +3,70 @@
 const oad = require('../../oad.js')
 
 
-function programFirmware(sdk, beanName, completedCallback) {
-  console.log('Programming Bean (%s) with firmware (%s).', beanName, oad.bakedFirmwareVersion())
+function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
 
-  if (!beanName) {
-    completedCallback("Please provide bean name and FW version")
+  if (!name && !uuid) {
+    errorCallback("Please provide bean name or UUID")
   }
 
-  sdk.startScanning()
+  let found = false
+
+  sdk.startScanning(15, ()=> {
+    // Scan timeout
+    if (!found) {
+      errorCallback(`No Bean found with name/uuid: ${name}/${uuid}`)
+    }
+  })
 
   sdk.on('discover', (device)=> {
-    if (device.getName() === beanName) {
-      console.log("Found Bean (%s)", device.getName())
+    if (device.getName() === name || device.getUUID() === uuid) {
+      console.log(`Found Bean with name/uuid: ${device.getName()}/${device.getUUID()}`)
+      found = true
 
       sdk.connectToDevice(device.getUUID(), (err)=> {
+
+        if (err) {
+          errorCallback(`Bean connection failed: ${err}`)
+          return
+        }
+
         device.lookupServices((err)=> {
+
           if (err) {
-            console.log("Service lookup FAILED!")
+            errorCallback(`Service lookup FAILED: ${err}`)
           } else {
-            if (err) {
-              console.log("Bean connect FAILED!")
-            } else {
-              sdk.updateFirmware(device, (error)=> {
-                if (error) {
-                  console.log("FW Update FAILED: %s", error)
-                } else {
-                  console.log("FW Success!")
-                }
-              })
-            }
+            successCallback(device)
           }
+
         })
       })
     }
   })
-
 }
 
 
-function programSketch() {
+function programFirmware(sdk, beanName, beanUUID, completedCallback) {
+  console.log('Programming Bean (%s) with firmware (%s).', beanName, oad.bakedFirmwareVersion())
+
+  connectToBean(sdk, beanName, beanUUID, (device)=> {
+    sdk.updateFirmware(device, (err)=> {
+
+      if (err) {
+        completedCallback(`FW update failed: ${err}`)
+      } else {
+        completedCallback(null)
+      }
+
+    })
+  }, completedCallback)
+}
+
+
+function programSketch(sdk, beanName, beanUUID, hexFile, completedCallback) {
+
+  connectToBean(sdk, beanName, beanUUID, (device)=> {
+
+  }, completedCallback)
 
 }
 

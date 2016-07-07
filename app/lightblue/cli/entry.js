@@ -41,8 +41,17 @@ program
   .command('program_firmware')
   .description('Program bean firmware')
   .option('-b, --bean [bean]', 'Bean name')
+  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
   .action((options)=> {
-    commands.programFirmware(new LightBlueSDK(), options.bean, commandComplete)
+    commands.programFirmware(new LightBlueSDK(), options.bean, options.uuid, commandComplete)
+  })
+
+
+program
+  .command('program_sketch [bean_name] [hexfile]')
+  .description('Program a single sketch to the Bean')
+  .action((beanName, hexFile)=> {
+    commands.programSketch(new LightBlueSDK(), beanName, hexFile, commandComplete)
   })
 
 

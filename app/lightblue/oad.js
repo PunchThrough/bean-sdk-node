@@ -38,16 +38,16 @@ class FirmwareUpdater {
     this._fwfiles = fs.readdirSync(FW_FILES).sort()  // alphabetized
     this._storedFwVersion = this._fwfiles[0].split('_')[0]
 
-    this.resetState()
+    this.resetState(true)
   }
 
-  resetState() {
+  resetState(init=false) {
     /**
      * Reset or instantiate all FW state
      * TODO: This state is for ONE device, eventually this class should be
      *       capable of updating many devices simultaneously
      */
-    console.log('Resetting FW State')
+
     this._deviceInProgress = null
     this._completionCallback = null
     this._fileOfferedIndex = -1
@@ -60,6 +60,12 @@ class FirmwareUpdater {
     this._stateStep = null
     this._nextBlock = 0
     this._blockTransferStartTime = null;
+
+    if (!init) {
+      // We don't want to log anything from the constructor
+      console.log("OAD State Machine reset!")
+    }
+
   }
 
   _fail(err) {

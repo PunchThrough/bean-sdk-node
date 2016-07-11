@@ -18,7 +18,10 @@ class SerialTransportService extends BleService {
 
   constructor(characteristics, nobleService) {
     super(characteristics, nobleService)
-    let x = 3
+  }
+
+  getName() {
+    return 'Serial Transport Service'
   }
 
 }

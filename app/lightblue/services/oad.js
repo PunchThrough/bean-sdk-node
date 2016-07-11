@@ -59,6 +59,10 @@ class OADService extends BleService {
     })
   }
 
+  getName() {
+    return 'OAD Service'
+  }
+
   setupNotifications() {
     console.log('Setting up IDENTIFY and BLOCK notifications')
 
@@ -103,10 +107,6 @@ class OADService extends BleService {
      */
 
     this._registeredNotificationCallbacks[key].push(cb)
-  }
-
-  getName() {
-    return 'OAD Service'
   }
 
   triggerIdentifyHeaderNotification() {

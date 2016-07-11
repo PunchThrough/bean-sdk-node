@@ -1,6 +1,6 @@
 'use strict'
 
-const oad = require('../../oad.js')
+const FirmwareUpdater = require('../../firmware-updater')
 
 
 function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
@@ -46,7 +46,7 @@ function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
-  console.log('Programming Bean (%s) with firmware (%s).', beanName, oad.bakedFirmwareVersion())
+  console.log('Programming Bean (%s) with firmware (%s).', beanName, FirmwareUpdater.bakedFirmwareVersion())
 
   connectToBean(sdk, beanName, beanUUID, (device)=> {
     sdk.updateFirmware(device, (err)=> {

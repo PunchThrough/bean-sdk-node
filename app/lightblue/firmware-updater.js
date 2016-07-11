@@ -1,6 +1,6 @@
 'use strict'
 
-let services = require('./services')
+let BleServices = require('./services/services')
 let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
@@ -85,8 +85,8 @@ class FirmwareUpdater {
      */
 
     let oad = device.getOADService()
-    oad.registerForNotifications(services.UUID_CHAR_OAD_IDENTIFY, (data)=> {this._notificationIdentify(data)})
-    oad.registerForNotifications(services.UUID_CHAR_OAD_BLOCK, (data)=> {this._notificationBlock(data)})
+    oad.registerForNotifications(BleServices.OADService.characteristics.IDENTIFY, (data)=> {this._notificationIdentify(data)})
+    oad.registerForNotifications(BleServices.OADService.characteristics.BLOCK, (data)=> {this._notificationBlock(data)})
   }
 
   _notificationBlock(buf) {
@@ -321,6 +321,6 @@ class FirmwareUpdater {
 }
 
 module.exports = {
-  FirmwareUpdater: FirmwareUpdater,
+  init: FirmwareUpdater,
   bakedFirmwareVersion: bakedFirmwareVersion
 }

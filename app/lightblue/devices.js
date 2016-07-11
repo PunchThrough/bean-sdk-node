@@ -1,7 +1,9 @@
 'use strict'
 
-let BleServices = require('./services')
-let util = require('./util')
+
+const util = require('./util')
+const BleServices = require('./services/services')
+
 
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
@@ -83,7 +85,7 @@ class BleDevice {
   }
 
   getDeviceInformationService() {
-    return this._lookupService(BleServices.UUID_SERVICE_DEVICE_INFORMATION)
+    return this._lookupService(BleServices.DeviceInformationService.UUID)
   }
 
   describe() {
@@ -183,7 +185,7 @@ class LightBlueDevice extends BleDevice {
   }
 
   getOADService() {
-    return this._lookupService(BleServices.UUID_SERVICE_OAD)
+    return this._lookupService(BleServices.OADService.UUID)
   }
 
 }

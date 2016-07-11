@@ -1,8 +1,20 @@
-let LB = require('../app/lightblue/lightblue.js')
+let LightBlueSDK = require('../app/lightblue/lightblue.js')
 
+sdk = new LightBlueSDK()
 
-LB.startScanning()
+sdk.startScanning()
 
-LB.on('discover', (device)=> {
-  console.log(device.toString())
+sdk.on('discover', (device)=> {
+
+  sdk.connectToDevice(device.getUUID(), (err)=> {
+    if (err) {
+      console.log(`Bean connection failed: ${err}`)
+    } else {
+      device.lookupServices((err)=> {
+        if (err) {
+          console.log(`Service lookup FAILED: ${err}`)
+        }
+      })
+    }
+  })
 })

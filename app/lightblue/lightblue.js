@@ -2,7 +2,7 @@
 
 const noble = require('noble')
 const devices = require('./devices')
-const oad = require('./oad')
+const FirmwareUpdater = require('./firmware-updater')
 const events = require('events')
 const timers = require('timers')
 
@@ -18,11 +18,11 @@ class LightBlueSDK extends events.EventEmitter {
    *    - discover
    *
    */
-  
+
   constructor() {
     super()
 
-    this._fwUpdater = new oad.FirmwareUpdater(this)
+    this._fwUpdater = new FirmwareUpdater.init(this)
 
     // State
     this._devices = {}

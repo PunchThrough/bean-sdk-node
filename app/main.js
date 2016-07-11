@@ -2,7 +2,7 @@ const electron = require('electron')
 const {app} = electron
 const {BrowserWindow} = electron
 const {ipcMain} = electron
-const LightBlueSDK = require('./lightblue/lightblue.js')
+const LightBlueSDK = require('./lightblue/lightblue')
 const devices = require('./lightblue/devices')
 
 // Keep a global reference of the window object, if you don't, the window will

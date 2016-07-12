@@ -1,7 +1,7 @@
 'use strict'
 
 
-const util = require('../util')
+const util = require('../util/util')
 const BleService = require('./base')
 const DeviceInformationService = require('./device-information')
 const OADService = require('./oad')

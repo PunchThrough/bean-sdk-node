@@ -1,0 +1,176 @@
+commands:
+  0x0000:
+    name: "SERIAL_DATA"
+    arguments: []
+    response: []
+
+  0x0500:
+    name: "BT_SET_ADV"
+    arguments: []
+    response: []
+
+  0x0502:
+    name: "BT_SET_CONN"
+    arguments: []
+    response: []
+
+  0x0504:
+    name: "BT_SET_LOCAL_NAME"
+    arguments: []
+    response: []
+
+  0x0506:
+    name: "BT_SET_PIN"
+    arguments: []
+    response: []
+
+  0x0508:
+    name: "BT_SET_TX_PWR"
+    arguments: []
+    response: []
+
+  0x0510:
+    name: "BT_GET_CONFIG"
+    arguments: []
+    response: []
+
+  0x0511:
+    name: "BT_SET_CONFIG"
+    arguments: []
+    response: []
+
+  0x0540:
+    name: "BT_SET_CONFIG_NOSAVE"
+    arguments: []
+    response: []
+
+  0x0550:
+    name: "BT_END_GATE"
+    arguments: []
+    response: []
+
+  0x0512:
+    name: "BT_ADV_ONOFF"
+    arguments: []
+    response: []
+
+  0x0514:
+    name: "BT_SET_SCRATCH"
+    arguments: []
+    response: []
+
+  0x0515:
+    name: "BT_GET_SCRATCH"
+    arguments: []
+    response: []
+
+  0x0520:
+    name: "BT_RESTART"
+    arguments: []
+    response: []
+
+  0x1000:
+    name: "BL_CMD_START"
+    arguments: []
+    response: []
+
+  0x1001:
+    name: "BL_FW_BLOCK"
+    arguments: []
+    response: []
+
+  0x1002:
+    name: "BL_STATUS"
+    arguments: []
+    response: []
+
+  0x1003:
+    name: "BL_GET_META"
+    arguments: []
+    response: []
+
+  0x2000:
+    name: "CC_LED_WRITE"
+    arguments: []
+    response: []
+
+  0x2001:
+    name: "CC_LED_WRITE_ALL"
+    arguments:
+      - name: "Red"
+        type: "uint8"
+      - name: "Green"
+        type: "uint8"
+      - name: "Blue"
+        type: "uint8"
+    response: []
+
+  0x2002:
+    name: "CC_LED_READ_ALL"
+    arguments: []
+    response: []
+
+  0x2010:
+    name: "CC_ACCEL_READ"
+    arguments: []
+    response: []
+
+  0x2011:
+    name: "CC_TEMP_READ"
+    arguments: []
+    response: []
+
+  0x2015:
+    name: "CC_BATT_READ"
+    arguments: []
+    response: []
+
+  0x2020:
+    name: "CC_POWER_ARDUINO"
+    arguments: []
+    response: []
+
+  0x2021:
+    name: "CC_GET_AR_POWER"
+    arguments: []
+    response: []
+
+  0x2030:
+    name: "CC_ACCEL_GET_RANGE"
+    arguments: []
+    response: []
+
+  0x2035:
+    name: "CC_ACCEL_SET_RANGE"
+    arguments: []
+    response: []
+
+  0x3000:
+    name: "AR_SLEEP"
+    arguments: []
+    response: []
+
+  0x4000:
+    name: "ERROR_CC"
+    arguments: []
+    response: []
+
+  0xFE00:
+    name: "DB_LOOPBACK"
+    arguments: []
+    response: []
+
+  0xFE01:
+    name: "DB_COUNTER"
+    arguments: []
+    response: []
+
+  0xFE02:
+    name: "DB_E2E_LOOPBACK"
+    arguments: []
+    response: []
+
+  0xFE03:
+    name: "DB_PTM"
+    arguments: []
+    response: []

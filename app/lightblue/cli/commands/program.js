@@ -1,54 +1,13 @@
 'use strict'
 
 const FirmwareUpdater = require('../../firmware-updater')
-
-
-function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
-
-  if (!name && !uuid) {
-    errorCallback("Please provide bean name or UUID")
-  }
-
-  let found = false
-
-  sdk.startScanning(15, ()=> {
-    // Scan timeout
-    if (!found) {
-      errorCallback(`No Bean found with name/uuid: ${name}/${uuid}`)
-    }
-  })
-
-  sdk.on('discover', (device)=> {
-    if (device.getName() === name || device.getUUID() === uuid) {
-      console.log(`Found Bean with name/uuid: ${device.getName()}/${device.getUUID()}`)
-      found = true
-
-      sdk.connectToDevice(device.getUUID(), (err)=> {
-
-        if (err) {
-          errorCallback(`Bean connection failed: ${err}`)
-          return
-        }
-
-        device.lookupServices((err)=> {
-
-          if (err) {
-            errorCallback(`Service lookup FAILED: ${err}`)
-          } else {
-            successCallback(device)
-          }
-
-        })
-      })
-    }
-  })
-}
+const common = require('./common')
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
   console.log('Programming Bean (%s) with firmware (%s).', beanName, FirmwareUpdater.bakedFirmwareVersion())
 
-  connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
     sdk.updateFirmware(device, (err)=> {
 
       if (err) {
@@ -64,7 +23,7 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 
 function programSketch(sdk, beanName, beanUUID, hexFile, completedCallback) {
 
-  connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 
   }, completedCallback)
 

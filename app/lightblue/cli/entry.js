@@ -55,6 +55,16 @@ program
   })
 
 
+program
+  .command('blink_led')
+  .description('Blink on-board Bean LED')
+  .option('-b, --bean [bean]', 'Bean name')
+  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .action((options)=> {
+    commands.blinkLed(new LightBlueSDK(), options.bean, options.uuid, commandComplete)
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

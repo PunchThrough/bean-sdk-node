@@ -12,7 +12,7 @@ const UUID_SERVICE_SERIAL_TRANSPORT = util.normalizeUUID('a495ff10c5b14b44b51213
 
 
 class LightBluePacket {
-  constructor() {
+  constructor(payload) {
 
   }
 
@@ -37,7 +37,7 @@ class SerialTransportService extends BleService {
   sendCommand(commandId, payloadArguments, completedCallback) {
     let defn = commands.definitionForCommand(commandId)
     let command = new commands.Command(commandId, defn)
-    let packed = command.pack.apply(command, payloadArguments)
+    let commandPacked = command.pack.apply(command, payloadArguments)
   }
 
 }

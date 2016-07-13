@@ -192,9 +192,9 @@ class LightBlueDevice extends BleDevice {
     return this._lookupService(BleServices.SerialTransportService.UUID)
   }
 
-  setLed(red, green, blue, completedCallback) {
+  setLed(red, green, blue) {
     let cmd = BleServices.SerialTransportService.commandIds.CC_LED_WRITE_ALL
-    this.getSerialTransportService().sendCommand(cmd, [red, green, blue], completedCallback)
+    this.getSerialTransportService().sendCommand(cmd, [red, green, blue])
   }
 
 }

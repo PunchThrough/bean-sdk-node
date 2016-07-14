@@ -25,7 +25,8 @@
     "noble": "*",
     "queue": "^4.0.0",
     "react": "^15.1.0",
-    "react-dom": "^15.1.0"
+    "react-dom": "^15.1.0",
+    "sleep": "^3.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015": "*",

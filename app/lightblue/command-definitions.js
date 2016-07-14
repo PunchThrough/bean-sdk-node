@@ -81,17 +81,18 @@ class Command {
   }
 
   pack(...args) {
-    let length = 1 + 1 + 2 + this._calculatePayloadSize() + 2
-    let packed = new buffer.Buffer(length)
+    let payloadLength = this._calculatePayloadSize()
+    let bufferLength = 1 + 1 + 2 + payloadLength + 2
+    let packed = new buffer.Buffer(bufferLength)
 
-    // Pack length
-    packed.writeUInt8(length, 0)
+    // Pack length (payload and message ID)
+    packed.writeUInt8(payloadLength + 2, 0)
 
     // Pack reserved
     packed.writeUInt8(0, 1)
 
-    // Pack message ID
-    packed.writeUInt16LE(this._msgId, 2)
+    // Pack message ID (Big endian)
+    packed.writeUInt16BE(this._msgId, 2)
 
     // Pack payload
     let offset = 4

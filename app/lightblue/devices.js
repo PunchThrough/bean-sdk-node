@@ -1,9 +1,8 @@
 'use strict'
 
 
-const util = require('./util')
+const util = require('./util/util')
 const BleServices = require('./services/services')
-
 
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
@@ -147,6 +146,7 @@ class BleDevice {
 
   lookupServices(completionCallback) {
     console.log(`Looking up services for device: ${this._name}`)
+
     this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         console.log(`There was an error getting services: ${err}`)
@@ -186,6 +186,15 @@ class LightBlueDevice extends BleDevice {
 
   getOADService() {
     return this._lookupService(BleServices.OADService.UUID)
+  }
+
+  getSerialTransportService() {
+    return this._lookupService(BleServices.SerialTransportService.UUID)
+  }
+
+  setLed(red, green, blue) {
+    let cmd = BleServices.SerialTransportService.commandIds.CC_LED_WRITE_ALL
+    this.getSerialTransportService().sendCommand(cmd, [red, green, blue])
   }
 
 }

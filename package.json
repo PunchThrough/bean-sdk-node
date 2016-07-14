@@ -4,7 +4,7 @@
   "description": "Cross platform Bean Loader by Punch Through",
   "main": "build/main.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers js:babel-register",
+    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive",
     "dev": "gulp build && ./node_modules/.bin/electron ."
   },
   "repository": {
@@ -19,10 +19,14 @@
   "homepage": "https://github.com/PunchThrough/bean-loader-x#readme",
   "dependencies": {
     "async": "*",
+    "crc": "^3.4.0",
     "flux": "*",
+    "js-yaml": "*",
     "noble": "*",
+    "queue": "^4.0.0",
     "react": "^15.1.0",
-    "react-dom": "^15.1.0"
+    "react-dom": "^15.1.0",
+    "sleep": "^3.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015": "*",

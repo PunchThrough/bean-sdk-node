@@ -3,7 +3,7 @@
 
 let buffer = require('buffer')
 let BleService = require ('./base')
-let util = require('../util')
+let util = require('../util/util')
 
 
 const UUID_SERVICE_OAD = util.normalizeUUID('F000FFC004514000B000000000000000', 16)

@@ -93,6 +93,6 @@ class DeviceInformationService extends BleService {
 }
 
 module.exports = {
-  init: DeviceInformationService,
+  DeviceInformationService: DeviceInformationService,
   UUID: UUID_SERVICE_DEVICE_INFORMATION
 }

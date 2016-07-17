@@ -3,9 +3,9 @@
 
 const util = require('../util/util')
 const BleService = require('./base')
-const DeviceInformationService = require('./device-information')
-const OADService = require('./oad')
-const SerialTransportService = require('./serial-transport')
+const DeviceInformationService = require('./device-information').DeviceInformationService
+const OADService = require('./oad').OADService
+const SerialTransportService = require('./serial-transport').SerialTransportService
 
 
 function _charListToObject(charList) {
@@ -38,13 +38,13 @@ function fromNobleService(nobleService) {
   let s = null
   switch (util.normalizeUUID(nobleService.uuid)) {
     case DeviceInformationService.UUID:
-      s = new DeviceInformationService.init(_charListToObject(nobleService.characteristics), nobleService)
+      s = new DeviceInformationService(_charListToObject(nobleService.characteristics), nobleService)
       break
     case OADService.UUID:
-      s = new OADService.init(_charListToObject(nobleService.characteristics), nobleService)
+      s = new OADService(_charListToObject(nobleService.characteristics), nobleService)
       break
     case SerialTransportService.UUID:
-      s = new SerialTransportService.init(_charListToObject(nobleService.characteristics), nobleService)
+      s = new SerialTransportService(_charListToObject(nobleService.characteristics), nobleService)
       break
     default:
       s = new BleService([], nobleService)

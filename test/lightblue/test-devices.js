@@ -2,10 +2,10 @@
 
 let assert = require('assert')
 let devices = require('../../app/lightblue/devices')
-const SerialTransportService = require('../../app/lightblue/services/serial-transport')
+const SerialTransportService = require('../../app/lightblue/services/serial-transport').SerialTransportService
 
 
-class MockSerialTransportService extends SerialTransportService.init {
+class MockSerialTransportService extends SerialTransportService {
   constructor(characteristics, nobleService) {
     super(characteristics, nobleService)
   }

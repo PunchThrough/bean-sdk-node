@@ -128,7 +128,7 @@ class OADService extends BleService {
 }
 
 module.exports = {
-  init: OADService,
+  OADService: OADService,
   UUID: UUID_SERVICE_OAD,
   characteristics: {
     IDENTIFY: UUID_CHAR_OAD_IDENTIFY,

@@ -49,8 +49,8 @@ class SerialTransportService extends BleService {
 
   _sendLightBluePacket(packet) {
     let packed = packet.pack()
-    console.log(`Sending LightBlue Packet: ${packed}`)
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packet.pack(), true, (err)=> {
+    console.log(`Sending LightBlue Packet: ${packed.toString()}`)
+    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packed, true, (err)=> {
       if (err) {
         console.log(`Error sending LightBlue Packet: ${err}`)
       }
@@ -62,12 +62,21 @@ class SerialTransportService extends BleService {
   }
 
   sendCommand(commandId, payloadArguments, completedCallback) {
+    /**
+     * Send a LightBlue Command
+     *
+     * @param commandId int command ID
+     * @param payloadArguments list of command arguments
+     * @param completedCallback function called back when command is sent
+     */
+
     let defn = commands.definitionForCommand(commandId)
     let command = new commands.Command(commandId, defn)
-    let commandPacked = command.pack.apply(command, payloadArguments)
-    if (commandPacked.length < (BLE_MAX_PACKET_LENGTH - 1)) {
+    let packetPayload = command.pack.apply(command, payloadArguments)
+
+    if (packetPayload.length < (BLE_MAX_PACKET_LENGTH - 1)) {
       this._packetCount = (this._packetCount + 1) % 4
-      this._sendLightBluePacket(new LightBluePacket(true, this._packetCount, 0, commandPacked))
+      this._sendLightBluePacket(new LightBluePacket(true, this._packetCount, 0, packetPayload))
     }
   }
 
@@ -75,8 +84,10 @@ class SerialTransportService extends BleService {
 
 
 module.exports = {
-  init: SerialTransportService,
+  SerialTransportService: SerialTransportService,
   UUID: UUID_SERVICE_SERIAL_TRANSPORT,
+  characteristics: {
+    UUID_CHAR_SERIAL_TRANSPORT: UUID_CHAR_SERIAL_TRANSPORT
+  },
   commandIds: commands.commandIds,
-  LightBluePacket: LightBluePacket  // Exported only for testing!
 }

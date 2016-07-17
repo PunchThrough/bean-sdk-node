@@ -113,7 +113,15 @@ commands:
   0x2010:
     name: "CC_ACCEL_READ"
     arguments: []
-    response: []
+    response:
+      - name: "X Axis"
+        type: "uint16"
+      - name: "Y Axis"
+        type: "uint16"
+      - name: "Z Axis"
+        type: "uint16"
+      - name: "Sensitivity"
+        type: "uint8"
 
   0x2011:
     name: "CC_TEMP_READ"

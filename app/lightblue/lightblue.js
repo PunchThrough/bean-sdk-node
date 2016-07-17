@@ -1,10 +1,12 @@
 'use strict'
 
+
 const noble = require('noble')
 const devices = require('./devices')
 const FirmwareUpdater = require('./firmware-updater')
 const events = require('events')
 const timers = require('timers')
+
 
 const NOBLE_STATE_READY = 'poweredOn'
 
@@ -13,9 +15,10 @@ class LightBlueSDK extends events.EventEmitter {
   /**
    * Core LightBlue SDK class
    *
-   * This class implements the EventEmitter which allows clients to register for
-   * certain events including:
-   *    - discover
+   * This class implements the EventEmitter which allows clients to register
+   * for events using the .on() method. Events include:
+   *
+   *    - "discover"
    *
    */
 

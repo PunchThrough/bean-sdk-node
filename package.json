@@ -44,6 +44,7 @@
     "gulp-zip": "*",
     "json-loader": "*",
     "mocha": "*",
-    "node-loader": "*"
+    "node-loader": "*",
+    "sinon": "^1.17.4"
   }
 }

@@ -2,20 +2,54 @@
 
 const assert = require('assert')
 const buffer = require('buffer')
-const LightBluePacket = require('../../../app/lightblue/services/serial-transport').LightBluePacket
+const sinon = require('sinon')
+
+const chars = require('../../../app/lightblue/services/serial-transport').characteristics
+const commandIds = require('../../../app/lightblue/services/serial-transport').commandIds
+const SerialTransportService = require('../../../app/lightblue/services/serial-transport').SerialTransportService
 
 
-describe('LightBlue Packet', ()=> {
-  describe('should pack', ()=> {
+class MockNobleCharacteristic {
+  constructor () {
+    this._writes = []
+  }
 
-    it('first packet', ()=> {
-      let payload = new buffer.Buffer('010203', 'hex')
-      let lbPacket = new LightBluePacket(true, 0, 0, payload)
-      let packed = lbPacket.pack()
-      assert.equal(packed[0], 128)
-      assert.equal(packed[1], 1)
-      assert.equal(packed[2], 2)
-      assert.equal(packed[3], 3)
+  getWrites() {
+    return this._writes
+  }
+
+  write (buf) {
+    this._writes.push(buf)
+  }
+
+  read () {
+
+  }
+
+}
+
+
+describe('Serial Transport Service', ()=> {
+  describe('commands', ()=> {
+
+    let transportService
+    let mockNobleCharacteristic
+
+    beforeEach(()=> {
+      mockNobleCharacteristic = new MockNobleCharacteristic()
+      let mockChars = {}
+      mockChars[chars.UUID_CHAR_SERIAL_TRANSPORT] = mockNobleCharacteristic
+      transportService = new SerialTransportService(mockChars, null)
+    })
+
+    it('CC_LED_WRITE_ALL', ()=> {
+      let completedCallback = sinon.spy()
+      transportService.sendCommand(commandIds.CC_LED_WRITE_ALL, [1, 2, 3], completedCallback)
+      let writes = mockNobleCharacteristic.getWrites()
+      assert.equal(writes.length, 1)
+      let value = writes[0]
+      assert.equal(value.length, 10)
+      assert.equal(value[0], 160)  // packet header
     })
 
   })

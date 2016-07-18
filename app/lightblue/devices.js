@@ -84,7 +84,7 @@ class BleDevice {
   }
 
   getDeviceInformationService() {
-    return this._lookupService(BleServices.DeviceInformationService.UUID)
+    return this._lookupService(BleServices.deviceInformation.UUID)
   }
 
   describe() {
@@ -185,15 +185,15 @@ class LightBlueDevice extends BleDevice {
   }
 
   getOADService() {
-    return this._lookupService(BleServices.OADService.UUID)
+    return this._lookupService(BleServices.oad.UUID)
   }
 
   getSerialTransportService() {
-    return this._lookupService(BleServices.SerialTransportService.UUID)
+    return this._lookupService(BleServices.serialTransport.UUID)
   }
 
   setLed(red, green, blue) {
-    let cmd = BleServices.SerialTransportService.commandIds.CC_LED_WRITE_ALL
+    let cmd = BleServices.serialTransport.commandIds.CC_LED_WRITE_ALL
     this.getSerialTransportService().sendCommand(cmd, [red, green, blue])
   }
 

@@ -19,9 +19,5 @@ describe('Serial Transport Command Definitions', ()=> {
       assert(packed.length === 9)
     })
 
-    it ('should unpack', ()=> {
-
-    })
-
   })
 })

@@ -18,8 +18,9 @@ class MockNobleCharacteristic {
     return this._writes
   }
 
-  write (buf) {
+  write (buf, withoutResponse, callback) {
     this._writes.push(buf)
+    callback(false)
   }
 
   read () {
@@ -47,9 +48,8 @@ describe('Serial Transport Service', ()=> {
       transportService.sendCommand(commandIds.CC_LED_WRITE_ALL, [1, 2, 3], completedCallback)
       let writes = mockNobleCharacteristic.getWrites()
       assert.equal(writes.length, 1)
-      let value = writes[0]
-      assert.equal(value.length, 10)
-      assert.equal(value[0], 160)  // packet header
+      let packet = writes[0]
+      assert.equal(packet.length, 10)
     })
 
     it('BT_SET_CONFIG', ()=> {
@@ -66,6 +66,8 @@ describe('Serial Transport Service', ()=> {
         9,             // local name length
       ]
       transportService.sendCommand(commandIds.BT_SET_CONFIG, args, completedCallback)
+      let writes = mockNobleCharacteristic.getWrites()
+      assert.equal(writes.length, 3)
     })
 
   })

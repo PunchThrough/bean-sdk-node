@@ -7,7 +7,8 @@ const commands = require('../command-definitions')
 const buffer = require('buffer')
 
 
-const BLE_MAX_PACKET_LENGTH = 20
+const LB_MAX_PACKET_LENGTH = 19
+
 const UUID_SERVICE_SERIAL_TRANSPORT = util.normalizeUUID('a495ff10c5b14b44b5121370f02d74de', 16)
 const UUID_CHAR_SERIAL_TRANSPORT = util.normalizeUUID('A495FF11C5B14B44B5121370F02D74DE', 16)
 
@@ -45,15 +46,24 @@ class SerialTransportService extends BleService {
     super(characteristics, nobleService)
 
     this._packetCount = 0
+    this._packets = []
   }
 
-  _sendLightBluePacket(packet) {
+  _sendLightBluePackets() {
+    let packet = this._packets.shift()
     let packed = packet.pack()
     console.log(`Sending LightBlue Packet: ${packed.toString()}`)
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packed, true, (err)=> {
       if (err) {
         console.log(`Error sending LightBlue Packet: ${err}`)
       }
+
+      if (this._packets.length == 0) {
+        console.log('Last LightBlue packet sent!')
+      } else {
+        this._sendLightBluePackets()
+      }
+
     })
   }
 
@@ -70,14 +80,27 @@ class SerialTransportService extends BleService {
      * @param completedCallback function called back when command is sent
      */
 
+    // Pack the binary command
     let defn = commands.definitionForCommand(commandId)
     let command = new commands.Command(commandId, defn)
-    let packetPayload = command.pack.apply(command, payloadArguments)
+    let commandPayload = command.pack.apply(command, payloadArguments)
 
-    if (packetPayload.length < (BLE_MAX_PACKET_LENGTH - 1)) {
+    // Split the command into 1 or more LightBlue packets and queue them
+    let numPackets = Math.ceil(commandPayload.length / LB_MAX_PACKET_LENGTH)
+    for (let i = 0; i < numPackets; i++) {
+      let offset = i * LB_MAX_PACKET_LENGTH
+      let packetPayload = commandPayload.slice(offset, offset + LB_MAX_PACKET_LENGTH)
+
+      let first = false
+      if (i == 0)
+        first = true
+
       this._packetCount = (this._packetCount + 1) % 4
-      this._sendLightBluePacket(new LightBluePacket(true, this._packetCount, 0, packetPayload))
+      let packet = new LightBluePacket(first, this._packetCount, numPackets - (i + 1), packetPayload)
+      this._packets.push(packet)
     }
+
+    this._sendLightBluePackets()
   }
 
 }

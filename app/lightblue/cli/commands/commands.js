@@ -7,5 +7,6 @@ module.exports = {
   programFirmware: program.programFirmware,
   programSketch: program.programSketch,
   startScan: scan.startScan,
-  blinkLed: bean.blinkLed
+  blinkLed: bean.blinkLed,
+  readAccel: bean.readAccel
 }

@@ -20,7 +20,9 @@ function blinkLed(sdk, beanName, beanUUID, completedCallback) {
 function readAccel(sdk, beanName, beanUUID, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
-
+    device.readAccelerometer((reading)=> {
+      console.log(reading)
+    })
   }, completedCallback)
 
 }

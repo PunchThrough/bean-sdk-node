@@ -19,6 +19,10 @@ class BleService {
     this._charValueCache = {}
   }
 
+  setup(complete) {
+    complete(null)
+  }
+
   getName() {
     return this._nobleService.name === null ? 'Unknown' : this._nobleService.name
   }

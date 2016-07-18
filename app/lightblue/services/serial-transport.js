@@ -49,6 +49,10 @@ class SerialTransportService extends BleService {
     this._packets = []
   }
 
+  _packetReceived(buf) {
+    console.log(`Received LightBlue packet: ${buf}`)
+  }
+
   _sendLightBluePackets() {
     let packet = this._packets.shift()
     let packed = packet.pack()
@@ -69,6 +73,24 @@ class SerialTransportService extends BleService {
 
   getName() {
     return 'Serial Transport Service'
+  }
+
+  setup(complete) {
+    console.log('Setting up IDENTIFY and BLOCK notifications')
+
+    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].notify(true, (err)=> {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('Serial Transport notifications ready')
+      }
+    })
+
+    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].on('read', (data, isNotification)=> {
+      if (isNotification) this._packetReceived(data)
+    })
+
+    complete(null)  // TODO: This is a race condition, should wait for notifications
   }
 
   sendCommand(commandId, payloadArguments, completedCallback) {

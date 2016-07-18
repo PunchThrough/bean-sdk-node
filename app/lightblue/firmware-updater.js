@@ -85,8 +85,8 @@ class FirmwareUpdater {
      */
 
     let oad = device.getOADService()
-    oad.registerForNotifications(BleServices.OADService.characteristics.IDENTIFY, (data)=> {this._notificationIdentify(data)})
-    oad.registerForNotifications(BleServices.OADService.characteristics.BLOCK, (data)=> {this._notificationBlock(data)})
+    oad.registerForNotifications(BleServices.oad.characteristics.IDENTIFY, (data)=> {this._notificationIdentify(data)})
+    oad.registerForNotifications(BleServices.oad.characteristics.BLOCK, (data)=> {this._notificationBlock(data)})
   }
 
   _notificationBlock(buf) {

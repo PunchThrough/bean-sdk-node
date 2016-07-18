@@ -144,30 +144,40 @@ class BleDevice {
     this._noblePeripheral.disconnect()
   }
 
-  lookupServices(completionCallback) {
+  lookupServices(callback) {
     console.log(`Looking up services for device: ${this._name}`)
 
     this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         console.log(`There was an error getting services: ${err}`)
-        completionCallback(err)
+        callback(err)
       } else {
-        for (let i in services) {
-          let nobleService = services[i]
-          let sUUID = util.normalizeUUID(nobleService.uuid)
-          let service = null
-          if (this._services[sUUID]) {
-            // Service exists
-            service = BleServices.fromExistingService(this._services[sUUID], nobleService)
-          } else {
-            // New service
-            service = BleServices.fromNobleService(nobleService)
-          }
-          this._services[sUUID] = service
-          console.log(`Found service: ${service.getName()}`)
 
+        let setupFns = []
+
+        for (let nobleService of services) {
+          setupFns.push(function() {
+            let sUUID = util.normalizeUUID(nobleService.uuid)
+            let service = null
+            if (this._services[sUUID]) {
+              // Service exists
+              service = BleServices.fromExistingService(this._services[sUUID], nobleService)
+            } else {
+              // New service
+              service = BleServices.fromNobleService(nobleService)
+            }
+
+            service.setup((err)=> {
+              console.log(`Service setup successfully: ${service.getName()}`)
+            })
+
+            this._services[sUUID] = service
+          })
         }
-        completionCallback()
+
+        async.parallel(setupFns, function () {
+          callback()
+        })
       }
     })
   }
@@ -197,7 +207,13 @@ class LightBlueDevice extends BleDevice {
     this.getSerialTransportService().sendCommand(cmd, [red, green, blue])
   }
 
+  readAccelerometer(callback) {
+    let cmd = BleServices.serialTransport.commandIds.CC_ACCEL_READ
+    this.getSerialTransportService().sendCommand(cmd, [])
+  }
+
 }
+
 
 module.exports = {
   fromNoblePeripheral: fromNoblePeripheral,

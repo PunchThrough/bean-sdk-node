@@ -30,7 +30,6 @@ class OADService extends BleService {
 
     this._notificationsReady = false
     this._triggerIdentifyNotification = false
-    this.setupNotifications()
   }
 
   _fireCBs(key, data) {
@@ -63,7 +62,7 @@ class OADService extends BleService {
     return 'OAD Service'
   }
 
-  setupNotifications() {
+  setup(complete) {
     console.log('Setting up IDENTIFY and BLOCK notifications')
 
     // Setup notifications IDENTIFY
@@ -96,6 +95,8 @@ class OADService extends BleService {
     this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
       if (isNotification) this._onBlockNotification(data)
     })
+
+    complete(null)  // TODO: This is a race condition, should wait for notifications
   }
 
   registerForNotifications(key, cb) {

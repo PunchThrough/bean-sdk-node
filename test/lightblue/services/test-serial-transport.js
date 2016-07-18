@@ -31,7 +31,7 @@ class MockNobleCharacteristic {
 
 
 describe('Serial Transport Service', ()=> {
-  describe('commands', ()=> {
+  describe('packets', ()=> {
 
     let transportService
     let mockNobleCharacteristic

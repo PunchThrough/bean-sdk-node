@@ -83,7 +83,7 @@ class SerialTransportService extends BleService {
     // Pack the binary command
     let defn = commands.definitionForCommand(commandId)
     let command = new commands.Command(commandId, defn)
-    let commandPayload = command.pack.apply(command, payloadArguments)
+    let commandPayload = command.pack(payloadArguments)
 
     // Split the command into 1 or more LightBlue packets and queue them
     let numPackets = Math.ceil(commandPayload.length / LB_MAX_PACKET_LENGTH)

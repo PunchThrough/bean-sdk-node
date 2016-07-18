@@ -109,7 +109,7 @@ class Command {
     return buf
   }
 
-  pack(...args) {
+  pack(args) {
     let messageId = this._packMessageId()
     let payload = this._packPayload(args)
     let lengthAndReserved = this._packLengthAndReserved(payload.length)

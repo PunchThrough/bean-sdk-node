@@ -24,22 +24,25 @@ function _loadDefinitions() {
 }
 
 
-function _binaryHelperForType(type) {
+function _createBinaryField(value, fieldDefinition) {
 
-  let binaryHelper = null
+  let binaryField = null
 
-  switch (type) {
+  switch (fieldDefinition.type) {
     case 'uint8':
-      binaryHelper = binary.UInt8
+      binaryField = new binary.UInt8(value)
       break
     case 'uint16':
-      binaryHelper = binary.UInt16
+      binaryField = new binary.UInt16(value)
+      break
+    case 'string':
+      binaryField = new binary.String(value, fieldDefinition.length)
       break
     default:
       console.log(`No binary type found: ${type}`)
   }
 
-  return binaryHelper
+  return binaryField
 
 }
 
@@ -65,53 +68,53 @@ class Command {
     this._definition = definition
   }
 
-  _calculatePayloadSize() {
-    let payloadSize = 0
-    for (var argDefn of this._definition.arguments) {
-      let BinaryArgument = _binaryHelperForType(argDefn.type)
-      payloadSize += BinaryArgument.size()
-    }
-    return payloadSize
+  _concatBuffers(...buffers) {
+    let length = 0
+    for (let b of buffers)
+      length += b.length
+    let buf = buffer.Buffer.concat(buffers, length)
+    return buf
   }
 
-  _calculateCRC(data) {
-    let bufCopy = new buffer.Buffer(data.length - 2)  // 2 is length of CRC
-    data.copy(bufCopy, 0, 0, data.length - 2)
-    return crc.crc16ccitt(bufCopy)
+  _packLengthAndReserved(payloadLength) {
+    let buf = new buffer.Buffer(2)
+    buf.writeUInt8(payloadLength + 2, 0)  // Length = payload + msg ID
+    buf.writeUInt8(0, 1)
+    return buf
+  }
+
+  _packMessageId() {
+    let buf = new buffer.Buffer(2)
+    buf.writeUInt16BE(this._msgId)
+    return buf
+  }
+
+  _packPayload(args) {
+    let packedArgs = []
+    let totalLength = 0
+    for (let index in args) {
+      let fieldDefinition = this._definition.arguments[index]
+      let value = args[index]
+      let field = _createBinaryField(value, fieldDefinition)
+      packedArgs.push(field.pack())
+      totalLength += field.size()
+    }
+    return buffer.Buffer.concat(packedArgs, totalLength)
+  }
+
+  _packCRC(crcBuf) {
+    let crcValue = crc.crc16ccitt(crcBuf)
+    let buf = new buffer.Buffer(2)
+    buf.writeUInt16LE(crcValue)
+    return buf
   }
 
   pack(...args) {
-    let payloadLength = this._calculatePayloadSize()
-    let bufferLength = 1 + 1 + 2 + payloadLength + 2
-    let packed = new buffer.Buffer(bufferLength)
-
-    // Pack length (payload and message ID)
-    packed.writeUInt8(payloadLength + 2, 0)
-
-    // Pack reserved
-    packed.writeUInt8(0, 1)
-
-    // Pack message ID (Big endian)
-    packed.writeUInt16BE(this._msgId, 2)
-
-    // Pack payload
-    let offset = 4
-    for (var index in args) {
-      let argDefn = this._definition.arguments[index]
-      let rawArg = args[index]
-      let BinaryArgument = _binaryHelperForType(argDefn.type)
-      BinaryArgument.pack(packed, rawArg, offset)
-      offset += BinaryArgument.size()
-    }
-
-    // Pack CRC
-    packed.writeUInt16LE(this._calculateCRC(packed), offset)
-
-    return packed
-  }
-
-  unpack(buf) {
-
+    let messageId = this._packMessageId()
+    let payload = this._packPayload(args)
+    let lengthAndReserved = this._packLengthAndReserved(payload.length)
+    let crc = this._packCRC(this._concatBuffers(lengthAndReserved, messageId, payload))
+    return this._concatBuffers(lengthAndReserved, messageId, payload, crc)
   }
 
 }

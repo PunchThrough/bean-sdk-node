@@ -32,11 +32,49 @@ commands:
   0x0510:
     name: "BT_GET_CONFIG"
     arguments: []
-    response: []
+    response:
+      - name: "Advertising Interval"
+        type: "uint16"
+      - name: "Connection Interval"
+        type: "uint16"
+      - name: "Tx Power"
+        type: "uint8"
+      - name: "Advertising Mode"
+        type: "uint8"
+      - name: "iBeacon UUID"
+        type: "uint16"
+      - name: "iBeacon Major ID"
+        type: "uint16"
+      - name: "iBeacon Minor ID"
+        type: "uint16"
+      - name: "Local Name"
+        type: "string"
+        length: 20
+      - name: "Local Name Size"
+        type: "uint8"
 
   0x0511:
     name: "BT_SET_CONFIG"
-    arguments: []
+    arguments:
+      - name: "Advertising Interval"
+        type: "uint16"
+      - name: "Connection Interval"
+        type: "uint16"
+      - name: "Tx Power"
+        type: "uint8"
+      - name: "Advertising Mode"
+        type: "uint8"
+      - name: "iBeacon UUID"
+        type: "uint16"
+      - name: "iBeacon Major ID"
+        type: "uint16"
+      - name: "iBeacon Minor ID"
+        type: "uint16"
+      - name: "Local Name"
+        type: "string"
+        length: 20
+      - name: "Local Name Size"
+        type: "uint8"
     response: []
 
   0x0540:

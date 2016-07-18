@@ -52,5 +52,21 @@ describe('Serial Transport Service', ()=> {
       assert.equal(value[0], 160)  // packet header
     })
 
+    it('BT_SET_CONFIG', ()=> {
+      let completedCallback = sinon.spy()
+      let args = [
+        20,            // adv interval
+        30,            // connection interval
+        16,            // tx power
+        0,             // advertising mode
+        500,           // iBeacon UUID
+        20,            // iBeacon major ID
+        40,            // iBeacon minor ID
+        "foobarbaz",   // local name
+        9,             // local name length
+      ]
+      transportService.sendCommand(commandIds.BT_SET_CONFIG, args, completedCallback)
+    })
+
   })
 })

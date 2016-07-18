@@ -109,7 +109,17 @@ commands:
 
   0x1000:
     name: "BL_CMD_START"
-    arguments: []
+    arguments:
+      - name: "hex_size"
+        type: "uint32"
+      - name: "hex_crc"
+        type: "uint32"
+      - name: "unix_timestamp"
+        type: "uint32"
+      - name: "sketch_name_size"
+        type: "uint8"
+      - name: "sketch_name"
+        type: "string"
     response: []
 
   0x1001:

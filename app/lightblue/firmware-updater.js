@@ -322,6 +322,6 @@ class FirmwareUpdater {
 }
 
 module.exports = {
-  init: FirmwareUpdater,
+  FirmwareUpdater: FirmwareUpdater,
   bakedFirmwareVersion: bakedFirmwareVersion
 }

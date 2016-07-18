@@ -126,18 +126,11 @@ class SerialTransportService extends BleService {
   setup(setupCallback) {
     logger.info('Setting up IDENTIFY and BLOCK notifications')
 
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].notify(true, (err)=> {
-      if (err) {
-        logger.info(err)
-      } else {
-        logger.info('Serial Transport notifications ready')
-      }
-
+    this._setupNotification(UUID_CHAR_SERIAL_TRANSPORT, (err) => {
       setupCallback(err)
-    })
-
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].on('read', (data, isNotification)=> {
-      if (isNotification) this._packetReceived(data)
+      this.registerForNotifications(UUID_CHAR_SERIAL_TRANSPORT, (data) => {
+        this._packetReceived(data)
+      })
     })
 
   }

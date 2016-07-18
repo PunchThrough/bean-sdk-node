@@ -3,7 +3,8 @@
 
 const noble = require('noble')
 const devices = require('./devices')
-const FirmwareUpdater = require('./firmware-updater')
+const FirmwareUpdater = require('./firmware-updater').FirmwareUpdater
+const SketchUploader = require('./sketch-uploader').SketchUploader
 const events = require('events')
 const timers = require('timers')
 const logger = require('./util/logs').logger
@@ -32,7 +33,8 @@ class LightBlueSDK extends events.EventEmitter {
     }
 
     // Dependencies
-    this._fwUpdater = new FirmwareUpdater.init(this)
+    this._fwUpdater = new FirmwareUpdater(this)
+    this._sketchUploader = new SketchUploader()
 
     // State
     this._devices = {}
@@ -153,6 +155,10 @@ class LightBlueSDK extends events.EventEmitter {
 
   updateFirmware(device, callback) {
     this._fwUpdater.beginUpdate(device, callback)
+  }
+
+  uploadSketch(device, sketchBuf, callback) {
+    this._sketchUploader.beginUpload(device, sketchBuf, callback)
   }
 
   connectToDevice(uuid, callback) {

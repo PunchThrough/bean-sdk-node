@@ -7,10 +7,10 @@ const LightBlueSDK = require('../lightblue.js')
 const winston = require('winston')
 
 
-function initSdk() {
+function initSdk(logLevel='error') {
   // We want the SDK to be as silent as possible from the CLI, hence error level
   let loggingOpts = {
-    level: 'error',
+    level: logLevel,
     transports: [
       new (winston.transports.Console)()
     ]
@@ -57,15 +57,17 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.programFirmware(initSdk(), options.bean, options.address, commandComplete)
+    commands.programFirmware(initSdk('info'), options.name, options.address, commandComplete)
   })
 
 
 program
-  .command('program_sketch [bean_name] [hexfile]')
+  .command('program_sketch [hexfile]')
   .description('Program a single sketch to the Bean')
-  .action((beanName, hexFile)=> {
-    commands.programSketch(initSdk(), beanName, hexFile, commandComplete)
+  .option('-n, --name [name]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((hexFile, options)=> {
+    commands.programSketch(initSdk('info'), hexFile, options.name, options.address, commandComplete)
   })
 
 
@@ -75,7 +77,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.blinkLed(initSdk(), options.bean, options.address, commandComplete)
+    commands.blinkLed(initSdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -85,7 +87,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readAccel(initSdk(), options.bean, options.address, commandComplete)
+    commands.readAccel(initSdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -95,7 +97,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readConfig(initSdk(), options.bean, options.address, commandComplete)
+    commands.readConfig(initSdk(), options.name, options.address, commandComplete)
   })
 
 

@@ -3,6 +3,7 @@
 
 const util = require('./util/util')
 const BleServices = require('./services/services')
+const async = require('async')
 
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
@@ -156,7 +157,7 @@ class BleDevice {
         let setupFns = []
 
         for (let nobleService of services) {
-          setupFns.push(function() {
+          setupFns.push((setupCallback)=> {
             let sUUID = util.normalizeUUID(nobleService.uuid)
             let service = null
             if (this._services[sUUID]) {
@@ -167,16 +168,18 @@ class BleDevice {
               service = BleServices.fromNobleService(nobleService)
             }
 
-            service.setup((err)=> {
+            service.setup((setupError)=> {
               console.log(`Service setup successfully: ${service.getName()}`)
+              setupCallback(setupError)
             })
 
             this._services[sUUID] = service
           })
         }
 
-        async.parallel(setupFns, function () {
-          callback()
+        async.parallel(setupFns, function (error, results) {
+          console.log('All services have been setup!')
+          callback(error)
         })
       }
     })

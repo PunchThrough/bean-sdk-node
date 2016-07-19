@@ -1,10 +1,10 @@
 'use strict'
 
 
-let buffer = require('buffer')
-let BleService = require ('./base')
-let util = require('../util/util')
-
+const buffer = require('buffer')
+const BleService = require('./base')
+const util = require('../util/util')
+const async = require('async')
 
 const UUID_SERVICE_OAD = util.normalizeUUID('F000FFC004514000B000000000000000', 16)
 
@@ -62,41 +62,51 @@ class OADService extends BleService {
     return 'OAD Service'
   }
 
-  setup(complete) {
+  setup(setupCallback) {
     console.log('Setting up IDENTIFY and BLOCK notifications')
 
-    // Setup notifications IDENTIFY
-    this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log('IDENTIFY notifications ready')
-        this._notificationsReady = true
-        if (this._triggerIdentifyNotification) {
-          this._writeZerosToIdentify()
-          this._triggerIdentifyNotification = false
-        }
+    async.parallel([
+      (callback)=> {
+        // Setup notifications IDENTIFY
+        this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log('IDENTIFY notifications ready')
+            this._notificationsReady = true
+            if (this._triggerIdentifyNotification) {
+              this._writeZerosToIdentify()
+              this._triggerIdentifyNotification = false
+            }
+          }
+
+          callback(err)
+        })
+
+        this._characteristics[UUID_CHAR_OAD_IDENTIFY].on('read', (data, isNotification)=> {
+          if (isNotification) this._onIdentifyNotification(data)
+        })
+      },
+
+      (callback)=> {
+        // Setup notifications BLOCK
+        this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log('BLOCK notifications ready')
+          }
+
+          callback(err)
+        })
+
+        this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
+          if (isNotification) this._onBlockNotification(data)
+        })
       }
+    ], function (error, results) {
+      setupCallback(error)
     })
-
-    this._characteristics[UUID_CHAR_OAD_IDENTIFY].on('read', (data, isNotification)=> {
-      if (isNotification) this._onIdentifyNotification(data)
-    })
-
-    // Setup notifications BLOCK
-    this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log('BLOCK notifications ready')
-      }
-    })
-
-    this._characteristics[UUID_CHAR_OAD_BLOCK].on('read', (data, isNotification)=> {
-      if (isNotification) this._onBlockNotification(data)
-    })
-
-    complete(null)  // TODO: This is a race condition, should wait for notifications
   }
 
   registerForNotifications(key, cb) {

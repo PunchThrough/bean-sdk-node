@@ -19,8 +19,8 @@ class BleService {
     this._charValueCache = {}
   }
 
-  setup(complete) {
-    complete(null)
+  setup(callback) {
+    callback(null)  // No error
   }
 
   getName() {

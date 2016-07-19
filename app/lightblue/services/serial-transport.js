@@ -75,7 +75,7 @@ class SerialTransportService extends BleService {
     return 'Serial Transport Service'
   }
 
-  setup(complete) {
+  setup(setupCallback) {
     console.log('Setting up IDENTIFY and BLOCK notifications')
 
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].notify(true, (err)=> {
@@ -84,13 +84,15 @@ class SerialTransportService extends BleService {
       } else {
         console.log('Serial Transport notifications ready')
       }
+
+      setupCallback(err)
+
     })
 
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].on('read', (data, isNotification)=> {
       if (isNotification) this._packetReceived(data)
     })
 
-    complete(null)  // TODO: This is a race condition, should wait for notifications
   }
 
   sendCommand(commandId, payloadArguments, completedCallback) {

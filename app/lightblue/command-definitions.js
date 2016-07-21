@@ -2,6 +2,7 @@
 
 
 const binary = require('./util/binary')
+const util = require('./util/util')
 const buffer = require('buffer')
 const yaml = require('js-yaml')
 const fs = require('fs')
@@ -9,7 +10,7 @@ const path = require('path')
 const crc = require('crc')
 
 const DEFINITIONS_FILE = path.join(__dirname, '..', 'resources', 'command-definitions.yaml')
-
+const MESSAGE_RESPONSE_BIT = 0x80
 
 let _defns = null
 
@@ -24,19 +25,19 @@ function _loadDefinitions() {
 }
 
 
-function _createBinaryField(value, fieldDefinition) {
+function _binaryField(type) {
 
   let binaryField = null
 
-  switch (fieldDefinition.type) {
+  switch (type) {
     case 'uint8':
-      binaryField = new binary.UInt8(value)
+      binaryField = binary.UInt8
       break
     case 'uint16':
-      binaryField = new binary.UInt16(value)
+      binaryField = binary.UInt16
       break
     case 'string':
-      binaryField = new binary.String(value, fieldDefinition.length)
+      binaryField = binary.VariableLengthString
       break
     default:
       console.log(`No binary type found: ${type}`)
@@ -47,34 +48,79 @@ function _createBinaryField(value, fieldDefinition) {
 }
 
 
-class Command {
+class Message {
+
   /**
-   * Represents a LightBlue Serial Transport command
+   * Represents a LightBlue Serial Transport Message
    *
    * Defined as:
    *
-   *    [1 byte]       - Length
-   *    [1 byte]       - Reserved
-   *    [2 byte]       - Message ID
-   *    [0-64 bytes]   - Payload
-   *    [2 bytes]      - CRC
+   *    [1 byte]         - Length     (Message ID + Payload)
+   *    [1 byte]         - Reserved
+   *    [2 byte]      BE - Message ID
+   *    [0-64 bytes]  LE - Payload
+   *    [2 bytes]     LE - CRC        (Everything before CRC)
    *
    * @param messageId
    * @param definition
    */
 
-  constructor(messageId, definition) {
+  constructor(messageId, args, definition) {
     this._msgId = messageId
+    this._args = args
     this._definition = definition
   }
 
-  _concatBuffers(...buffers) {
-    let length = 0
-    for (let b of buffers)
-      length += b.length
-    let buf = buffer.Buffer.concat(buffers, length)
-    return buf
+  getMessageId() {
+    return this._msgId
   }
+
+  getArguments() {
+    return this._args
+  }
+
+  getDefinition() {
+    return this._definition
+  }
+
+}
+
+
+class Response extends Message {
+
+  static fromBuffer(buf) {
+    let crcValue = buf.readUInt16LE(buf.length - 2)
+    let crcBuf = buf.slice(0, buf.length - 2)
+    let calcedCrc = crc.crc16ccitt(crcBuf)
+    if (crcValue != calcedCrc) {
+      throw new Error(`CRC Mismatch: ${crcValue} != ${calcedCrc}`)
+    }
+    let length = buf.readUInt8(0)
+    let reserved = buf.readUInt8(1)
+    let responseMessageId = buf.readUInt16BE(2)
+    if (!(responseMessageId & MESSAGE_RESPONSE_BIT)) {
+      throw new Error(`Response bit not set: ${responseMessageId}`)
+    }
+    let messageId = responseMessageId & ~MESSAGE_RESPONSE_BIT
+    let defn = definitionForCommand(messageId)
+    let payloadLength = length - 2  // Subtract message ID from length
+    let payloadBuf = buf.slice(4, 4 + payloadLength)
+    let offset = 0
+    let argValues = []
+    for (let fieldDefinition of defn.response) {
+      let Field = _binaryField(fieldDefinition.type)
+      let binaryField = Field.fromBuffer(payloadBuf, offset, fieldDefinition)
+      offset += binaryField.size()
+      argValues.push(binaryField.getValue())
+    }
+
+    return new Response(messageId, argValues, defn)
+  }
+
+}
+
+
+class Command extends Message {
 
   _packLengthAndReserved(payloadLength) {
     let buf = new buffer.Buffer(2)
@@ -95,9 +141,10 @@ class Command {
     for (let index in args) {
       let fieldDefinition = this._definition.arguments[index]
       let value = args[index]
-      let field = _createBinaryField(value, fieldDefinition)
-      packedArgs.push(field.pack())
-      totalLength += field.size()
+      let Field = _binaryField(fieldDefinition.type)
+      let binaryField = new Field(value, fieldDefinition)
+      packedArgs.push(binaryField.pack())
+      totalLength += binaryField.size()
     }
     return buffer.Buffer.concat(packedArgs, totalLength)
   }
@@ -109,12 +156,12 @@ class Command {
     return buf
   }
 
-  pack(args) {
+  pack() {
     let messageId = this._packMessageId()
-    let payload = this._packPayload(args)
+    let payload = this._packPayload(this._args)
     let lengthAndReserved = this._packLengthAndReserved(payload.length)
-    let crc = this._packCRC(this._concatBuffers(lengthAndReserved, messageId, payload))
-    return this._concatBuffers(lengthAndReserved, messageId, payload, crc)
+    let crc = this._packCRC(util.concatBuffers([lengthAndReserved, messageId, payload]))
+    return util.concatBuffers([lengthAndReserved, messageId, payload, crc])
   }
 
 }
@@ -168,5 +215,6 @@ const commandIds = {
 module.exports = {
   commandIds: commandIds,
   definitionForCommand: definitionForCommand,
-  Command: Command
+  Command: Command,
+  Response: Response
 }

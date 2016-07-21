@@ -23,6 +23,7 @@ function fromExistingDevice(existingDevice, peripheral) {
   return existingDevice
 }
 
+
 function fromNoblePeripheral(peripheral) {
   /**
    * Return a Device class given a Noble peripheral object
@@ -184,7 +185,6 @@ class BleDevice {
       }
     })
   }
-
 }
 
 

@@ -10,7 +10,7 @@ const SerialTransportService = require('../../../app/lightblue/services/serial-t
 
 
 class MockNobleCharacteristic {
-  constructor () {
+  constructor() {
     this._writes = []
   }
 
@@ -18,12 +18,12 @@ class MockNobleCharacteristic {
     return this._writes
   }
 
-  write (buf, withoutResponse, callback) {
+  write(buf, withoutResponse, callback) {
     this._writes.push(buf)
     callback(false)
   }
 
-  read () {
+  read() {
 
   }
 
@@ -31,7 +31,7 @@ class MockNobleCharacteristic {
 
 
 describe('Serial Transport Service', ()=> {
-  describe('packets', ()=> {
+  describe('commands', ()=> {
 
     let transportService
     let mockNobleCharacteristic
@@ -43,7 +43,7 @@ describe('Serial Transport Service', ()=> {
       transportService = new SerialTransportService(mockChars, null)
     })
 
-    it('CC_LED_WRITE_ALL', ()=> {
+    it('CC_LED_WRITE_ALL command', ()=> {
       let completedCallback = sinon.spy()
       transportService.sendCommand(commandIds.CC_LED_WRITE_ALL, [1, 2, 3], completedCallback)
       let writes = mockNobleCharacteristic.getWrites()
@@ -52,7 +52,7 @@ describe('Serial Transport Service', ()=> {
       assert.equal(packet.length, 10)
     })
 
-    it('BT_SET_CONFIG', ()=> {
+    it('BT_SET_CONFIG command', ()=> {
       let completedCallback = sinon.spy()
       let args = [
         20,            // adv interval
@@ -68,6 +68,25 @@ describe('Serial Transport Service', ()=> {
       transportService.sendCommand(commandIds.BT_SET_CONFIG, args, completedCallback)
       let writes = mockNobleCharacteristic.getWrites()
       assert.equal(writes.length, 3)
+    })
+
+    it('CC_READ_ACCEL response', ()=> {
+      let responseRaw = new buffer.Buffer(14)
+      responseRaw[0] = 160
+      responseRaw[0] = 9
+      responseRaw[0] = 0
+      responseRaw[0] = 32
+      responseRaw[0] = 144
+      responseRaw[0] = 96
+      responseRaw[0] = 255
+      responseRaw[0] = 2
+      responseRaw[0] = 0
+      responseRaw[0] = 186
+      responseRaw[0] = 0
+      responseRaw[0] = 2
+      responseRaw[0] = 91
+      responseRaw[0] = 115
+      transportService._packetReceived(responseRaw)
     })
 
   })

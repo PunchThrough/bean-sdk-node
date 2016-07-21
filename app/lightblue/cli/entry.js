@@ -1,8 +1,22 @@
 'use strict'
 
+
 const program = require('commander')
 const commands = require('./commands/commands.js')
 const LightBlueSDK = require('../lightblue.js')
+const winston = require('winston')
+
+
+function initSdk() {
+  // We want the SDK to be as silent as possible from the CLI, hence error level
+  let loggingOpts = {
+    level: 'error',
+    transports: [
+      new (winston.transports.Console)()
+    ]
+  }
+  return new LightBlueSDK(loggingOpts)
+}
 
 
 function quit(rc, message) {
@@ -33,7 +47,7 @@ program
   .command('scan')
   .description('Scan for LightBlue devices')
   .action((options)=> {
-    commands.startScan(new LightBlueSDK())
+    commands.startScan(initSdk())
   })
 
 
@@ -43,7 +57,7 @@ program
   .option('-b, --bean [bean]', 'Bean name')
   .option('-u, --uuid [uuid]', 'Bean address (UUID)')
   .action((options)=> {
-    commands.programFirmware(new LightBlueSDK(), options.bean, options.uuid, commandComplete)
+    commands.programFirmware(initSdk(), options.bean, options.uuid, commandComplete)
   })
 
 
@@ -51,7 +65,7 @@ program
   .command('program_sketch [bean_name] [hexfile]')
   .description('Program a single sketch to the Bean')
   .action((beanName, hexFile)=> {
-    commands.programSketch(new LightBlueSDK(), beanName, hexFile, commandComplete)
+    commands.programSketch(initSdk(), beanName, hexFile, commandComplete)
   })
 
 
@@ -61,7 +75,7 @@ program
   .option('-b, --bean [bean]', 'Bean name')
   .option('-u, --uuid [uuid]', 'Bean address (UUID)')
   .action((options)=> {
-    commands.blinkLed(new LightBlueSDK(), options.bean, options.uuid, commandComplete)
+    commands.blinkLed(initSdk(), options.bean, options.uuid, commandComplete)
   })
 
 
@@ -71,7 +85,7 @@ program
   .option('-b, --bean [bean]', 'Bean name')
   .option('-u, --uuid [uuid]', 'Bean address (UUID)')
   .action((options)=> {
-    commands.readAccel(new LightBlueSDK(), options.bean, options.uuid, commandComplete)
+    commands.readAccel(initSdk(), options.bean, options.uuid, commandComplete)
   })
 
 

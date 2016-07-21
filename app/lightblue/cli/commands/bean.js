@@ -24,14 +24,14 @@ function readAccel(sdk, beanName, beanUUID, completedCallback) {
 
 
 
-    async.timesSeries(20, (n, next)=> {
+    async.timesSeries(30, (n, next)=> {
       device.readAccelerometer((xAxis, yAxis, zAxis, sensitivity)=> {
-        let out = 'Accelerometer Reading:\n'
+        let out = ''
         out += `    X: ${xAxis}`
         out += `    Y: ${yAxis}`
         out += `    Z: ${zAxis}`
         console.log(out)
-        sleep.usleep(500)
+        sleep.usleep(500000)
         next()
       })
     }, (err, results)=> {

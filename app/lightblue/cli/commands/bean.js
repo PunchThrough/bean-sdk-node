@@ -4,6 +4,7 @@
 const common = require('./common')
 const sleep = require('sleep')
 const async = require('async')
+const sprintf = require('sprintf-js').sprintf
 
 
 function blinkLed(sdk, beanName, beanUUID, completedCallback) {
@@ -26,10 +27,10 @@ function readAccel(sdk, beanName, beanUUID, completedCallback) {
 
     async.timesSeries(30, (n, next)=> {
       device.readAccelerometer((xAxis, yAxis, zAxis, sensitivity)=> {
-        let out = ''
-        out += `    X: ${xAxis}`
-        out += `    Y: ${yAxis}`
-        out += `    Z: ${zAxis}`
+        let xOut = sprintf("X: %-10s", xAxis)
+        let yOut = sprintf("Y: %-10s", yAxis)
+        let zOut = sprintf("Z: %-10s", zAxis)
+        let out = `${xOut}${yOut}${zOut}`
         console.log(out)
         sleep.usleep(500000)
         next()

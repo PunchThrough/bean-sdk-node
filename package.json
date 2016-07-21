@@ -46,6 +46,7 @@
     "json-loader": "*",
     "mocha": "*",
     "node-loader": "*",
-    "sinon": "^1.17.4"
+    "sinon": "^1.17.4",
+    "sprintf-js": "^1.0.3"
   }
 }

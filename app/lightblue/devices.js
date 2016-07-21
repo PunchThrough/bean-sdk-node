@@ -42,8 +42,8 @@ function fromNoblePeripheral(peripheral) {
 
 class BleDevice {
 
-  constructor(uuid, name, noble_peripheral) {
-    this._uuid = uuid
+  constructor(address, name, noble_peripheral) {
+    this._address = address
     this._name = name
     this._noblePeripheral = noble_peripheral
 
@@ -69,8 +69,8 @@ class BleDevice {
     return DEVICE_TYPE_BLE
   }
 
-  getUUID() {
-    return this._uuid
+  getAddress() {
+    return this._address
   }
 
   getName() {
@@ -94,7 +94,7 @@ class BleDevice {
     let adv = this._noblePeripheral.advertisement
     let out = `${this.getType()}:\n`
     out += `    Name: ${this._name}\n`
-    out += `    UUID: ${this._uuid}\n`
+    out += `    Address: ${this._address}\n`
     out += `    Advertised Services:\n`
     if (adv.serviceUuids.length > 0) {
       for (let i in adv.serviceUuids) {
@@ -107,13 +107,13 @@ class BleDevice {
   }
 
   toString() {
-    return `${this._name}(${this._uuid})`
+    return `${this._name}(${this._address})`
   }
 
   serialize() {
     return {
       name: this._name,
-      uuid: this._uuid,
+      address: this._address,
       device_type: this.getType()
     }
   }

@@ -92,7 +92,7 @@ class LightBlueSDK extends events.EventEmitter {
 
       let device = devices.fromNoblePeripheral(peripheral)
       if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
-        this._devices[device.getUUID()] = device
+        this._devices[device.getAddress()] = device
         this.emit('discover', device)
       }
     }

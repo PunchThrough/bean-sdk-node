@@ -1,10 +1,10 @@
 'use strict'
 
 
-function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
+function connectToBean(sdk, name, address, successCallback, errorCallback) {
 
-  if (!name && !uuid) {
-    errorCallback("Please provide bean name or UUID")
+  if (!name && !address) {
+    errorCallback("Please provide bean name or address")
   }
 
   let found = false
@@ -12,16 +12,16 @@ function connectToBean(sdk, name, uuid, successCallback, errorCallback) {
   sdk.startScanning(15, ()=> {
     // Scan timeout
     if (!found) {
-      errorCallback(`No Bean found with name/uuid: ${name}/${uuid}`)
+      errorCallback(`No Bean found with name/address: ${name}/${address}`)
     }
   })
 
   sdk.on('discover', (device)=> {
-    if (device.getName() === name || device.getUUID() === uuid) {
-      console.log(`Found Bean with name/uuid: ${device.getName()}/${device.getUUID()}`)
+    if (device.getName() === name || device.getAddress() === address) {
+      console.log(`Found Bean with name/address: ${device.getName()}/${device.getAddress()}`)
       found = true
 
-      sdk.connectToDevice(device.getUUID(), (err)=> {
+      sdk.connectToDevice(device.getAddress(), (err)=> {
 
         if (err) {
           errorCallback(`Bean connection failed: ${err}`)

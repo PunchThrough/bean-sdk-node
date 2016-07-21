@@ -54,10 +54,10 @@ program
 program
   .command('program_firmware')
   .description('Program bean firmware')
-  .option('-b, --bean [bean]', 'Bean name')
-  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .option('-n, --name [name]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.programFirmware(initSdk(), options.bean, options.uuid, commandComplete)
+    commands.programFirmware(initSdk(), options.bean, options.address, commandComplete)
   })
 
 
@@ -72,30 +72,30 @@ program
 program
   .command('blink_led')
   .description('Blink on-board Bean LED')
-  .option('-b, --bean [bean]', 'Bean name')
-  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .option('-n, --name [name]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.blinkLed(initSdk(), options.bean, options.uuid, commandComplete)
+    commands.blinkLed(initSdk(), options.bean, options.address, commandComplete)
   })
 
 
 program
   .command('read_accel')
   .description('Read accelerometer data')
-  .option('-b, --bean [bean]', 'Bean name')
-  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .option('-n, --name [name]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readAccel(initSdk(), options.bean, options.uuid, commandComplete)
+    commands.readAccel(initSdk(), options.bean, options.address, commandComplete)
   })
 
 
 program
   .command('read_config')
   .description('Read BLE config')
-  .option('-b, --bean [bean]', 'Bean name')
-  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readConfig(initSdk(), options.bean, options.uuid, commandComplete)
+    commands.readConfig(initSdk(), options.bean, options.address, commandComplete)
   })
 
 

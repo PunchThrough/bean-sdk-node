@@ -1,8 +1,9 @@
 'use strict'
 
 
-let async = require('async')
-let BleService = require ('./base')
+const async = require('async')
+const BleService = require ('./base')
+const logger = require('../util/logs').logger
 
 
 const UUID_SERVICE_DEVICE_INFORMATION = 0x180A
@@ -29,7 +30,7 @@ class DeviceInformationService extends BleService {
   _performCachedLookup(key, callback) {
     if (this._charValueCache[key]) {
       let cachedVal = this._charValueCache[key]
-      console.log(`Got cached value(${key}): ${cachedVal}`)
+      logger.info(`Got cached value(${key}): ${cachedVal}`)
       callback(null, cachedVal)
       return
     }
@@ -37,11 +38,11 @@ class DeviceInformationService extends BleService {
     let char = this._characteristics[key]
     char.read((err, data)=> {
       if (err) {
-        console.log(`Error reading characteristic(${key.toString(16)}): ${err}`)
+        logger.info(`Error reading characteristic(${key.toString(16)}): ${err}`)
         callback(err, null)
       } else {
         this._charValueCache[key] = data
-        console.log(`Char read success(${key.toString(16)}): ${data}`)
+        logger.info(`Char read success(${key.toString(16)}): ${data}`)
         callback(null, data)
       }
     })
@@ -77,7 +78,7 @@ class DeviceInformationService extends BleService {
       (cb) => this.getSoftwareVersion(cb)
     ], (err, results) => {
       if (err) {
-        console.log(err)
+        logger.info(err)
         finalCallback(err, null)
       } else {
         finalCallback(null, {

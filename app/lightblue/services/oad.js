@@ -5,9 +5,10 @@ const buffer = require('buffer')
 const BleService = require('./base')
 const util = require('../util/util')
 const async = require('async')
+const logger = require('../util/logs').logger
+
 
 const UUID_SERVICE_OAD = util.normalizeUUID('F000FFC004514000B000000000000000', 16)
-
 const UUID_CHAR_OAD_IDENTIFY = util.normalizeUUID('F000FFC104514000B000000000000000', 16)
 const UUID_CHAR_OAD_BLOCK = util.normalizeUUID('F000FFC204514000B000000000000000', 16)
 
@@ -51,9 +52,9 @@ class OADService extends BleService {
     let zeros = new buffer.Buffer(16).fill(0)
     this._characteristics[UUID_CHAR_OAD_IDENTIFY].write(zeros, true, (err)=> {
       if (err) {
-        console.log(`Error: ${err}`)
+        logger.info(`Error: ${err}`)
       } else {
-        console.log('Triggered a notification on Identify char')
+        logger.info('Triggered a notification on Identify char')
       }
     })
   }
@@ -63,16 +64,16 @@ class OADService extends BleService {
   }
 
   setup(setupCallback) {
-    console.log('Setting up IDENTIFY and BLOCK notifications')
+    logger.info('Setting up IDENTIFY and BLOCK notifications')
 
     async.parallel([
       (callback)=> {
         // Setup notifications IDENTIFY
         this._characteristics[UUID_CHAR_OAD_IDENTIFY].notify(true, (err)=> {
           if (err) {
-            console.log(err)
+            logger.info(err)
           } else {
-            console.log('IDENTIFY notifications ready')
+            logger.info('IDENTIFY notifications ready')
             this._notificationsReady = true
             if (this._triggerIdentifyNotification) {
               this._writeZerosToIdentify()
@@ -92,9 +93,9 @@ class OADService extends BleService {
         // Setup notifications BLOCK
         this._characteristics[UUID_CHAR_OAD_BLOCK].notify(true, (err)=> {
           if (err) {
-            console.log(err)
+            logger.info(err)
           } else {
-            console.log('BLOCK notifications ready')
+            logger.info('BLOCK notifications ready')
           }
 
           callback(err)

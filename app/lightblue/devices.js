@@ -4,6 +4,7 @@
 const util = require('./util/util')
 const BleServices = require('./services/services')
 const async = require('async')
+const logger = require('./util/logs').logger
 
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
@@ -60,7 +61,7 @@ class BleDevice {
     if (s)
       return s
 
-    console.log(`No such service: ${serviceKey}`)
+    logger.info(`No such service: ${serviceKey}`)
     return null
   }
 
@@ -77,7 +78,7 @@ class BleDevice {
   }
 
   setAutoReconnect(state) {
-    console.log(`Set reconnect for ${this._name}: ${state}`)
+    logger.info(`Set reconnect for ${this._name}: ${state}`)
     this._autoReconnect = state
   }
 
@@ -131,9 +132,9 @@ class BleDevice {
      *
      * @param callback Callback function that takes an error argument
      */
-    console.log(`Connecting to device: ${this._name}`)
+    logger.info(`Connecting to device: ${this._name}`)
     if (this.isConnected()) {
-      console.log('Already connected.')
+      logger.info('Already connected.')
       callback(null)
     } else {
       this._noblePeripheral.connect((err)=> {
@@ -147,11 +148,11 @@ class BleDevice {
   }
 
   lookupServices(callback) {
-    console.log(`Looking up services for device: ${this._name}`)
+    logger.info(`Looking up services for device: ${this._name}`)
 
     this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
-        console.log(`There was an error getting services: ${err}`)
+        logger.info(`There was an error getting services: ${err}`)
         callback(err)
       } else {
 
@@ -170,7 +171,7 @@ class BleDevice {
             }
 
             service.setup((setupError)=> {
-              console.log(`Service setup successfully: ${service.getName()}`)
+              logger.info(`Service setup successfully: ${service.getName()}`)
               setupCallback(setupError)
             })
 
@@ -179,7 +180,7 @@ class BleDevice {
         }
 
         async.parallel(setupFns, function (error, results) {
-          console.log('All services have been setup!')
+          logger.info('All services have been setup!')
           callback(error)
         })
       }

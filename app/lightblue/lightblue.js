@@ -6,6 +6,8 @@ const devices = require('./devices')
 const FirmwareUpdater = require('./firmware-updater')
 const events = require('events')
 const timers = require('timers')
+const logger = require('./util/logs').logger
+const configureLogger = require('./util/logs').configure
 
 
 const NOBLE_STATE_READY = 'poweredOn'
@@ -22,9 +24,14 @@ class LightBlueSDK extends events.EventEmitter {
    *
    */
 
-  constructor() {
+  constructor(loggerOpts=null) {
     super()
 
+    if (loggerOpts) {
+      configureLogger(loggerOpts)
+    }
+
+    // Dependencies
     this._fwUpdater = new FirmwareUpdater.init(this)
 
     // State
@@ -41,21 +48,21 @@ class LightBlueSDK extends events.EventEmitter {
       let d = this._devices[i]
       if (d.isConnected()) {
         d.disconnect()
-        console.log(`Disconnected from Bean: ${d.getName()}`)
+        logger.info(`Disconnected from Bean: ${d.getName()}`)
       }
     }
   }
 
   _autoReconnect(device) {
-    console.log(`Auto reconnecting to ${device.getName()}`)
+    logger.info(`Auto reconnecting to ${device.getName()}`)
     device.connect((err)=> {
       if (err) {
-        console.log(`Error reconnecting to ${device.getName()}`)
+        logger.info(`Error reconnecting to ${device.getName()}`)
       }
       else {
-        console.log(`Auto reconnect to ${device.getName()} success`)
+        logger.info(`Auto reconnect to ${device.getName()} success`)
         if (this._fwUpdater.isInProgress(device)) {
-          console.log('Auto-reconnected to device in middle of FW update')
+          logger.info('Auto-reconnected to device in middle of FW update')
 
           device.lookupServices((err)=> {
             device.getOADService().setupNotifications()
@@ -93,9 +100,9 @@ class LightBlueSDK extends events.EventEmitter {
   }
 
   reset() {
-    console.log('Disconnected all devices!')
+    logger.info('Disconnected all devices!')
     this._disconnectDevices()
-    console.log('Clearing device cache!')
+    logger.info('Clearing device cache!')
     this._devices = {}
     this._fwUpdater.resetState()
   }
@@ -111,22 +118,22 @@ class LightBlueSDK extends events.EventEmitter {
     let ctx = this
 
     if (noble.state === NOBLE_STATE_READY) {
-      console.log('Starting to scan...')
+      logger.info('Starting to scan...')
       noble.startScanning([], true)
       this._scanning = true
     } else {
       noble.on('stateChange', function (state) {
         if (state === NOBLE_STATE_READY) {
-          console.log('Starting to scan...')
+          logger.info('Starting to scan...')
           noble.startScanning([], true)
           this._scanning = true
         }
       })
     }
 
-    console.log(`Setting scan timeout: ${timeoutSeconds} seconds`)
+    logger.info(`Setting scan timeout: ${timeoutSeconds} seconds`)
     timers.setTimeout(()=> {
-      console.log("Scan timeout!")
+      logger.info("Scan timeout!")
       ctx.stopScanning()
       if (timeoutCallback) {
         timeoutCallback()
@@ -135,7 +142,7 @@ class LightBlueSDK extends events.EventEmitter {
   }
 
   stopScanning() {
-    console.log('No longer scanning...')
+    logger.info('No longer scanning...')
     noble.stopScanning()
     this._scanning = false
   }
@@ -175,7 +182,7 @@ class LightBlueSDK extends events.EventEmitter {
   }
 
   quitGracefully() {
-    console.log('Quitting LightBlue SDK...')
+    logger.info('Quitting LightBlue SDK...')
     this.stopScanning()
     this._disconnectDevices()
   }

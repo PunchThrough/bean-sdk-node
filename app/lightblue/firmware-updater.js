@@ -4,6 +4,7 @@ let BleServices = require('./services/services')
 let fs = require('fs')
 let path = require('path')
 let buffer = require('buffer')
+const logger = require('./util/logs').logger
 
 const FW_VERSION = '201606030000'
 const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
@@ -63,7 +64,7 @@ class FirmwareUpdater {
 
     if (!init) {
       // We don't want to log anything from the constructor
-      console.log("OAD State Machine reset!")
+      logger.info("OAD State Machine reset!")
     }
 
   }
@@ -73,7 +74,7 @@ class FirmwareUpdater {
      * Helper function: call when an error occurs
      */
 
-    console.log(err)
+    logger.info(err)
     this._completionCallback(err)
     fs.closeSync(this._currentFwFile)
     this.resetState()
@@ -103,26 +104,26 @@ class FirmwareUpdater {
     let blkNoRequested = buf.readUInt16LE(0, 2)
 
     if (blkNoRequested === 0) {
-      console.log('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
-      console.log('Got request for the first BLOCK of FW')
+      logger.info('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      logger.info('Got request for the first BLOCK of FW')
       this._stateStep = OAD_STEP_STATE_BLOCK_XFER
 
       // calculate size of image to get total blocks
       let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
-      console.log(`Total blocks: ${this._totalBlocks}`)
-      console.log(`FW file size: ${fwFileStats.size}`)
+      logger.info(`Total blocks: ${this._totalBlocks}`)
+      logger.info(`FW file size: ${fwFileStats.size}`)
       this._step += 1
-      console.log(`Starting step #${this._step}!`)
+      logger.info(`Starting step #${this._step}!`)
       this._lb.stopScanning()
       this._blockTransferStartTime = Math.round(+new Date() / 1000)
     }
 
     if (blkNoRequested % 512 === 0)
-      console.log(`Got request for FW block ${blkNoRequested}`)
+      logger.info(`Got request for FW block ${blkNoRequested}`)
 
     if (DEBUG)
-      console.log(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
+      logger.info(`${Math.round(+new Date())} - REQUESTED: ${blkNoRequested}`)
 
     while (this._stateStep == OAD_STEP_STATE_BLOCK_XFER &&
            this._nextBlock <= this._totalBlocks &&
@@ -142,25 +143,25 @@ class FirmwareUpdater {
       let finalBuf = buffer.Buffer.concat([blockAddr, blkBuf])
       this._deviceInProgress.getOADService().writeToBlock(finalBuf, (err)=> {
         if (err)
-          console.log(`Error writing to block char: ${err}`)
+          logger.info(`Error writing to block char: ${err}`)
       })
 
       if (DEBUG)
-        console.log(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
+        logger.info(`${Math.round(+new Date())} - SENT: ${this._nextBlock}`)
 
       this._nextBlock += 1
     }
 
     if (this._nextBlock > this._totalBlocks) {
-      console.log('Last block Sent')
+      logger.info('Last block Sent')
       let blockEndTime = Math.round(+new Date() / 1000)
-      console.log(`Sent ${this._totalBlocks} in ${blockEndTime - this._blockTransferStartTime} seconds`)
+      logger.info(`Sent ${this._totalBlocks} in ${blockEndTime - this._blockTransferStartTime} seconds`)
       this._nextBlock = 0  // Reset Back to 0 for new file or done FWU!
       this._fileOfferedIndex = -1  // reset fileOfferedIndex
 
       this._lb.startScanning()
       this._stateStep = OAD_STEP_STATE_REBOOTING
-      console.log(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
+      logger.info(`Waiting for device to reset: ${this._deviceInProgress.toString()}`)
     }
 
   }
@@ -176,7 +177,7 @@ class FirmwareUpdater {
      */
 
     if (this._fileOfferedIndex != -1) {
-      console.log('REJECTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      logger.info('REJECTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
     }
 
     this._stateStep = OAD_STEP_STATE_OFFERING_FILES
@@ -198,11 +199,11 @@ class FirmwareUpdater {
       return this._fail('Internal error: failed to read FW file')
     }
 
-    console.log(`Offering image: ${filename}`)
+    logger.info(`Offering image: ${filename}`)
 
     this._deviceInProgress.getOADService().writeToIdentify(hdrBuf, (err)=> {
       if (err)
-        console.log(`Error writing to identify char: ${err}`)
+        logger.info(`Error writing to identify char: ${err}`)
     })
   }
 
@@ -224,7 +225,7 @@ class FirmwareUpdater {
         let v = ''
         if (buffer.Buffer.isBuffer(fwVersion))
           v = fwVersion.toString('utf8').split(' ')[0]
-        console.log(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
+        logger.info(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
         if (this._storedFwVersion === v && this._deviceInProgress != null) {
           callback('Versions are the same, no update needed')
         } else {
@@ -250,15 +251,15 @@ class FirmwareUpdater {
      * @param device a LB Device object
      */
 
-    console.log('Checking if device is in progress...')
+    logger.info('Checking if device is in progress...')
 
     if (this._deviceInProgress === null) {
-      console.log('No device is in progress!')
+      logger.info('No device is in progress!')
       return false
     }
 
-    console.log(`Current device in progress: ${this._deviceInProgress.toString()}`)
-    console.log(`Questionable device: ${device.toString()}`)
+    logger.info(`Current device in progress: ${this._deviceInProgress.toString()}`)
+    logger.info(`Questionable device: ${device.toString()}`)
     return device.getUUID() === this._deviceInProgress.getUUID()
 
   }
@@ -268,24 +269,24 @@ class FirmwareUpdater {
      * Continue an update procedure for `device` assuming it passes FW version check
      */
 
-    console.log('Continue update called')
+    logger.info('Continue update called')
 
     this._checkFirmwareVersion(this._deviceInProgress, (err)=> {
       if (err) {
         if (this._completionCallback) {
-          console.log(`${err}`)
-          console.log(`FW update COMPLETED for ${this._deviceInProgress.toString()}`)
+          logger.info(`${err}`)
+          logger.info(`FW update COMPLETED for ${this._deviceInProgress.toString()}`)
           let end = Math.round(+new Date() / 1000)
           let sum = end - this._fwBeginTime
-          console.log(`FW update process took ${sum} seconds`)
+          logger.info(`FW update process took ${sum} seconds`)
           this._completionCallback(null, err)  // This should mean we are done!!
           this.resetState()
         } else {
-          console.log(`FW Version Error: ${err}`)
+          logger.info(`FW Version Error: ${err}`)
         }
 
       } else {
-        console.log(`Continuing FW update for device ${this._deviceInProgress.toString()}`)
+        logger.info(`Continuing FW update for device ${this._deviceInProgress.toString()}`)
         this._deviceInProgress.getOADService().triggerIdentifyHeaderNotification()
       }
     })
@@ -299,21 +300,21 @@ class FirmwareUpdater {
      * @param callback A callback function that takes one param, an error
      */
 
-    console.log('Begin update called')
+    logger.info('Begin update called')
 
     this._checkFirmwareVersion(device, (err)=> {
       if (err) {
-        console.log(`FW Version Error: ${err}`)
+        logger.info(`FW Version Error: ${err}`)
         callback(err)
       } else {
-        console.log(`Starting FW update for device ${device.toString()}`)
+        logger.info(`Starting FW update for device ${device.toString()}`)
         this._stateGlobal = OAD_STATE_IN_PROGRESS
         this._deviceInProgress = device
         this._completionCallback = callback
         device.setAutoReconnect(true)
         this._registerNotifications(device)
         this._fwBeginTime = Math.round(+new Date() / 1000)
-        console.log(`Begin FW @ ${this._fwBeginTime}`)
+        logger.info(`Begin FW @ ${this._fwBeginTime}`)
         device.getOADService().triggerIdentifyHeaderNotification()
       }
     })

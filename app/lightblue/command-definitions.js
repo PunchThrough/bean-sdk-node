@@ -8,6 +8,7 @@ const yaml = require('js-yaml')
 const fs = require('fs')
 const path = require('path')
 const crc = require('crc')
+const logger = require('./util/logs').logger
 
 const DEFINITIONS_FILE = path.join(__dirname, '..', 'resources', 'command-definitions.yaml')
 const MESSAGE_RESPONSE_BIT = 0x80
@@ -20,7 +21,7 @@ function _loadDefinitions() {
     let rawDefs = yaml.safeLoad(fs.readFileSync(DEFINITIONS_FILE, 'utf8'))
     _defns = rawDefs.commands
   } catch (e) {
-    console.log(`Failed to load definitions: ${e}`)
+    logger.info(`Failed to load definitions: ${e}`)
   }
 }
 
@@ -40,7 +41,7 @@ function _binaryField(type) {
       binaryField = binary.VariableLengthString
       break
     default:
-      console.log(`No binary type found: ${type}`)
+      logger.info(`No binary type found: ${type}`)
   }
 
   return binaryField

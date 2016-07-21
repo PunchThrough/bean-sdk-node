@@ -5,6 +5,7 @@ const BleService = require ('./base')
 const util = require('../util/util')
 const commands = require('../command-definitions')
 const buffer = require('buffer')
+const logger = require('../util/logs').logger
 
 
 const LB_MAX_PACKET_LENGTH = 19
@@ -25,7 +26,7 @@ class LightBluePacket {
 
   constructor(first, packetCount, packetsRemaining, payload) {
     if (payload.length > 19) {
-      console.log("Payload length cannot be greater than 19")
+      logger.info("Payload length cannot be greater than 19")
     }
     this._first = first
     this._packetCount = packetCount
@@ -79,7 +80,7 @@ class SerialTransportService extends BleService {
   _packetReceived(buf) {
     let packet = LightBluePacket.fromBuffer(buf)
     this._incomingPackets.push(packet)
-    console.log(`Received LightBlue packet: ${packet.toString()}`)
+    logger.info(`Received LightBlue packet: ${packet.toString()}`)
 
     if (packet.finalPacket()) {
       let packetPayloads = []
@@ -94,14 +95,14 @@ class SerialTransportService extends BleService {
   _sendLightBluePackets() {
     let packet = this._outgoingPackets.shift()
     let packed = packet.pack()
-    console.log(`Sending LightBlue Packet: ${packed.toString()}`)
+    logger.info(`Sending LightBlue Packet: ${packed.toString()}`)
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packed, true, (err)=> {
       if (err) {
-        console.log(`Error sending LightBlue Packet: ${err}`)
+        logger.info(`Error sending LightBlue Packet: ${err}`)
       }
 
       if (this._outgoingPackets.length == 0) {
-        console.log('Last LightBlue packet sent!')
+        logger.info('Last LightBlue packet sent!')
       } else {
         this._sendLightBluePackets()
       }
@@ -114,7 +115,7 @@ class SerialTransportService extends BleService {
     if (callback){
       callback.apply(callback, response.getArguments())
     } else {
-      console.log(`Got serial response (${response.getMessageId()}) but no callback!`)
+      logger.info(`Got serial response (${response.getMessageId()}) but no callback!`)
     }
   }
 
@@ -123,13 +124,13 @@ class SerialTransportService extends BleService {
   }
 
   setup(setupCallback) {
-    console.log('Setting up IDENTIFY and BLOCK notifications')
+    logger.info('Setting up IDENTIFY and BLOCK notifications')
 
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].notify(true, (err)=> {
       if (err) {
-        console.log(err)
+        logger.info(err)
       } else {
-        console.log('Serial Transport notifications ready')
+        logger.info('Serial Transport notifications ready')
       }
 
       setupCallback(err)

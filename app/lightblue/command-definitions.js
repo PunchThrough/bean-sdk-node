@@ -166,6 +166,7 @@ class Command extends Message {
 
 }
 
+
 function definitionForCommand(cmdId) {
   if (!_defns) {
     _loadDefinitions()
@@ -173,6 +174,7 @@ function definitionForCommand(cmdId) {
 
   return _defns[cmdId]
 }
+
 
 const commandIds = {
   SERIAL_DATA: 0x0000,

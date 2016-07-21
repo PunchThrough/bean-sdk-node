@@ -87,7 +87,6 @@ class VariableLengthString extends BinaryField {
 }
 
 
-
 module.exports = {
   UInt8: UInt8,
   UInt16: UInt16,

@@ -112,7 +112,7 @@ class SerialTransportService extends BleService {
     let response = commands.Response.fromBuffer(buf)
     let callback = this._callbacks[response.getMessageId()]
     if (callback){
-      callback.apply(response.getArguments())
+      callback.apply(callback, response.getArguments())
     } else {
       console.log(`Got serial response (${response.getMessageId()}) but no callback!`)
     }

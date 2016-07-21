@@ -212,7 +212,7 @@ class LightBlueDevice extends BleDevice {
 
   readAccelerometer(callback) {
     let cmd = BleServices.serialTransport.commandIds.CC_ACCEL_READ
-    this.getSerialTransportService().sendCommand(cmd, [])
+    this.getSerialTransportService().sendCommand(cmd, [], callback)
   }
 
 }

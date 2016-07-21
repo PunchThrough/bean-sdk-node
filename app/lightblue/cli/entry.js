@@ -89,6 +89,16 @@ program
   })
 
 
+program
+  .command('read_config')
+  .description('Read BLE config')
+  .option('-b, --bean [bean]', 'Bean name')
+  .option('-u, --uuid [uuid]', 'Bean address (UUID)')
+  .action((options)=> {
+    commands.readConfig(initSdk(), options.bean, options.uuid, commandComplete)
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

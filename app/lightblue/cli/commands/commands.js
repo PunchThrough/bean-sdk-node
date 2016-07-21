@@ -8,5 +8,6 @@ module.exports = {
   programSketch: program.programSketch,
   startScan: scan.startScan,
   blinkLed: bean.blinkLed,
-  readAccel: bean.readAccel
+  readAccel: bean.readAccel,
+  readConfig: bean.readConfig
 }

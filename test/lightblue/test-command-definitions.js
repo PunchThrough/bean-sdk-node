@@ -10,12 +10,12 @@ describe('Serial Transport Command Definitions', ()=> {
     it('should pack', ()=> {
       let cmdId = commands.commandIds.CC_LED_WRITE_ALL
       let defn = commands.definitionForCommand(cmdId)
-      let command = new commands.Command(cmdId, defn)
-
       let red = 20
       let green = 30
       let blue = 40
-      let packed = command.pack([red, green, blue])
+      let args = [red, green, blue]
+      let command = new commands.Command(cmdId, args, defn)
+      let packed = command.pack()
       assert.equal(packed.length, 9)
       assert(packed.length === 9)
       assert.equal(packed[0], 5)       // length
@@ -36,8 +36,6 @@ describe('Serial Transport Command Definitions', ()=> {
     it('should pack', ()=> {
       let cmdId = commands.commandIds.BT_SET_CONFIG
       let defn = commands.definitionForCommand(cmdId)
-      let command = new commands.Command(cmdId, defn)
-
       let args = [
         20,            // adv interval
         30,            // connection interval
@@ -49,7 +47,8 @@ describe('Serial Transport Command Definitions', ()=> {
         "foobarbaz",   // local name
         9,             // local name length
       ]
-      let packed = command.pack(args)
+      let command = new commands.Command(cmdId, args, defn)
+      let packed = command.pack()
       assert.equal(packed.length, 39)
 
       // Header
@@ -89,8 +88,8 @@ describe('Serial Transport Command Definitions', ()=> {
     it('should pack', ()=> {
       let cmdId = commands.commandIds.CC_ACCEL_READ
       let defn = commands.definitionForCommand(cmdId)
-      let command = new commands.Command(cmdId, defn)
-      let packed = command.pack([])
+      let command = new commands.Command(cmdId, [], defn)
+      let packed = command.pack()
       assert.equal(packed[0], 2)        // length
       assert.equal(packed[1], 0)        // reserved
       assert.equal(packed[2], 32)       // command ID (MSB) - Command ID big endian

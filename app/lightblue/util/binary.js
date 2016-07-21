@@ -71,7 +71,8 @@ class UInt16 extends BinaryField {
 class VariableLengthString extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new VariableLengthString('', definition)  // TODO: Implement me
+    let strBuf = buf.slice(offset, definition.length + offset)
+    return new VariableLengthString(strBuf.toString('ascii'), definition)
   }
 
   pack() {

@@ -118,6 +118,16 @@ class Response extends Message {
     return new Response(messageId, argValues, defn)
   }
 
+  asObject() {
+    let obj = {}
+    for (let idx in this._definition.response) {
+      let fieldDefn = this._definition.response[idx]
+      let fieldVal = this._args[idx]
+      obj[fieldDefn.name] = fieldVal
+    }
+    return obj
+  }
+
 }
 
 

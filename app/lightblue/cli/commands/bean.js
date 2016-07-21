@@ -23,13 +23,11 @@ function readAccel(sdk, beanName, beanUUID, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 
-
-
     async.timesSeries(30, (n, next)=> {
-      device.readAccelerometer((xAxis, yAxis, zAxis, sensitivity)=> {
-        let xOut = sprintf("X: %-10s", xAxis)
-        let yOut = sprintf("Y: %-10s", yAxis)
-        let zOut = sprintf("Z: %-10s", zAxis)
+      device.readAccelerometer((err, response)=> {
+        let xOut = sprintf("X: %-10s", response.x_axis)
+        let yOut = sprintf("Y: %-10s", response.y_axis)
+        let zOut = sprintf("Z: %-10s", response.z_axis)
         let out = `${xOut}${yOut}${zOut}`
         console.log(out)
         sleep.usleep(500000)
@@ -45,7 +43,27 @@ function readAccel(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
+function readConfig(sdk, beanName, beanUUID, completedCallback) {
+
+  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+    device.readBleConfig((err, response)=> {
+      let out = "\n"
+      out += `    Advertising Interval: ${response.advertising_interval}\n`
+      out += `     Connection Interval: ${response.connection_interval}\n`
+      out += `                Tx Power: ${response.tx_power}\n`
+      out += `        Advertising Mode: ${response.advertising_mode}\n`
+      out += `            iBeacon UUID: ${response.ibeacon_uuid}\n`
+      out += `        iBeacon Major ID: ${response.ibeacon_major_id}\n`
+      out += `        iBeacon Minor ID: ${response.ibeacon_minor_id}\n`
+      out += `              Local Name: ${response.local_name}\n`
+      console.log(out)
+    })
+  })
+}
+
+
 module.exports = {
   blinkLed: blinkLed,
-  readAccel: readAccel
+  readAccel: readAccel,
+  readConfig: readConfig
 }

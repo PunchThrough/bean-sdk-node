@@ -33,47 +33,47 @@ commands:
     name: "BT_GET_CONFIG"
     arguments: []
     response:
-      - name: "Advertising Interval"
+      - name: "advertising_interval"
         type: "uint16"
-      - name: "Connection Interval"
+      - name: "connection_interval"
         type: "uint16"
-      - name: "Tx Power"
+      - name: "tx_power"
         type: "uint8"
-      - name: "Advertising Mode"
+      - name: "advertising_mode"
         type: "uint8"
-      - name: "iBeacon UUID"
+      - name: "ibeacon_uuid"
         type: "uint16"
-      - name: "iBeacon Major ID"
+      - name: "ibeacon_major_id"
         type: "uint16"
-      - name: "iBeacon Minor ID"
+      - name: "ibeacon_minor_id"
         type: "uint16"
-      - name: "Local Name"
+      - name: "local_name"
         type: "string"
         length: 20
-      - name: "Local Name Size"
+      - name: "local_name_size"
         type: "uint8"
 
   0x0511:
     name: "BT_SET_CONFIG"
     arguments:
-      - name: "Advertising Interval"
+      - name: "advertising_interval"
         type: "uint16"
-      - name: "Connection Interval"
+      - name: "connection_interval"
         type: "uint16"
-      - name: "Tx Power"
+      - name: "tx_power"
         type: "uint8"
-      - name: "Advertising Mode"
+      - name: "advertising_mode"
         type: "uint8"
-      - name: "iBeacon UUID"
+      - name: "ibeacon_uuid"
         type: "uint16"
-      - name: "iBeacon Major ID"
+      - name: "ibeacon_major_id"
         type: "uint16"
-      - name: "iBeacon Minor ID"
+      - name: "ibeacon_minor_id"
         type: "uint16"
-      - name: "Local Name"
+      - name: "local_name"
         type: "string"
         length: 20
-      - name: "Local Name Size"
+      - name: "local_name_size"
         type: "uint8"
     response: []
 
@@ -135,11 +135,11 @@ commands:
   0x2001:
     name: "CC_LED_WRITE_ALL"
     arguments:
-      - name: "Red"
+      - name: "red"
         type: "uint8"
-      - name: "Green"
+      - name: "green"
         type: "uint8"
-      - name: "Blue"
+      - name: "blue"
         type: "uint8"
     response: []
 
@@ -152,13 +152,13 @@ commands:
     name: "CC_ACCEL_READ"
     arguments: []
     response:
-      - name: "X Axis"
+      - name: "x_axis"
         type: "uint16"
-      - name: "Y Axis"
+      - name: "y_axis"
         type: "uint16"
-      - name: "Z Axis"
+      - name: "z_axis"
         type: "uint16"
-      - name: "Sensitivity"
+      - name: "sensitivity"
         type: "uint8"
 
   0x2011:

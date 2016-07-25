@@ -1,4 +1,5 @@
 const fsm = require('../../lib/jsfsm/fsm')
+const logger = require('./util/logs').logger
 
 
 const STATE_INACTIVE = 'STATE_INACTIVE'
@@ -13,8 +14,8 @@ class SketchUploader {
     this._process = null
   }
 
-  beginUpload(device, sketchBuf, callback) {
-    this._process = new UploadProcess(device, sketchBuf, callback)
+  beginUpload(device, sketchBuf, sketchName, callback) {
+    this._process = new UploadProcess(device, sketchBuf, sketchName, callback)
     this._process.start()
   }
 
@@ -22,11 +23,12 @@ class SketchUploader {
 
 
 class UploadProcess extends fsm.Context {
-  constructor(device, sketchBuf, callback) {
+  constructor(device, sketchBuf, sketchName, callback) {
     super()
 
     this._device = device
     this._sketchBuf = sketchBuf
+    this._sketchName = sketchName
     this._callback = callback
 
     this._states = {
@@ -41,7 +43,7 @@ class UploadProcess extends fsm.Context {
   }
 
   start() {
-
+    logger.info(`Beginning sketch upload of sketch: ${this._sketchName}`)
     this.setState(STATE_AWAIT_READY)
   }
 
@@ -51,6 +53,10 @@ class UploadProcess extends fsm.Context {
 
   getSketchBuffer() {
     return this._sketchBuf
+  }
+
+  getSketchName() {
+    return this._sketchName
   }
 }
 
@@ -72,7 +78,7 @@ class StateInactive extends SketchUploadState {
 class StateAwaitReady extends SketchUploadState {
   enterState() {
     let serialTransport = this.ctx.getDevice().getSerialTransportService()
-    serialTransport.sendCommand()
+
   }
 }
 

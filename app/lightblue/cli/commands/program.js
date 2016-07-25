@@ -2,8 +2,8 @@
 
 const FirmwareUpdater = require('../../firmware-updater')
 const common = require('./common')
-const buffer = require('buffer')
 const fs = require('fs')
+const path = require('path')
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
@@ -25,8 +25,11 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 
 function programSketch(sdk, hexFile, beanName, beanUUID, completedCallback) {
 
+  let sketchBuf = fs.readFileSync(hexFile)
+  let sketchName = path.parse(hexFile).name
+
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
-    sdk.uploadSketch(device, fs.readFileSync(hexFile), (err)=> {
+    sdk.uploadSketch(device, sketchBuf, sketchName, (err)=> {
 
     })
   }, completedCallback)

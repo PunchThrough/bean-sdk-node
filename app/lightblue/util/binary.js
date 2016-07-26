@@ -7,7 +7,7 @@ const buffer = require('buffer')
 class BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    throw new Error("Subclasses must implement .fromBuffer(buf)")
+    throw new Error("Subclasses must implement .fromBuffer(buf, offset, definition)")
   }
 
   constructor(value, defn) {
@@ -68,6 +68,25 @@ class UInt16 extends BinaryField {
 }
 
 
+class UInt32 extends BinaryField {
+
+  static fromBuffer(buf, offset, definition) {
+    return new UInt32(buf.readUInt32LE(buf, offset), definition)
+  }
+
+  pack() {
+    let buf = new buffer.Buffer(4)
+    buf.writeUInt32LE(this._value, 0)
+    return buf
+  }
+
+  size() {
+    return 4
+  }
+
+}
+
+
 class VariableLengthString extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
@@ -91,5 +110,6 @@ class VariableLengthString extends BinaryField {
 module.exports = {
   UInt8: UInt8,
   UInt16: UInt16,
+  UInt32: UInt32,
   VariableLengthString: VariableLengthString
 }

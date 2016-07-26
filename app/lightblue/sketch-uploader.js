@@ -31,7 +31,7 @@ class UploadProcess extends fsm.Context {
     this._sketchName = sketchName
     this._callback = callback
 
-    this._states = {
+    this.states = {
       STATE_INACTIVE: StateInactive,
       STATE_AWAIT_READY: StateAwaitReady,
       STATE_BLOCK_TRANSFER: StateBlockTransfer,

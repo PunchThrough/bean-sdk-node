@@ -37,6 +37,9 @@ function _binaryField(type) {
     case 'uint16':
       binaryField = binary.UInt16
       break
+    case 'uint32':
+      binaryField = binary.UInt32
+      break
     case 'string':
       binaryField = binary.VariableLengthString
       break

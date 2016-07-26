@@ -92,12 +92,22 @@ program
 
 
 program
-  .command('read_config')
+  .command('read_ble_config')
   .description('Read BLE config')
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
     commands.readConfig(initSdk(), options.name, options.address, commandComplete)
+  })
+
+
+program
+  .command('read_device_info')
+  .description('Read Device Information')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((options)=> {
+    commands.readDeviceInfo(initSdk(), options.name, options.address, commandComplete)
   })
 
 

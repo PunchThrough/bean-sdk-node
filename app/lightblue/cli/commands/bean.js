@@ -62,8 +62,26 @@ function readConfig(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
+function readDeviceInfo(sdk, beanName, beanUUID, completedCallback) {
+
+  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+    let dis = device.getDeviceInformationService()
+    dis.serialize((err, info) => {
+      let out = "\n"
+      out += `      Manufacturer: ${info.manufacturer_name}\n`
+      out += `      Model Number: ${info.model_number}\n`
+      out += `  Hardware Version: ${info.hardware_version}\n`
+      out += `  Firmware Version: ${info.firmware_version}\n`
+      out += `  Software Version: ${info.software_version}\n`
+      console.log(out)
+    })
+  })
+}
+
+
 module.exports = {
   blinkLed: blinkLed,
   readAccel: readAccel,
-  readConfig: readConfig
+  readConfig: readConfig,
+  readDeviceInfo: readDeviceInfo
 }

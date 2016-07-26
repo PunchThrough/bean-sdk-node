@@ -1,4 +1,4 @@
-commands:
+outgoing:
   0x0000:
     name: "SERIAL_DATA"
     arguments: []
@@ -120,15 +120,11 @@ commands:
         type: "uint8"
       - name: "sketch_name"
         type: "string"
+        length: 20
     response: []
 
   0x1001:
     name: "BL_FW_BLOCK"
-    arguments: []
-    response: []
-
-  0x1002:
-    name: "BL_STATUS"
     arguments: []
     response: []
 
@@ -229,4 +225,32 @@ commands:
   0xFE03:
     name: "DB_PTM"
     arguments: []
+    response: []
+
+
+incoming:
+  0x0001:
+    name: "ERROR"
+    arguments:
+      - name: "length"
+        type: "uint8"
+      - name: "expected_header"
+        type: "uint8"
+      - name: "recieved_header"
+        type: "uint8"
+      - name: "reserved"
+        type: "uint16"
+    response: []
+
+  0x1002:
+    name: "BL_STATUS"
+    arguments:
+      - name: "state"
+        type: "uint8"
+      - name: "substate"
+        type: "uint8"
+      - name: "blocks_sent"
+        type: "uint16"
+      - name: "bytes_sent"
+        type: "uint16"
     response: []

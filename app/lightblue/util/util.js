@@ -1,4 +1,5 @@
 const buffer = require('buffer')
+const crc = require('crc')
 
 
 function normalizeUUID(uuid) {
@@ -15,7 +16,13 @@ function concatBuffers(buffers) {
 }
 
 
+function crc16(buf) {
+  return crc.crc16ccitt(buf)
+}
+
+
 module.exports = {
   normalizeUUID: normalizeUUID,
-  concatBuffers: concatBuffers
+  concatBuffers: concatBuffers,
+  crc16: crc16
 }

@@ -1,5 +1,7 @@
 const fsm = require('../../lib/jsfsm/fsm')
 const logger = require('./util/logs').logger
+const util = require('./util/util')
+const commandIds = require('./command-definitions').commandIds
 
 
 const STATE_INACTIVE = 'STATE_INACTIVE'
@@ -77,8 +79,17 @@ class StateInactive extends SketchUploadState {
 
 class StateAwaitReady extends SketchUploadState {
   enterState() {
+    let sketchBuf = this.ctx.getSketchBuffer()
+    let sketchName = this.ctx.getSketchName()
     let serialTransport = this.ctx.getDevice().getSerialTransportService()
-
+    let cmdArgs = [
+      sketchBuf.length,              // hex size
+      util.crc16(sketchBuf),         // hex crc
+      new Date().getTime() / 1000,   // unix timestamp
+      sketchName.length,             // sketch name size
+      sketchName                     // sketch name
+    ]
+    serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
   }
 }
 

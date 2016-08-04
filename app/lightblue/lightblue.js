@@ -67,7 +67,6 @@ class LightBlueSDK extends events.EventEmitter {
           logger.info('Auto-reconnected to device in middle of FW update')
 
           device.lookupServices((err)=> {
-            device.getOADService().setupNotifications()
             this._fwUpdater.continueUpdate()
           })
 

@@ -7,9 +7,11 @@ const path = require('path')
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
-  console.log('Programming Bean (%s) with firmware (%s).', beanName, FirmwareUpdater.bakedFirmwareVersion())
+  console.log(`Programming Bean ${beanName}`)
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+
+    console.log(`Programming device ${device.getAddress()} with firmware version ${FirmwareUpdater.bakedFirmwareVersion()}`)
     sdk.updateFirmware(device, (err)=> {
 
       if (err) {

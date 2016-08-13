@@ -27,7 +27,7 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 
 function programSketch(sdk, hexFile, beanName, beanUUID, completedCallback) {
 
-  let sketchBuf = fs.readFileSync(hexFile)
+  let sketchBuf = fs.readFileSync(hexFile, 'ascii')
   let sketchName = path.parse(hexFile).name
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {

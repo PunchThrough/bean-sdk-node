@@ -2,7 +2,9 @@ const fsm = require('../../lib/jsfsm/fsm')
 const logger = require('./util/logs').logger
 const util = require('./util/util')
 const commandIds = require('./command-definitions').commandIds
+const buffer = require('buffer')
 
+const BLOCK_SIZE = 64
 
 // Sketch Uploader states
 const STATE_INACTIVE = 'STATE_INACTIVE'
@@ -79,7 +81,17 @@ class UploadProcess extends fsm.Context {
   }
 
   _statusCommandReceived(status) {
-    
+    if (status.state === BEAN_STATE_ERROR) {
+      let out = `Bean sketch upload error!\n`
+      out += `    Sub state: ${status.substate}\n`
+      out += `    Blocks sent: ${status.blocks_sent}\n`
+      out += `    Bytes sent: ${status.bytes_sent}`
+      logger.error(out)
+      this.state.eventBeanError(status.substate)
+    } else {
+      this.state.eventBeanState(status.state)
+    }
+
   }
 
   start() {
@@ -111,6 +123,14 @@ class SketchUploadState extends fsm.State {
 
   exitState() {}  // Override if needed
 
+  eventBeanState(state) {
+    logger.debug(`New Bean State: ${state}`)
+  }
+
+  eventBeanError(substate) {
+    logger.error(`Bean sketch upload error: ${substate}`)
+  }
+
 }
 
 
@@ -120,6 +140,7 @@ class StateInactive extends SketchUploadState {
 
 
 class StateAwaitReady extends SketchUploadState {
+
   enterState() {
     let serialTransport = this.ctx.getDevice().getSerialTransportService()
     let sketchBuf = this.ctx.getSketchBuffer()
@@ -132,12 +153,41 @@ class StateAwaitReady extends SketchUploadState {
       sketchName.length,             // sketch name size
       sketchName                     // sketch name
     ]
+
     serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
   }
+
+  eventBeanState(state) {
+    if (state == BEAN_STATE_READY) {
+      this.ctx.setState(STATE_BLOCK_TRANSFER)
+    }
+  }
+
 }
 
 
 class StateBlockTransfer extends SketchUploadState {
+
+  _sendBlock() {
+    logger.info(`Sending Bean sketch block: #${this._blocksSent}`)
+    let serialTransport = this.ctx.getDevice().getSerialTransportService()
+    let sketchBuffer = this.ctx.getSketchBuffer()
+    let offset = this._blocksSent * BLOCK_SIZE
+    let blockBuffer = sketchBuffer.slice(offset, offset + BLOCK_SIZE)
+    serialTransport.sendCommand(commandIds.BL_FW_BLOCK, [blockBuffer])
+    this._blocksSent++
+  }
+
+  enterState() {
+    this._blocksSent = 0
+    this._sendBlock()
+  }
+
+  eventBeanState(state) {
+    if (state == BEAN_STATE_READY) {
+      this._sendBlock()
+    }
+  }
 
 }
 

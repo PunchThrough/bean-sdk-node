@@ -33,7 +33,7 @@ class BinaryField {
 class UInt8 extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new UInt8(buf.readUInt8(buf, offset), definition)
+    return new UInt8(buf.readUInt8(offset), definition)
   }
 
   pack() {
@@ -52,7 +52,7 @@ class UInt8 extends BinaryField {
 class UInt16 extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new UInt16(buf.readUInt16LE(buf, offset), definition)
+    return new UInt16(buf.readUInt16LE(offset), definition)
   }
 
   pack() {
@@ -71,7 +71,7 @@ class UInt16 extends BinaryField {
 class UInt32 extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new UInt32(buf.readUInt32LE(buf, offset), definition)
+    return new UInt32(buf.readUInt32LE(offset), definition)
   }
 
   pack() {
@@ -107,9 +107,27 @@ class VariableLengthString extends BinaryField {
 }
 
 
+class BinaryBlob extends BinaryField {
+
+  static fromBuffer(buf, offset, definition) {
+    let binBuf = buf.slice(offset, definition.length + offset)
+    return new BinaryBlob(binBuf, definition)
+  }
+
+  pack() {
+    return this._value  // Already a buffer!
+  }
+
+  size() {
+    return this._defn.length
+  }
+}
+
+
 module.exports = {
   UInt8: UInt8,
   UInt16: UInt16,
   UInt32: UInt32,
-  VariableLengthString: VariableLengthString
+  VariableLengthString: VariableLengthString,
+  BinaryBlob: BinaryBlob
 }

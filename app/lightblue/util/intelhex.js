@@ -53,8 +53,8 @@ function extractDataFromIntelHexLine(intelHexLine) {
   if (rawBytes[3] === INTEL_HEX_DATA) {
     let dataBytes = rawBytes.slice(4, rawBytes.length - 2)
     let bytes = new buffer.Buffer(dataBytes.length)
-    for (let b of dataBytes) {
-      bytes.writeUInt8(b)
+    for (let i = 0; i < dataBytes.length; i++) {
+      bytes.writeUInt8(dataBytes[i], i)
     }
     return bytes
   } else {

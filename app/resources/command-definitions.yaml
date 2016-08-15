@@ -125,7 +125,10 @@ outgoing:
 
   0x1001:
     name: "BL_FW_BLOCK"
-    arguments: []
+    arguments:
+      - name: "block"
+        type: "binary_blob"
+        length: 64
     response: []
 
   0x1003:
@@ -230,13 +233,13 @@ outgoing:
 
 incoming:
   0x0001:
-    name: "ERROR"
+    name: "LB_PROTOCOL_ERROR"
     arguments:
       - name: "length"
         type: "uint8"
       - name: "expected_header"
         type: "uint8"
-      - name: "recieved_header"
+      - name: "received_header"
         type: "uint8"
       - name: "reserved"
         type: "uint16"

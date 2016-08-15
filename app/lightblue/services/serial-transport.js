@@ -107,10 +107,18 @@ class SerialTransportService extends BleService {
 
   _handleIncomingCommand(buf, defn) {
     let command = commands.Command.fromBuffer(buf, defn)
-    let commandCallback = this._commandCallbacks[command.getMessageId()]
-    if (commandCallback) {
-      commandCallback(command.asObject(command.getDefinition().arguments))
+    if (command.getMessageId() === commands.commandIds.LB_PROTOCOL_ERROR) {
+      // Handle protocol errors here, nobody else should need to register for this error
+      let err = command.asObject()
+      logger.error(`LB PROTOCOL ERROR: expected ${err.expected_header} got ${err.received_header}`)
+    } else {
+      // Notify any registered callbacks of received command
+      let commandCallback = this._commandCallbacks[command.getMessageId()]
+      if (commandCallback) {
+        commandCallback(command.asObject(command.getDefinition().arguments))
+      }
     }
+
   }
 
   _handleIncomingResponse(buf, defn) {
@@ -132,11 +140,10 @@ class SerialTransportService extends BleService {
         logger.info(`Error sending LightBlue Packet: ${err}`)
       }
 
-      if (this._outgoingPackets.length == 0) {
-        logger.info('Last LightBlue packet sent!')
-      } else {
+      if (this._outgoingPackets.length != 0) {
         this._sendLightBluePackets()
       }
+
     })
   }
 

@@ -42,6 +42,9 @@ function _binaryField(type) {
     case 'string':
       binaryField = binary.VariableLengthString
       break
+    case 'binary_blob':
+      binaryField = binary.BinaryBlob
+      break
     default:
       logger.info(`No binary type found: ${type}`)
   }
@@ -161,8 +164,6 @@ class Message {
     return this._definition
   }
 
-
-
   static fromBuffer(buf) {
     throw new Error("Subclasses must implement static method .fromBuffer(buf)")
   }
@@ -251,6 +252,7 @@ function definitions() {
 
 const commandIds = {
   SERIAL_DATA:            0x0000,
+  LB_PROTOCOL_ERROR:      0x0001,
   BT_SET_ADV:             0x0500,
   BT_SET_CONN:            0x0502,
   BT_SET_LOCAL_NAME:      0x0504,

@@ -35,11 +35,7 @@ class LightBluePacket {
   }
 
   toString() {
-    let out = `LightBluePacket:\n`
-    out += `    First: ${this._first}\n`
-    out += `    Remaining: ${this._packetsRemaining}\n`
-    out += `    Payload:${this._payload}\n`
-    return out
+    return `LightBluePacket (First: ${this._first}) (Remaining: ${this._packetsRemaining}`
   }
 
   pack() {
@@ -81,7 +77,7 @@ class SerialTransportService extends BleService {
   _packetReceived(buf) {
     let packet = LightBluePacket.fromBuffer(buf)
     this._incomingPackets.push(packet)
-    logger.info(`Received LightBlue packet: ${packet.toString()}`)
+    logger.debug(`PACKET <<<: ${packet.toString()}`)
 
     if (packet.finalPacket()) {
       let packetPayloads = []
@@ -133,9 +129,9 @@ class SerialTransportService extends BleService {
 
   _sendLightBluePackets() {
     let packet = this._outgoingPackets.shift()
-    let packed = packet.pack()
-    logger.info(`Sending LightBlue Packet: ${packed.toString()}`)
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packed, true, (err)=> {
+    let packetData = packet.pack()
+    logger.debug(`PACKET >>>: ${packet.toString()}`)
+    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packetData, true, (err)=> {
       if (err) {
         logger.info(`Error sending LightBlue Packet: ${err}`)
       }
@@ -160,6 +156,9 @@ class SerialTransportService extends BleService {
         this._packetReceived(data)
       })
     })
+
+    let x = new Date()
+    x.toISOString()
 
   }
 

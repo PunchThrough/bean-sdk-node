@@ -2,7 +2,8 @@ const winston = require('winston')
 
 
 function timestamp() {
-  return new Date()
+  let d = new Date()
+  return d.toISOString()
 }
 
 

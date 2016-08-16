@@ -3,6 +3,7 @@ const logger = require('./util/logs').logger
 const util = require('./util/util')
 const commandIds = require('./command-definitions').commandIds
 const buffer = require('buffer')
+const timers = require('timers')
 
 const BLOCK_SIZE = 64
 
@@ -10,7 +11,6 @@ const BLOCK_SIZE = 64
 const STATE_INACTIVE = 'STATE_INACTIVE'
 const STATE_AWAIT_READY = 'STATE_AWAIT_READY'
 const STATE_BLOCK_TRANSFER = 'STATE_BLOCK_TRANSFER'
-const STATE_AWAIT_COMPLETED = 'STATE_AWAIT_COMPLETED'
 const STATE_COMPLETED = 'STATE_COMPLETED'
 
 // Bean States
@@ -69,18 +69,18 @@ class UploadProcess extends fsm.Context {
     this._sketchName = sketchName
     this._callback = callback
 
-    this.states = {
+    this.initStates({
       STATE_INACTIVE: StateInactive,
       STATE_AWAIT_READY: StateAwaitReady,
       STATE_BLOCK_TRANSFER: StateBlockTransfer,
-      STATE_AWAIT_COMPLETED: StateAwaitCompleted,
       STATE_COMPLETED: StateCompleted
-    }
+    })
 
     this.setState(STATE_INACTIVE)
   }
 
   _statusCommandReceived(status) {
+    logger.info(`New Bean State: ${status.state}`)
     if (status.state === BEAN_STATE_ERROR) {
       let out = `Bean sketch upload error!\n`
       out += `    Sub state: ${status.substate}\n`
@@ -114,34 +114,44 @@ class UploadProcess extends fsm.Context {
   getSketchName() {
     return this._sketchName
   }
+
+  complete(error) {
+    this._callback(error)
+  }
 }
 
 
 class SketchUploadState extends fsm.State {
 
-  enterState() {}  // Override if needed
-
-  exitState() {}  // Override if needed
-
-  eventBeanState(state) {
-    logger.debug(`New Bean State: ${state}`)
-  }
-
-  eventBeanError(substate) {
-    logger.error(`Bean sketch upload error: ${substate}`)
-  }
+  // Override any methods in subclasses
+  enterState(previousState) {}
+  exitState() {}
+  eventBeanState(state) {}
+  eventBeanError(substate) {}
 
 }
 
 
 class StateInactive extends SketchUploadState {
-
+  enterState(previousState) {
+    if (previousState) {
+      if (previousState === STATE_COMPLETED) {
+        // Sketch completed successfully
+        logger.info('Sketch completed successfully!')
+        this.ctx.complete(null)
+      } else {
+        // Sketch upload error
+        logger.error('Sketch upload error!')
+        this.ctx.complete('Sketch upload failed')
+      }
+    }
+  }
 }
 
 
 class StateAwaitReady extends SketchUploadState {
 
-  enterState() {
+  enterState(previousState) {
     let serialTransport = this.ctx.getDevice().getSerialTransportService()
     let sketchBuf = this.ctx.getSketchBuffer()
     let sketchName = this.ctx.getSketchName()
@@ -160,6 +170,9 @@ class StateAwaitReady extends SketchUploadState {
   eventBeanState(state) {
     if (state == BEAN_STATE_READY) {
       this.ctx.setState(STATE_BLOCK_TRANSFER)
+    } else {
+      logger.error(`Unexpected Bean sketch state: ${state}`)
+      this.ctx.setState(STATE_INACTIVE)
     }
   }
 
@@ -169,36 +182,53 @@ class StateAwaitReady extends SketchUploadState {
 class StateBlockTransfer extends SketchUploadState {
 
   _sendBlock() {
-    logger.info(`Sending Bean sketch block: #${this._blocksSent}`)
-    let serialTransport = this.ctx.getDevice().getSerialTransportService()
-    let sketchBuffer = this.ctx.getSketchBuffer()
-    let offset = this._blocksSent * BLOCK_SIZE
-    let blockBuffer = sketchBuffer.slice(offset, offset + BLOCK_SIZE)
-    serialTransport.sendCommand(commandIds.BL_FW_BLOCK, [blockBuffer])
-    this._blocksSent++
-  }
-
-  enterState() {
-    this._blocksSent = 0
-    this._sendBlock()
-  }
-
-  eventBeanState(state) {
-    if (state == BEAN_STATE_READY) {
-      this._sendBlock()
+    logger.info(`Sending Bean sketch block: ${this._blocksSent}/${this._totalBlocks - 1}`)
+    let blockStart = this._blocksSent * BLOCK_SIZE
+    let blockEnd = blockStart + BLOCK_SIZE
+    if (blockEnd > this._sketchBuffer.length) {
+      blockEnd = this._sketchBuffer.length
+    }
+    let blockBuffer = this._sketchBuffer.slice(blockStart, blockEnd)
+    this._serialTransport.sendCommand(commandIds.BL_FW_BLOCK, [blockBuffer])
+    if (blockEnd == this._sketchBuffer.length) {
+      clearInterval(this._blockTimer)
+    } else {
+      this._blocksSent++
     }
   }
 
-}
+  enterState(previousState) {
+    this._serialTransport = this.ctx.getDevice().getSerialTransportService()
+    this._sketchBuffer = this.ctx.getSketchBuffer()
+    this._totalBlocks = Math.ceil(this._sketchBuffer.length / BLOCK_SIZE)
+    this._blocksSent = 0
+    this._blockTimer = timers.setInterval(()=> {this._sendBlock()}, 200)
+  }
 
+  eventBeanState(state) {
+    if (state === BEAN_STATE_COMPLETE) {
+      this.ctx.setState(STATE_COMPLETED)
+    }
 
-class StateAwaitCompleted extends SketchUploadState {
+    if (state !== BEAN_STATE_PROGRAMMING) {
+      logger.error(`Unexpected Bean sketch state: ${state}`)
+      this.ctx.setState(STATE_INACTIVE)
+    }
+  }
+
+  eventBeanError(substate) {
+    clearInterval(this._blockTimer)
+    this.ctx.setState(STATE_INACTIVE)
+  }
 
 }
 
 
 class StateCompleted extends SketchUploadState {
-
+  enterState(previousState) {
+    logger.info('Sketch upload complete!')
+    this.ctx.setState(STATE_INACTIVE)
+  }
 }
 
 

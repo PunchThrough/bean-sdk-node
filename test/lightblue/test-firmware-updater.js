@@ -1,7 +1,7 @@
 'use strict'
 
 let assert = require('assert')
-let FirmwareUpdater = require('../../app/lightblue/firmware-updater')
+let FirmwareUpdater = require('../../app/lightblue/firmware-updater').FirmwareUpdater
 
 
 let mockOADService = {
@@ -24,7 +24,7 @@ describe('OAD', ()=> {
   describe('FirmwareUpdater', ()=> {
 
     it('should work', ()=> {
-      let fwUpdater = new FirmwareUpdater.init()
+      let fwUpdater = new FirmwareUpdater()
       //fwUpdater.update(mockLightBlueDevice, ()=>{})
     })
 

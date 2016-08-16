@@ -260,7 +260,7 @@ class FirmwareUpdater {
 
     logger.info(`Current device in progress: ${this._deviceInProgress.toString()}`)
     logger.info(`Questionable device: ${device.toString()}`)
-    return device.getUUID() === this._deviceInProgress.getUUID()
+    return device.getAddress() === this._deviceInProgress.getAddress()
 
   }
 
@@ -322,6 +322,6 @@ class FirmwareUpdater {
 }
 
 module.exports = {
-  init: FirmwareUpdater,
+  FirmwareUpdater: FirmwareUpdater,
   bakedFirmwareVersion: bakedFirmwareVersion
 }

@@ -13,6 +13,28 @@ class BleService {
     this._characteristics = characteristics
     this._nobleService = nobleService
     this._charValueCache = {}
+    this._registeredNotificationCallbacks = {}
+  }
+
+  _setupNotification(uuid, callback) {
+
+    this._registeredNotificationCallbacks[uuid] = []
+
+    this._characteristics[uuid].notify(true, (err)=> {
+      callback(err)
+    })
+
+    this._characteristics[uuid].on('read', (data, isNotification)=> {
+      if (isNotification)
+        this._fireNotificationCallbacks(uuid, data)
+    })
+  }
+
+  _fireNotificationCallbacks(key, data) {
+    for (let i in this._registeredNotificationCallbacks[key]) {
+      let cb = this._registeredNotificationCallbacks[key][i]
+      cb(data)
+    }
   }
 
   resetCache() {
@@ -29,6 +51,17 @@ class BleService {
 
   getUUID() {
     return this._nobleService.uuid
+  }
+
+  registerForNotifications(key, cb) {
+    /**
+     * Register to be called-back on receipt of a notification
+     *
+     * @param key The characteristic UUID
+     * @param cb Function to be called back
+     */
+
+    this._registeredNotificationCallbacks[key].push(cb)
   }
 
 }

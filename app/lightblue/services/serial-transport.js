@@ -35,11 +35,7 @@ class LightBluePacket {
   }
 
   toString() {
-    let out = `LightBluePacket:\n`
-    out += `    First: ${this._first}\n`
-    out += `    Remaining: ${this._packetsRemaining}\n`
-    out += `    Payload:${this._payload}\n`
-    return out
+    return `LightBluePacket (First: ${this._first}) (Remaining: ${this._packetsRemaining}`
   }
 
   pack() {
@@ -74,49 +70,77 @@ class SerialTransportService extends BleService {
     this._packetCount = 0
     this._outgoingPackets = []
     this._incomingPackets = []
-    this._callbacks = {}
+    this._commandCallbacks = {}
+    this._responseCallbacks = {}
   }
 
   _packetReceived(buf) {
     let packet = LightBluePacket.fromBuffer(buf)
     this._incomingPackets.push(packet)
-    logger.info(`Received LightBlue packet: ${packet.toString()}`)
+    logger.debug(`PACKET <<<: ${packet.toString()}`)
 
     if (packet.finalPacket()) {
       let packetPayloads = []
       for (let p of this._incomingPackets) {
         packetPayloads.push(p.getPayload())
       }
-      this._handleResponse(util.concatBuffers(packetPayloads))
+
+      let commandPayload = util.concatBuffers(packetPayloads)
+      let incomingMessageId = commandPayload.readUInt16BE(2) & ~commands.MESSAGE_RESPONSE_BIT
+      let incomingCommandDefn = commands.definitions().incoming[incomingMessageId]
+      let outgoingCommandDefn = commands.definitions().outgoing[incomingMessageId]
+      if (incomingCommandDefn) {
+        this._handleIncomingCommand(commandPayload, incomingCommandDefn)
+      } else if (outgoingCommandDefn) {
+        this._handleIncomingResponse(commandPayload, outgoingCommandDefn)
+      } else {
+        logger.warn(`Couldn't find definition for command: ${incomingMessageId}`)
+      }
+
       this._incomingPackets = []  // Clear incoming packets
+    }
+  }
+
+  _handleIncomingCommand(buf, defn) {
+    let command = commands.Command.fromBuffer(buf, defn)
+    if (command.getMessageId() === commands.commandIds.LB_PROTOCOL_ERROR) {
+      // Handle protocol errors here, nobody else should need to register for this error
+      let err = command.asObject()
+      logger.error(`LB PROTOCOL ERROR: expected ${err.expected_header} got ${err.received_header}`)
+    } else {
+      // Notify any registered callbacks of received command
+      let commandCallback = this._commandCallbacks[command.getMessageId()]
+      if (commandCallback) {
+        commandCallback(command.asObject(command.getDefinition().arguments))
+      }
+    }
+
+  }
+
+  _handleIncomingResponse(buf, defn) {
+    let response = commands.Response.fromBuffer(buf, defn)
+    let callback = this._responseCallbacks[response.getMessageId()]
+    if (callback) {
+      callback(null, response.asObject(response.getDefinition().response))
+    } else {
+      logger.info(`Got serial response (${response.getMessageId()}) but no callback!`)
     }
   }
 
   _sendLightBluePackets() {
     let packet = this._outgoingPackets.shift()
-    let packed = packet.pack()
-    logger.info(`Sending LightBlue Packet: ${packed.toString()}`)
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packed, true, (err)=> {
+    let packetData = packet.pack()
+    logger.debug(`PACKET >>>: ${packet.toString()}`)
+    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packetData, true, (err)=> {
       if (err) {
         logger.info(`Error sending LightBlue Packet: ${err}`)
       }
 
-      if (this._outgoingPackets.length == 0) {
-        logger.info('Last LightBlue packet sent!')
-      } else {
+      if (this._outgoingPackets.length != 0) {
         this._sendLightBluePackets()
       }
-    })
-  }
 
-  _handleResponse(buf) {
-    let response = commands.Response.fromBuffer(buf)
-    let callback = this._callbacks[response.getMessageId()]
-    if (callback) {
-      callback(null, response.asObject())
-    } else {
-      logger.info(`Got serial response (${response.getMessageId()}) but no callback!`)
-    }
+    })
   }
 
   getName() {
@@ -126,20 +150,20 @@ class SerialTransportService extends BleService {
   setup(setupCallback) {
     logger.info('Setting up IDENTIFY and BLOCK notifications')
 
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].notify(true, (err)=> {
-      if (err) {
-        logger.info(err)
-      } else {
-        logger.info('Serial Transport notifications ready')
-      }
-
+    this._setupNotification(UUID_CHAR_SERIAL_TRANSPORT, (err) => {
       setupCallback(err)
+      this.registerForNotifications(UUID_CHAR_SERIAL_TRANSPORT, (data) => {
+        this._packetReceived(data)
+      })
     })
 
-    this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].on('read', (data, isNotification)=> {
-      if (isNotification) this._packetReceived(data)
-    })
+    let x = new Date()
+    x.toISOString()
 
+  }
+
+  registerForCommandNotification(commandId, callback) {
+    this._commandCallbacks[commandId] = callback
   }
 
   sendCommand(commandId, payloadArguments, responseCallback) {
@@ -158,6 +182,8 @@ class SerialTransportService extends BleService {
 
     // Split the command into 1 or more LightBlue packets and queue them
     let numPackets = Math.ceil(commandPayload.length / LB_MAX_PACKET_LENGTH)
+    this._packetCount = (this._packetCount + 1) % 4
+
     for (let i = 0; i < numPackets; i++) {
       let offset = i * LB_MAX_PACKET_LENGTH
       let packetPayload = commandPayload.slice(offset, offset + LB_MAX_PACKET_LENGTH)
@@ -166,7 +192,6 @@ class SerialTransportService extends BleService {
       if (i == 0)
         first = true
 
-      this._packetCount = (this._packetCount + 1) % 4
       let packet = new LightBluePacket(first, this._packetCount, numPackets - (i + 1), packetPayload)
       this._outgoingPackets.push(packet)
     }
@@ -174,7 +199,7 @@ class SerialTransportService extends BleService {
     this._sendLightBluePackets()
 
     if (responseCallback) {
-        this._callbacks[commandId] = responseCallback
+        this._responseCallbacks[commandId] = responseCallback
     }
   }
 

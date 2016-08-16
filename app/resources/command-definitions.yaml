@@ -1,4 +1,4 @@
-commands:
+outgoing:
   0x0000:
     name: "SERIAL_DATA"
     arguments: []
@@ -109,17 +109,26 @@ commands:
 
   0x1000:
     name: "BL_CMD_START"
-    arguments: []
+    arguments:
+      - name: "hex_size"
+        type: "uint32"
+      - name: "hex_crc"
+        type: "uint32"
+      - name: "unix_timestamp"
+        type: "uint32"
+      - name: "sketch_name_size"
+        type: "uint8"
+      - name: "sketch_name"
+        type: "string"
+        length: 20
     response: []
 
   0x1001:
     name: "BL_FW_BLOCK"
-    arguments: []
-    response: []
-
-  0x1002:
-    name: "BL_STATUS"
-    arguments: []
+    arguments:
+      - name: "block"
+        type: "binary_blob"
+        length: 64
     response: []
 
   0x1003:
@@ -219,4 +228,32 @@ commands:
   0xFE03:
     name: "DB_PTM"
     arguments: []
+    response: []
+
+
+incoming:
+  0x0001:
+    name: "LB_PROTOCOL_ERROR"
+    arguments:
+      - name: "length"
+        type: "uint8"
+      - name: "expected_header"
+        type: "uint8"
+      - name: "received_header"
+        type: "uint8"
+      - name: "reserved"
+        type: "uint16"
+    response: []
+
+  0x1002:
+    name: "BL_STATUS"
+    arguments:
+      - name: "state"
+        type: "uint8"
+      - name: "substate"
+        type: "uint8"
+      - name: "blocks_sent"
+        type: "uint16"
+      - name: "bytes_sent"
+        type: "uint16"
     response: []

@@ -9,5 +9,6 @@ module.exports = {
   startScan: scan.startScan,
   blinkLed: bean.blinkLed,
   readAccel: bean.readAccel,
-  readConfig: bean.readConfig
+  readConfig: bean.readConfig,
+  readDeviceInfo: bean.readDeviceInfo
 }

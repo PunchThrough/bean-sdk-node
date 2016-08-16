@@ -5,6 +5,7 @@ const program = require('commander')
 const commands = require('./commands/commands.js')
 const LightBlueSDK = require('../lightblue.js')
 const winston = require('winston')
+const logging = require('../util/logs')
 
 
 function initSdk(logLevel='error') {
@@ -12,7 +13,10 @@ function initSdk(logLevel='error') {
   let loggingOpts = {
     level: logLevel,
     transports: [
-      new (winston.transports.Console)()
+      new (winston.transports.Console)({
+        timestamp: logging.timestamp,
+        formatter: logging.formatter,
+      })
     ]
   }
   return new LightBlueSDK(loggingOpts)

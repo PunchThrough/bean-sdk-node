@@ -19,11 +19,11 @@ const INTEL_HEX_START_LINEAR_ADDRESS = 5
  * Hexadecimal octet, or byte. However, not every byte in the string is considered
  * data, here is what the bytes mean:
  *
- *     Byte(s) [        0]    = Byte count
- *     Byte(s) [1   :   2]    = Address
- *     Byte(s) [        3]    = Record type
- *     Byte(s) [        n]    = Data
- *     Byte(s) [n+1 : n+2]    = Checksum
+ *     Byte(s) [  0]    = Byte count
+ *     Byte(s) [1:2]    = Address
+ *     Byte(s) [  3]    = Record type
+ *     Byte(s) [  n]    = Data
+ *     Byte(s) [n+1]    = Checksum
  *
  * @param intelHexLine Ascii Intel hex line
  * @returns
@@ -51,7 +51,7 @@ function extractDataFromIntelHexLine(intelHexLine) {
   }
 
   if (rawBytes[3] === INTEL_HEX_DATA) {
-    let dataBytes = rawBytes.slice(4, rawBytes.length - 2)
+    let dataBytes = rawBytes.slice(4, rawBytes.length - 1)
     let bytes = new buffer.Buffer(dataBytes.length)
     for (let i = 0; i < dataBytes.length; i++) {
       bytes.writeUInt8(dataBytes[i], i)

@@ -35,7 +35,11 @@ function programSketch(sdk, hexFile, beanName, beanUUID, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
     sdk.uploadSketch(device, binary, sketchName, (err)=> {
-
+      if (err) {
+        completedCallback(`Sketch upload failed: ${err}`)
+      } else {
+        completedCallback(null)
+      }
     })
   }, completedCallback)
 

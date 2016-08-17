@@ -2,7 +2,7 @@
   "name": "bean-sdk-node",
   "version": "0.0.1",
   "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
-  "main": "",
+  "main": "src/lightblue.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive"
   },

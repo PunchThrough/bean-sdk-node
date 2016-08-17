@@ -7,7 +7,7 @@ let buffer = require('buffer')
 const logger = require('./util/logs').logger
 
 const FW_VERSION = '201606030000'
-const FW_FILES = path.join(__dirname, '..', 'resources', 'firmware_bundles', FW_VERSION)
+const FW_FILES = path.join(__dirname, 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
 const MAX_BLOCKS_IN_AIR = 8

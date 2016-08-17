@@ -1,31 +1,27 @@
 {
-  "name": "bean-loader-x",
+  "name": "bean-sdk-node",
   "version": "0.0.1",
-  "description": "Cross platform Bean Loader by Punch Through",
-  "main": "build/main.js",
+  "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
+  "main": "",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive",
-    "dev": "gulp build && ./node_modules/.bin/electron ."
+    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PunchThrough/bean-loader-x.git"
+    "url": "git+https://github.com/PunchThrough/bean-sdk-node.git"
   },
   "author": "Stephen Stack",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PunchThrough/bean-loader-x/issues"
+    "url": "https://github.com/PunchThrough/bean-sdk-node/issues"
   },
-  "homepage": "https://github.com/PunchThrough/bean-loader-x#readme",
+  "homepage": "https://github.com/PunchThrough/bean-sdk-node#readme",
   "dependencies": {
     "async": "*",
     "crc": "^3.4.0",
-    "flux": "*",
     "js-yaml": "*",
     "noble": "*",
     "queue": "^4.0.0",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
     "sleep": "^3.0.1",
     "winston": "^2.2.0"
   },
@@ -34,18 +30,7 @@
     "babel-preset-react": "*",
     "babel-register": "*",
     "commander": "*",
-    "electron-packager": "*",
-    "electron-prebuilt": "*",
-    "electron-rebuild": "*",
-    "gulp": "*",
-    "gulp-babel": "*",
-    "gulp-replace": "*",
-    "gulp-run": "*",
-    "gulp-sourcemaps": "*",
-    "gulp-zip": "*",
-    "json-loader": "*",
     "mocha": "*",
-    "node-loader": "*",
     "sinon": "^1.17.4",
     "sprintf-js": "^1.0.3"
   }

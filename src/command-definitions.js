@@ -9,7 +9,7 @@ const fs = require('fs')
 const path = require('path')
 const logger = require('./util/logs').logger
 
-const DEFINITIONS_FILE = path.join(__dirname, '..', 'resources', 'command-definitions.yaml')
+const DEFINITIONS_FILE = path.join(__dirname, 'resources', 'command-definitions.yaml')
 const MESSAGE_RESPONSE_BIT = 0x80
 
 let _defns = null

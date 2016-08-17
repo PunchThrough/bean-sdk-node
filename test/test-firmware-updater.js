@@ -1,7 +1,7 @@
 'use strict'
 
 let assert = require('assert')
-let FirmwareUpdater = require('../../src/firmware-updater').FirmwareUpdater
+let FirmwareUpdater = require('../src/firmware-updater').FirmwareUpdater
 
 
 let mockOADService = {

@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const commands = require('../../src/command-definitions')
+const commands = require('../src/command-definitions')
 
 
 describe('Serial Transport Command Definitions', ()=> {

@@ -4,9 +4,9 @@ const assert = require('assert')
 const buffer = require('buffer')
 const sinon = require('sinon')
 
-const chars = require('../../../src/services/serial-transport').characteristics
-const commandIds = require('../../../src/services/serial-transport').commandIds
-const SerialTransportService = require('../../../src/services/serial-transport').SerialTransportService
+const chars = require('../../src/services/serial-transport').characteristics
+const commandIds = require('../../src/services/serial-transport').commandIds
+const SerialTransportService = require('../../src/services/serial-transport').SerialTransportService
 
 
 class MockNobleCharacteristic {

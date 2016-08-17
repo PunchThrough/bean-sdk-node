@@ -1,8 +1,8 @@
 'use strict'
 
 let assert = require('assert')
-let devices = require('../../src/devices')
-const SerialTransportService = require('../../src/services/serial-transport').SerialTransportService
+let devices = require('../src/devices')
+const SerialTransportService = require('../src/services/serial-transport').SerialTransportService
 
 
 class MockSerialTransportService extends SerialTransportService {

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-node ./app/lightblue/cli/entry.js "$@"
+node ./src/cli/entry.js "$@"

@@ -162,11 +162,11 @@ outgoing:
     arguments: []
     response:
       - name: "x_axis"
-        type: "uint16"
+        type: "int16"
       - name: "y_axis"
-        type: "uint16"
+        type: "int16"
       - name: "z_axis"
-        type: "uint16"
+        type: "int16"
       - name: "sensitivity"
         type: "uint8"
 

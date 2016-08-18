@@ -87,6 +87,23 @@ class UInt32 extends BinaryField {
 }
 
 
+class Int16 extends BinaryField {
+  static fromBuffer(buf, offset, definition) {
+    return new Int16(buf.readInt16LE(offset), definition)
+  }
+
+  pack() {
+    let buf = new buffer.Buffer(2)
+    buf.writeInt16LE(this._value, 0)
+    return buf
+  }
+
+  size() {
+    return 2
+  }
+}
+
+
 class VariableLengthString extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
@@ -128,6 +145,7 @@ module.exports = {
   UInt8: UInt8,
   UInt16: UInt16,
   UInt32: UInt32,
+  Int16: Int16,
   VariableLengthString: VariableLengthString,
   BinaryBlob: BinaryBlob
 }

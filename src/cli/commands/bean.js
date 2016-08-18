@@ -58,6 +58,7 @@ function readConfig(sdk, beanName, beanUUID, completedCallback) {
       out += `        iBeacon Minor ID: ${response.ibeacon_minor_id}\n`
       out += `              Local Name: ${response.local_name}\n`
       console.log(out)
+      completedCallback(null)
     })
   })
 }
@@ -75,6 +76,7 @@ function readDeviceInfo(sdk, beanName, beanUUID, completedCallback) {
       out += `  Firmware Version: ${info.firmware_version}\n`
       out += `  Software Version: ${info.software_version}\n`
       console.log(out)
+      completedCallback(null)
     })
   })
 }

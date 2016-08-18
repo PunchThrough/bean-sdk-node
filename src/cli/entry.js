@@ -1,5 +1,6 @@
-'use strict'
+#!/usr/bin/env node
 
+'use strict'
 
 const program = require('commander')
 const commands = require('./commands/commands.js')

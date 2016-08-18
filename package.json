@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
   "main": "src/lightblue.js",
+  "bin": {
+    "bean": "src/cli/entry.js"
+  },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive"
   },
@@ -23,12 +26,12 @@
     "noble": "*",
     "queue": "^4.0.0",
     "sleep": "^3.0.1",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+    "commander": "*",
+    "sprintf-js": "^1.0.3"
   },
   "devDependencies": {
-    "commander": "*",
     "mocha": "*",
-    "sinon": "^1.17.4",
-    "sprintf-js": "^1.0.3"
+    "sinon": "^1.17.4"
   }
 }

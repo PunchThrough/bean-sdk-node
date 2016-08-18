@@ -33,6 +33,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
           if (err) {
             errorCallback(`Service lookup FAILED: ${err}`)
           } else {
+            console.log('Connected!')
             successCallback(device)
           }
 

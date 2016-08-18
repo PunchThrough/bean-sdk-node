@@ -10,10 +10,11 @@ const sprintf = require('sprintf-js').sprintf
 function blinkLed(sdk, beanName, beanUUID, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+    console.log('Blinking led...')
     device.setLed(255, 0, 255)
     sleep.sleep(1)
     device.setLed(0, 0, 0)
-
+    completedCallback(null)
   }, completedCallback)
 
 }

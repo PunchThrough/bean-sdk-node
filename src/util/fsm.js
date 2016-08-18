@@ -1,6 +1,6 @@
 'use strict'
 
-const logger = require('../../src/util/logs').logger
+const logger = require('./logs').logger
 
 
 class Context {

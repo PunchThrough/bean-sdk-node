@@ -1,4 +1,4 @@
-const fsm = require('../lib/jsfsm/fsm')
+const fsm = require('./util/fsm')
 const logger = require('./util/logs').logger
 const util = require('./util/util')
 const commandIds = require('./command-definitions').commandIds

@@ -2,12 +2,18 @@
   "name": "bean-sdk-node",
   "version": "0.0.1",
   "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
-  "main": "src/lightblue.js",
+  "main": "build/lightblue.js",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
   "bin": {
-    "bean": "src/cli/entry.js"
+    "bean": "build/cli/entry.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive"
+    "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive",
+    "build": "babel src -d build/  && npm pack"
   },
   "repository": {
     "type": "git",
@@ -31,6 +37,8 @@
     "sprintf-js": "^1.0.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.13.2",
     "mocha": "*",
     "sinon": "^1.17.4"
   }

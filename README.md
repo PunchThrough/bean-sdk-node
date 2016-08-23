@@ -31,7 +31,7 @@ Official cross-platform Bean SDK for Node.js.
     C:\Users\<user>\AppData\Roaming\npm\node_modules\npm
     ```
 
-3. Follow [platform specific install instructions](###Platform specific instructions)
+3. Follow [platform specific install instructions](#platform-specific-instructions)
 
 4. Install `bean-sdk`
 

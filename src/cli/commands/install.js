@@ -1,7 +1,10 @@
 'use strict'
 
-const fs = require('fs')
-const spawn = require('child_process').spawn;
+const fs = require('fs-extra')
+const os = require('os')
+const spawn = require('child_process').spawn
+const paths = require('../../util/paths')
+const path = require('path')
 
 const PLATFORM_OSX = 'darwin'
 const PLATFORM_FREEBSD = 'freebsd'
@@ -10,7 +13,20 @@ const PLATFORM_SUNOS = 'sunos'
 const PLATFORM_WINDOWS = 'win32'
 
 
-function openArduinoApp(arduinoInstallPath) {
+function runCli(program, args, callback) {
+  let cmd = spawn(program, args);
+
+  cmd.on('close', (code) => {
+    if (code != 0) {
+      throw new Error(`CLI command failed: ${program}`)
+    } else {
+      callback()
+    }
+  })
+}
+
+
+function openArduinoApp(arduinoInstallPath, callback) {
 
   if (arduinoInstallPath.endsWith('/')) {
     arduinoInstallPath = arduinoInstallPath.slice(0, -1)
@@ -37,16 +53,37 @@ function openArduinoApp(arduinoInstallPath) {
       break
   }
 
-  let cmd = spawn(program, args);
-
-  cmd.stderr.on('data', (data) => {
-    throw new Error(data)
-  })
-
-  cmd.on('close', (code) => {
+  runCli(program, args, ()=> {
     console.log('Arduino app opened successfully')
+    callback()
   })
 }
+
+
+function unzip(tarball, location, callback) {
+  let program = null
+  let args = null
+  switch(process.platform) {
+    case PLATFORM_OSX:
+      program = 'tar'
+      args = ['-xzvf', tarball, '-C', location]
+      break
+    case PLATFORM_WINDOWS:
+      throw new Error('Platform not supported')
+      break
+    case PLATFORM_LINUX:
+      throw new Error('Platform not supported')
+      break
+    default:
+      throw new Error('Platform not supported')
+      break
+  }
+
+  runCli(program, args, ()=> {
+    callback(path.join(location, 'bean-arduino-core'))
+  })
+}
+
 
 function installBeanArduinoCore(arduinoInstallPath, completedCallback) {
   // arduinoInstallPath examples:
@@ -54,7 +91,24 @@ function installBeanArduinoCore(arduinoInstallPath, completedCallback) {
   //     windows: c://Program Files(x86)/Arduino/
   //     linux: todo
 
-  openArduinoApp(arduinoInstallPath)
+  openArduinoApp(arduinoInstallPath, ()=> {
+    let beanArduinoCoreTarball = paths.getResource('bean-arduino-core-2.0.0.tar.gz')
+    unzip(beanArduinoCoreTarball, os.tmpdir(), (unzippedPath)=> {
+      let arduinoHardwareFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'hardware', 'LightBlue-Bean')
+      let arduinoExamplesFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'examples', 'LightBlue-Bean')
+      let beanCoreHardwareFolder = path.join(unzippedPath, 'hardware', 'LightBlue-Bean')
+      let beanCoreExamplesFolder = path.join(unzippedPath, 'examples', 'LightBlue-Bean')
+
+      fs.mkdirsSync(arduinoHardwareFolder)
+      fs.copySync(beanCoreHardwareFolder, arduinoHardwareFolder)
+
+      fs.mkdirsSync(arduinoExamplesFolder)
+      fs.copySync(beanCoreExamplesFolder, arduinoExamplesFolder)
+
+      console.log('Bean Arduino core installed.')
+      completedCallback(null)
+    })
+  })
 
 }
 

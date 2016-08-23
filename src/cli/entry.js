@@ -116,6 +116,14 @@ program
   })
 
 
+program
+  .command('install_bean_arduino_core [arduino_install_path]')
+  .description('Installs Bean Arduino core (https://github.com/punchthrough/bean-arduino-core)')
+  .action((arduinoInstallPath, options)=> {
+    commands.installBeanArduinoCore(arduinoInstallPath, commandComplete)
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

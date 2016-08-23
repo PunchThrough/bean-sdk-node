@@ -1,6 +1,7 @@
 const program = require('./program.js')
 const scan = require('./scan.js')
 const bean = require('./bean')
+const install = require('./install')
 
 
 module.exports = {
@@ -10,5 +11,6 @@ module.exports = {
   blinkLed: bean.blinkLed,
   readAccel: bean.readAccel,
   readConfig: bean.readConfig,
-  readDeviceInfo: bean.readDeviceInfo
+  readDeviceInfo: bean.readDeviceInfo,
+  installBeanArduinoCore: install.installBeanArduinoCore
 }

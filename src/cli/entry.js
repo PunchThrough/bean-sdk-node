@@ -117,10 +117,10 @@ program
 
 
 program
-  .command('install_bean_arduino_core [arduino_install_path]')
+  .command('install_bean_arduino_core')
   .description('Installs Bean Arduino core (https://github.com/punchthrough/bean-arduino-core)')
-  .action((arduinoInstallPath, options)=> {
-    commands.installBeanArduinoCore(arduinoInstallPath, commandComplete)
+  .action((ptions)=> {
+    commands.installBeanArduinoCore(commandComplete)
   })
 
 

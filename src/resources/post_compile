@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+# tools.beanupload.upload.pattern.windows="{cmd.path}\WinBeanPostScript.exe" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
+# tools.beanupload.upload.pattern="{cmd.path}/post_compile" "-board={build.mcu}" "-tools={cmd.path}" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
+
+
+import os
+import sys
+
+
+DEBUG_LOG = os.path.abspath(os.path.join(os.path.expanduser('~'), 'post_compile.log'))
+
+
+def debug(msg, mode='a'):
+    with open(DEBUG_LOG, mode) as f:
+        f.write("{}{}".format(msg, '\n'))
+
+
+debug('post compile started', mode='wb')
+for i in sys.argv:
+    debug(str(i))

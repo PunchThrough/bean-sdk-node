@@ -49,6 +49,10 @@ function openArduinoApp(arduinoInstallPath, callback) {
     arduinoInstallPath = arduinoInstallPath.slice(0, -1)
   }
 
+  if (!fs.existsSync(arduinoInstallPath)) {
+    throw new Error(`Path does not exist: ${arduinoInstallPath}`)
+  }
+
   let fnMap = {}
   fnMap[PLATFORM_OSX] = ()=> {return ['open', [arduinoInstallPath]]}
   let result = platformSpecificFn(fnMap)
@@ -87,16 +91,25 @@ function installBeanArduinoCore(completedCallback) {
       openArduinoApp(arduinoInstallPath, ()=> {
         let beanArduinoCoreTarball = paths.getResource('bean-arduino-core-2.0.0.tar.gz')
         unzip(beanArduinoCoreTarball, os.tmpdir(), (unzippedPath)=> {
-          let arduinoHardwareFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'hardware', 'LightBlue-Bean')
-          let arduinoExamplesFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'examples', 'LightBlue-Bean')
-          let beanCoreHardwareFolder = path.join(unzippedPath, 'hardware', 'LightBlue-Bean')
-          let beanCoreExamplesFolder = path.join(unzippedPath, 'examples', 'LightBlue-Bean')
 
+          // Install bean-arduino-core
+          let arduinoHardwareFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'hardware', 'LightBlue-Bean')
+          let beanCoreHardwareFolder = path.join(unzippedPath, 'hardware', 'LightBlue-Bean')
           fs.mkdirsSync(arduinoHardwareFolder)
           fs.copySync(beanCoreHardwareFolder, arduinoHardwareFolder)
 
+          // Install examples
+          let arduinoExamplesFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'examples', 'LightBlue-Bean')
+          let beanCoreExamplesFolder = path.join(unzippedPath, 'examples', 'LightBlue-Bean')
           fs.mkdirsSync(arduinoExamplesFolder)
           fs.copySync(beanCoreExamplesFolder, arduinoExamplesFolder)
+
+          // Install post_compile script
+          let arduinoToolsFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'hardware', 'tools', 'bean')
+          let arduinoPostCompilePath = path.join(arduinoToolsFolder, 'post_compile')
+          let localPostCompilePath = paths.getResource('post_compile')
+          fs.mkdirsSync(arduinoToolsFolder)
+          fs.copySync(localPostCompilePath, arduinoPostCompilePath)
 
           console.log('Bean Arduino core installed.')
           completedCallback(null)

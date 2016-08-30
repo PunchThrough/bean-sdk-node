@@ -69,12 +69,12 @@ program
 
 
 program
-  .command('program_sketch [hexfile]')
+  .command('program_sketch [sketch_name]')
   .description('Program a single sketch to the Bean')
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
-  .action((hexFile, options)=> {
-    commands.programSketch(initSdk('info'), hexFile, options.name, options.address, commandComplete)
+  .action((sketchName, options)=> {
+    commands.programSketch(initSdk('info'), sketchName, options.name, options.address, commandComplete)
   })
 
 

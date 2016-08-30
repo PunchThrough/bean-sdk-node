@@ -1,0 +1,9 @@
+dependencies:
+  override:
+    - nvm install 6.5.0
+    - npm install
+
+
+test:
+  override:
+    - nvm use 6.5.0 && npm run test

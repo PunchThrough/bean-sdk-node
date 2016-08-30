@@ -31,12 +31,20 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function programSketch(sdk, hexFile, beanName, beanUUID, completedCallback) {
+function programSketch(sdk, sketchName, beanName, beanUUID, completedCallback) {
 
-  let asciiData = fs.readFileSync(hexFile, 'ascii')
+  let hexFile = sketchName
+  if (!sketchName.endsWith('.hex'))
+    hexFile = `${sketchName}.hex`
+
+  let hexPath = path.join(COMPILED_SKETCH_LOCATION, hexFile)
+  if (!fs.existsSync(hexPath)) {
+    throw new Error(`No sketch with name: ${sketchName}`)
+  }
+
+  let asciiData = fs.readFileSync(hexPath, 'ascii')
   let intelHex = new intelhex.IntelHexFile(asciiData)
   let binary = intelHex.parse()
-  let sketchName = path.parse(hexFile).name
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
     sdk.uploadSketch(device, binary, sketchName, (err)=> {
@@ -56,7 +64,7 @@ function listCompiledSketches(completedCallback) {
   let dirFiles = fs.readdirSync(COMPILED_SKETCH_LOCATION)
   for (let i in dirFiles) {
     let f = dirFiles[i]
-    console.log(`${i}: ${f}`)
+    console.log(`${i}: ${f.split('.')[0]}`)
   }
 
   completedCallback(null)

@@ -119,7 +119,7 @@ program
 program
   .command('install_bean_arduino_core')
   .description('Installs Bean Arduino core (https://github.com/punchthrough/bean-arduino-core)')
-  .action((ptions)=> {
+  .action((options)=> {
     commands.installBeanArduinoCore(commandComplete)
   })
 

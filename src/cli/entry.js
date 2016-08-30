@@ -2,11 +2,13 @@
 
 'use strict'
 
+
 const program = require('commander')
 const commands = require('./commands/commands.js')
 const LightBlueSDK = require('../lightblue.js')
 const winston = require('winston')
 const logging = require('../util/logs')
+const platform = require('../util/platform')
 
 
 function initSdk(logLevel='error') {
@@ -34,7 +36,7 @@ function commandComplete(error) {
   if (error) {
     quit(1, error)
   } else {
-    quit(0, "Command completed successfully")
+    quit(0, `${platform.lineEnding()}Command completed successfully`)
   }
 }
 
@@ -121,6 +123,14 @@ program
   .description('Installs Bean Arduino core (https://github.com/punchthrough/bean-arduino-core)')
   .action((options)=> {
     commands.installBeanArduinoCore(commandComplete)
+  })
+
+
+program
+  .command('list_compiled_sketches')
+  .description('Lists compiled sketches (/homedir/.beansketches)')
+  .action((options)=> {
+    commands.listCompiledSketches(commandComplete)
   })
 
 

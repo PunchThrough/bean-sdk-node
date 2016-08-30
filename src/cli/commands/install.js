@@ -1,19 +1,16 @@
 'use strict'
 
+
 const fs = require('fs-extra')
 const os = require('os')
 const spawn = require('child_process').spawn
 const paths = require('../../util/paths')
+const platform = require('../../util/platform')
 const path = require('path')
 const readline = require('readline')
 
-const PLATFORM_OSX = 'darwin'
-const PLATFORM_FREEBSD = 'freebsd'
-const PLATFORM_LINUX = 'linux'
-const PLATFORM_SUNOS = 'sunos'
-const PLATFORM_WINDOWS = 'win32'
 
-const COMPILED_SKETCH_LOCATION = path.join(getUserHome(), '.beansketches')
+const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
 
 
 const rl = readline.createInterface({
@@ -56,7 +53,7 @@ function openArduinoApp(arduinoInstallPath, callback) {
   }
 
   let fnMap = {}
-  fnMap[PLATFORM_OSX] = ()=> {return ['open', [arduinoInstallPath]]}
+  fnMap[platform.OSX] = ()=> {return ['open', [arduinoInstallPath]]}
   let result = platformSpecificFn(fnMap)
   let program = result[0]
   let args = result[1]
@@ -70,7 +67,7 @@ function openArduinoApp(arduinoInstallPath, callback) {
 
 function unzip(tarball, location, callback) {
   let fnMap = {}
-  fnMap[PLATFORM_OSX] = ()=> {return ['tar', ['-xzvf', tarball, '-C', location]]}
+  fnMap[platform.OSX] = ()=> {return ['tar', ['-xzvf', tarball, '-C', location]]}
   let result = platformSpecificFn(fnMap)
   let program = result[0]
   let args = result[1]
@@ -81,27 +78,13 @@ function unzip(tarball, location, callback) {
 }
 
 
-function getUserHome() {
-  return process.env[(process.platform == PLATFORM_WINDOWS) ? 'USERPROFILE' : 'HOME'];
-}
-
-
-function lineEnding() {
-  if (process.platform == PLATFORM_WINDOWS) {
-    return '\r\n'
-  } else {
-    return '\n'
-  }
-}
-
-
 function createConfigFile(userHome, compiledSketchLocation) {
 
   // TODO: Finish me, for now we are hardcoding compiledSketchLocation
   let beanConfigFolder = path.join(userHome, 'bean')
   let beanConfigFile = path.join(beanConfigFolder, 'bean-sdk.cfg')
   fs.mkdirsSync(beanConfigFolder)
-  let jsonOut = `{"arduino_config_file": "${compiledSketchLocation}"}${lineEnding()}`
+  let jsonOut = `{"arduino_config_file": "${compiledSketchLocation}"}${platform.lineEnding()}`
   fs.writeFileSync(beanConfigFile, jsonOut)
 }
 
@@ -109,8 +92,8 @@ function createConfigFile(userHome, compiledSketchLocation) {
 function installBeanArduinoCore(completedCallback) {
 
   let fnMap = {}
-  fnMap[PLATFORM_OSX] = ()=> {return '/Applications/Arduino.app/'}
-  fnMap[PLATFORM_WINDOWS] = ()=> {return 'C://Program Files(x86)/Arduino/'}
+  fnMap[platform.OSX] = ()=> {return '/Applications/Arduino.app/'}
+  fnMap[platform.WINDOWS] = ()=> {return 'C://Program Files(x86)/Arduino/'}
   let example = platformSpecificFn(fnMap)
 
   rl.question(`Where is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {

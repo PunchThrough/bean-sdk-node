@@ -1,10 +1,15 @@
 'use strict'
 
+
 const FirmwareUpdater = require('../../firmware-updater')
 const intelhex = require('../../util/intelhex')
 const common = require('./common')
 const fs = require('fs')
 const path = require('path')
+const platform = require("../../util/platform")
+
+
+const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
@@ -46,7 +51,20 @@ function programSketch(sdk, hexFile, beanName, beanUUID, completedCallback) {
 }
 
 
+function listCompiledSketches(completedCallback) {
+
+  let dirFiles = fs.readdirSync(COMPILED_SKETCH_LOCATION)
+  for (let i in dirFiles) {
+    let f = dirFiles[i]
+    console.log(`${i}: ${f}`)
+  }
+
+  completedCallback(null)
+}
+
+
 module.exports = {
   programFirmware: programFirmware,
-  programSketch: programSketch
+  programSketch: programSketch,
+  listCompiledSketches: listCompiledSketches
 }

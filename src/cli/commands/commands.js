@@ -12,5 +12,6 @@ module.exports = {
   readAccel: bean.readAccel,
   readConfig: bean.readConfig,
   readDeviceInfo: bean.readDeviceInfo,
-  installBeanArduinoCore: install.installBeanArduinoCore
+  installBeanArduinoCore: install.installBeanArduinoCore,
+  listCompiledSketches: program.listCompiledSketches
 }

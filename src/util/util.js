@@ -1,3 +1,6 @@
+'use strict'
+
+
 const buffer = require('buffer')
 const crc = require('crc')
 

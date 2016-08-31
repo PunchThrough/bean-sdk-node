@@ -1,6 +1,9 @@
 'use strict'
 
 
+const spawn = require('child_process').spawn
+
+
 const PLATFORM_OSX = 'darwin'
 const PLATFORM_FREEBSD = 'freebsd'
 const PLATFORM_LINUX = 'linux'

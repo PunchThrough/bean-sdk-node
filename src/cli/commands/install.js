@@ -3,7 +3,6 @@
 
 const fs = require('fs-extra')
 const os = require('os')
-const spawn = require('child_process').spawn
 const paths = require('../../util/paths')
 const platform = require('../../util/platform')
 const path = require('path')
@@ -115,7 +114,7 @@ function installBeanArduinoCore(completedCallback) {
 
       // Install bean-arduino-core
       let arduinoHardwareFolder = arduinoHardwarePath(arduinoInstallPath)
-      let beanCoreHardwareFolder = path.join(beanArduinoCore, 'hardware', 'LightBlue-Bean')
+      let beanCoreHardwareFolder = path.join(beanArduinoCore, 'hardware', 'LightBlue-Bean', 'bean')
       fs.mkdirsSync(arduinoHardwareFolder)
       fs.copySync(beanCoreHardwareFolder, arduinoHardwareFolder)
 

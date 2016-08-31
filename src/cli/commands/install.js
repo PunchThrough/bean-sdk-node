@@ -43,6 +43,18 @@ function arduinoExamplesPath(arduinoFolder) {
 }
 
 
+function arduinoToolsPath(arduinoFolder) {
+  let fnMap = {}
+  fnMap[platform.OSX] = ()=> {
+    return path.join(arduinoFolder, 'Contents', 'java', 'hardware', 'tools', 'bean')
+  }
+  fnMap[platform.WINDOWS] = ()=> {
+    return path.join(arduinoFolder, 'hardware', 'tools', 'bean')
+  }
+  return platform.runFunction(fnMap)
+}
+
+
 function openArduinoApp(arduinoInstallPath, callback) {
 
   try {
@@ -125,7 +137,7 @@ function installBeanArduinoCore(completedCallback) {
       fs.copySync(beanCoreExamplesFolder, arduinoExamplesFolder)
 
       // Install post_compile script
-      let arduinoToolsFolder = path.join(arduinoInstallPath, 'Contents', 'java', 'hardware', 'tools', 'bean')
+      let arduinoToolsFolder = arduinoToolsPath(arduinoInstallPath)
       let arduinoPostCompilePath = path.join(arduinoToolsFolder, 'post_compile')
       let localPostCompilePath = paths.getResource('post_compile')
       fs.mkdirsSync(arduinoToolsFolder)

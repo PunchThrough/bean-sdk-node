@@ -44,6 +44,12 @@ function platformSpecificFn(functionMap, ...args) {
 
 function openArduinoApp(arduinoInstallPath, callback) {
 
+  if (process.platform == platform.WINDOWS) {
+    console.log(`Please manually open ${arduinoInstallPath}\\arduino.exe at least once`)
+    callback()
+    return
+  }
+
   if (arduinoInstallPath.endsWith('/')) {
     arduinoInstallPath = arduinoInstallPath.slice(0, -1)
   }

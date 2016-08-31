@@ -22,9 +22,35 @@ function userHome() {
 }
 
 
+function runCli(program, args, callback) {
+  let cmd = spawn(program, args)
+
+  cmd.on('close', (code) => {
+    if (code != 0) {
+      throw new Error(`CLI command failed: ${program}`)
+    } else {
+      callback()
+    }
+  })
+}
+
+
+function platformSpecificFn(functionMap, ...args) {
+  let fn = functionMap[process.platform]
+  if (fn) {
+    return fn.apply(fn, args)
+  }  else {
+    throw new Error(`Platform not supported: ${process.platform}`)
+  }
+}
+
+
+
 module.exports = {
   lineEnding: lineEnding,
   userHome: userHome,
+  cli: runCli,
+  runFunction: platformSpecificFn,
   OSX: PLATFORM_OSX,
   FREEBSD: PLATFORM_FREEBSD,
   LINUX: PLATFORM_LINUX,

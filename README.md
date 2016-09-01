@@ -9,6 +9,13 @@ Official cross-platform Bean SDK for Node.js.
 * Linux (Intel/AMD - Desktop)
 * Linux (ARM - Raspberry Pi)
 
+
+## Setup
+
+TODO: Dongle setup, etc.
+
+
+
 ## Installation
 
 1. Install [Node.js LTS or Current](https://nodejs.org/en/download/)
@@ -34,6 +41,14 @@ Official cross-platform Bean SDK for Node.js.
 3. Follow [platform specific install instructions](#platform-specific-instructions)
 
 4. Install `bean-sdk`
+
+    For CLI use:
+    
+    ```
+    npm install -g bean-sdk
+    ```
+
+    For library use:
 
     ```
     npm install bean-sdk

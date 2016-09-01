@@ -1,5 +1,5 @@
 {
-  "name": "bean-sdk-node",
+  "name": "bean-sdk",
   "version": "0.0.1",
   "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
   "main": "build/lightblue.js",
@@ -13,7 +13,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive",
-    "build": "babel src -d build/ && cp -R src/resources/ build/resources/"
+    "babel": "./node_modules/.bin/babel src -d build/",
+    "build": "./build.sh"
   },
   "repository": {
     "type": "git",

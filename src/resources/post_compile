@@ -40,7 +40,7 @@ def debug(msg, mode='a'):
         f.write("{}{}".format(msg, '\n'))
 
 
-def parse_input_unix(sys_args):
+def parse_input(sys_args):
     args = {}
     for a in sys_args[1:]:
         debug(str(a))
@@ -48,9 +48,6 @@ def parse_input_unix(sys_args):
         arg_name = arg_name.split('-')[-1]
         args[arg_name] = arg_value
     return args
-
-def parse_input_windows(sys_args):
-    pass
 
 
 def copy_hex(args):
@@ -62,10 +59,6 @@ def copy_hex(args):
 
 
 debug('post compile started', mode='wb')
-
-if (platform.system() == 'Windows'):
-    parsed_args = parse_input_windows(sys.argv)
-else:
-    parsed_args = parse_input_unix(sys.argv)
+parsed_args = parse_input(sys.argv)
 copy_hex(parsed_args)
 debug('done!')

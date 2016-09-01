@@ -80,7 +80,7 @@ class UploadProcess extends fsm.Context {
   }
 
   _statusCommandReceived(status) {
-    logger.info(`New Bean State: ${status.state}`)
+    logger.debug(`New Bean State: ${status.state}`)
     if (status.state === BEAN_STATE_ERROR) {
       let out = `Bean sketch upload error!\n`
       out += `    Sub state: ${status.substate}\n`

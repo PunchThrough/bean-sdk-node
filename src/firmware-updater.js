@@ -6,8 +6,6 @@ let path = require('path')
 let buffer = require('buffer')
 const logger = require('./util/logs').logger
 
-const FW_VERSION = '201606030000'
-const FW_FILES = path.join(__dirname, 'resources', 'firmware_bundles', FW_VERSION)
 const BLOCK_LENGTH = 16
 const FW_HEADER_LENGTH = 12
 const MAX_BLOCKS_IN_AIR = 8
@@ -27,17 +25,12 @@ const OAD_STEP_STATE_BLOCK_XFER = 'OAD_STEP_STATE_BLOCK_XFER'
 const OAD_STEP_STATE_REBOOTING = 'OAD_STEP_STATE_REBOOTING'
 
 
-function bakedFirmwareVersion() {
-  return FW_VERSION
-}
-
-
 class FirmwareUpdater {
 
   constructor(lb) {
-    this._lb = lb  // Dirty hack, this is technically a circular dependency
-    this._fwfiles = fs.readdirSync(FW_FILES).sort()  // alphabetized
-    this._storedFwVersion = this._fwfiles[0].split('_')[0]
+    this._lb = lb
+    this._fwfiles = []
+    this._storedFwVersion = null
 
     this.resetState(true)
   }
@@ -104,12 +97,13 @@ class FirmwareUpdater {
     let blkNoRequested = buf.readUInt16LE(0, 2)
 
     if (blkNoRequested === 0) {
-      logger.info('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      let filename = path.parse(this._fwfiles[this._fileOfferedIndex]).name
+      logger.info(`ACCEPTED IMAGE: ${filename}`)
       logger.info('Got request for the first BLOCK of FW')
       this._stateStep = OAD_STEP_STATE_BLOCK_XFER
 
       // calculate size of image to get total blocks
-      let fwFileStats = fs.statSync(path.join(FW_FILES, this._fwfiles[this._fileOfferedIndex]))
+      let fwFileStats = fs.statSync(this._fwfiles[this._fileOfferedIndex])
       this._totalBlocks = (fwFileStats.size / BLOCK_LENGTH) - 1
       logger.info(`Total blocks: ${this._totalBlocks}`)
       logger.info(`FW file size: ${fwFileStats.size}`)
@@ -177,7 +171,9 @@ class FirmwareUpdater {
      */
 
     if (this._fileOfferedIndex != -1) {
-      logger.info('REJECTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      let filepath = this._fwfiles[this._fileOfferedIndex]
+      let filename = path.parse(filepath).name
+      logger.info('REJECTED IMAGE: %s', filename)
     }
 
     this._stateStep = OAD_STEP_STATE_OFFERING_FILES
@@ -188,8 +184,9 @@ class FirmwareUpdater {
       this._fail("All firmware images have been rejected")
     }
 
-    let filename = this._fwfiles[this._fileOfferedIndex]
-    let filepath = path.join(FW_FILES, filename)
+    let filepath = this._fwfiles[this._fileOfferedIndex]
+    let filename = path.parse(filepath).name
+
     let hdrBuf = new buffer.Buffer(FW_HEADER_LENGTH)
 
     // Read bytes 4-16 from the file (12 bytes total)
@@ -222,11 +219,9 @@ class FirmwareUpdater {
       if (err) {
         callback(err)
       } else {
-        let v = ''
-        if (buffer.Buffer.isBuffer(fwVersion))
-          v = fwVersion.toString('utf8').split(' ')[0]
+        let v = fwVersion.toString('utf8').split(' ')[0]
         logger.info(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
-        if (this._storedFwVersion === v && this._deviceInProgress != null) {
+        if (this._storedFwVersion === v) {
           callback('Versions are the same, no update needed')
         } else {
           callback(null)
@@ -287,12 +282,13 @@ class FirmwareUpdater {
 
       } else {
         logger.info(`Continuing FW update for device ${this._deviceInProgress.toString()}`)
+        this._registerNotifications(this._deviceInProgress)
         this._deviceInProgress.getOADService().triggerIdentifyHeaderNotification()
       }
     })
   }
 
-  beginUpdate(device, callback) {
+  beginUpdate(device, bundle, callback) {
     /**
      * Begin an update procedure for `device` assuming it passes FW version check
      *
@@ -301,6 +297,9 @@ class FirmwareUpdater {
      */
 
     logger.info('Begin update called')
+    this._fwfiles = bundle
+    let filename = path.parse(this._fwfiles[0]).name
+    this._storedFwVersion = filename.split('_')[0]
 
     this._checkFirmwareVersion(device, (err)=> {
       if (err) {
@@ -323,5 +322,4 @@ class FirmwareUpdater {
 
 module.exports = {
   FirmwareUpdater: FirmwareUpdater,
-  bakedFirmwareVersion: bakedFirmwareVersion
 }

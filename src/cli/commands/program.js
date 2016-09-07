@@ -1,31 +1,61 @@
 'use strict'
 
 
-const FirmwareUpdater = require('../../firmware-updater')
 const intelhex = require('../../util/intelhex')
 const common = require('./common')
 const fs = require('fs')
 const path = require('path')
+const paths = require('../../util/paths')
 const platform = require("../../util/platform")
 
 
 const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
+const FIRMWARE_BUNDLES = paths.getResource('firmware_bundles')
+
+
+function lookupFirmwareBundleForHardwareVersion(hardwareVersion) {
+  let bundleDir
+  if (hardwareVersion.startsWith('1') || hardwareVersion.startsWith('E')) {
+    bundleDir = path.join(FIRMWARE_BUNDLES, 'bean')
+  } else if (hardwareVersion.startsWith('2')) {
+    bundleDir = path.join(FIRMWARE_BUNDLES, 'beanplus')
+  } else {
+    throw new Error(`Unrecognized hardware version: ${hardwareVersion}`)
+  }
+
+  let bundle = []
+  for (let filename of fs.readdirSync(bundleDir).sort())
+    bundle.push(path.join(bundleDir, filename))
+
+  return bundle
+}
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 
-    console.log(`Programming device ${device.getAddress()} with firmware version ${FirmwareUpdater.bakedFirmwareVersion()}`)
-    sdk.updateFirmware(device, (err)=> {
-
+    device.getDeviceInformationService().getHardwareVersion((err, version)=> {
       if (err) {
-        completedCallback(`FW update failed: ${err}`)
+        completedCallback(err)
       } else {
-        completedCallback(null)
-      }
 
+        let bundle = lookupFirmwareBundleForHardwareVersion(version.toString('utf8'))
+
+        console.log(`Programming device firmware: ${device.getAddress()}`)
+
+        sdk.updateFirmware(device, bundle, (err)=> {
+
+          if (err) {
+            completedCallback(`FW update failed: ${err}`)
+          } else {
+            completedCallback(null)
+          }
+
+        })
+      }
     })
+
   }, completedCallback)
 }
 

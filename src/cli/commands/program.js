@@ -15,7 +15,7 @@ const FIRMWARE_BUNDLES = paths.getResource('firmware_bundles')
 
 function lookupFirmwareBundleForHardwareVersion(hardwareVersion) {
   let bundleDir
-  if (hardwareVersion.startsWith('1')) {
+  if (hardwareVersion.startsWith('1') || hardwareVersion.startsWith('E')) {
     bundleDir = path.join(FIRMWARE_BUNDLES, 'bean')
   } else if (hardwareVersion.startsWith('2')) {
     bundleDir = path.join(FIRMWARE_BUNDLES, 'beanplus')

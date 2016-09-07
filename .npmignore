@@ -2,3 +2,6 @@ tmp/
 .idea/
 node_modules/
 *npm-debug.log
+*.tgz
+test/
+.git/

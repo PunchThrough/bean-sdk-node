@@ -12,13 +12,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
   sdk.startScanning(15, ()=> {
     // Scan timeout
     if (!found) {
-      let errMsg
-      if (name) {
-        errMsg = `No Bean found with name: ${name}`
-      } else {
-        errMsg = `No Bean found with address: ${address}`
-      }
-      errorCallback(errMsg)
+      errorCallback('No bean found!')
     }
   })
 

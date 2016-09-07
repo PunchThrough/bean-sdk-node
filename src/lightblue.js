@@ -152,26 +152,31 @@ class LightBlueSDK extends events.EventEmitter {
     return this._devices[uuid]
   }
 
-  updateFirmware(device, callback) {
-    this._fwUpdater.beginUpdate(device, callback)
+  /**
+   * Update a devices firmware
+   *
+   * @param device LightBlue Device object
+   * @param bundle an array of firmware images
+   */
+  updateFirmware(device, bundle, callback) {
+    this._fwUpdater.beginUpdate(device, bundle, callback)
   }
 
   uploadSketch(device, sketchBuf, sketchName, callback) {
     this._sketchUploader.beginUpload(device, sketchBuf, sketchName, callback)
   }
 
+  /**
+   * Connect to a device, preserving scanning state
+   *
+   * This method exists on the LB object by design, in addition to the Device object itself.
+   * This is because Noble will not connect to a device while scanning is enabled, therefore
+   * we stop scanning, connect to the device, and then set scanning back to it's original state.
+   *
+   * @param uuid string UUID of device
+   * @param callback Function with one error param
+   */
   connectToDevice(uuid, callback) {
-    /**
-     * Connect to a device, preserving scanning state
-     *
-     * This method exists on the LB object by design, in addition to the Device object itself.
-     * This is because Noble will not connect to a device while scanning is enabled, therefore
-     * we stop scanning, connect to the device, and then set scanning back to it's original state.
-     *
-     * @param uuid string UUID of device
-     * @param callback Function with one error param
-     */
-
     let d = this._devices[uuid]
     if (d) {
       let originalScanningState = this._scanning

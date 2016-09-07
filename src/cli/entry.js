@@ -54,7 +54,7 @@ program
   .command('scan')
   .description('Scan for LightBlue devices')
   .action((options)=> {
-    commands.startScan(initSdk())
+    commands.startScan(initSdk(), commandComplete)
   })
 
 

@@ -26,6 +26,9 @@ function arduinoHardwarePath(arduinoFolder) {
   fnMap[platform.WINDOWS] = ()=> {
     return path.join(arduinoFolder, 'hardware', 'LightBlue-Bean')
   }
+  fnMap[platform.LINUX] = ()=> {
+    return path.join(arduinoFolder, 'hardware', 'LightBlue-Bean')
+  }
   return platform.runFunction(fnMap)
 }
 
@@ -37,6 +40,9 @@ function arduinoExamplesPath(arduinoFolder) {
     return path.join(arduinoFolder, 'Contents', 'java', 'examples', 'LightBlue-Bean')
   }
   fnMap[platform.WINDOWS] = ()=> {
+    return path.join(arduinoFolder, 'examples', 'LightBlue-Bean')
+  }
+  fnMap[platform.LINUX] = ()=> {
     return path.join(arduinoFolder, 'examples', 'LightBlue-Bean')
   }
   return platform.runFunction(fnMap)
@@ -51,6 +57,9 @@ function arduinoToolsPath(arduinoFolder) {
   fnMap[platform.WINDOWS] = ()=> {
     return path.join(arduinoFolder, 'hardware', 'tools', 'bean')
   }
+  fnMap[platform.LINUX] = ()=> {
+    return path.join(arduinoFolder, 'hardware', 'tools', 'bean')
+  }
   return platform.runFunction(fnMap)
 }
 
@@ -63,8 +72,8 @@ function openArduinoApp(arduinoInstallPath, callback) {
     throw new Error(`Path does not exist: ${arduinoInstallPath}`)
   }
 
-  if (process.platform == platform.WINDOWS) {
-    console.log(`Please manually open ${arduinoInstallPath}\\arduino.exe at least once`)
+  if (process.platform != platform.OSX) {
+    console.log(`Please re-open the Arduino app manually!`)
     callback()
     return
   }
@@ -115,6 +124,7 @@ function installBeanArduinoCore(completedCallback) {
   let fnMap = {}
   fnMap[platform.OSX] = ()=> {return '/Applications/Arduino.app/'}
   fnMap[platform.WINDOWS] = ()=> {return 'C:\\Program Files(x86)\\Arduino\\'}
+  fnMap[platform.LINUX] = ()=> {return '/home/user/Arduino/'}
   let example = platform.runFunction(fnMap)
 
   rl.question(`Where is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {

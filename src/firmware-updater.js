@@ -220,7 +220,7 @@ class FirmwareUpdater {
       } else {
         let v = fwVersion.toString('utf8').split(' ')[0]
         logger.info(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
-        if (this._storedFwVersion === v && this._deviceInProgress != null) {
+        if (this._storedFwVersion === v) {
           callback('Versions are the same, no update needed')
         } else {
           callback(null)

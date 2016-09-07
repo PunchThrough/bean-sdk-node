@@ -97,7 +97,8 @@ class FirmwareUpdater {
     let blkNoRequested = buf.readUInt16LE(0, 2)
 
     if (blkNoRequested === 0) {
-      logger.info('ACCEPTED IMAGE: %s', this._fwfiles[this._fileOfferedIndex])
+      let filename = path.parse(this._fwfiles[this._fileOfferedIndex]).name
+      logger.info(`ACCEPTED IMAGE: ${filename}`)
       logger.info('Got request for the first BLOCK of FW')
       this._stateStep = OAD_STEP_STATE_BLOCK_XFER
 
@@ -281,6 +282,7 @@ class FirmwareUpdater {
 
       } else {
         logger.info(`Continuing FW update for device ${this._deviceInProgress.toString()}`)
+        this._registerNotifications(this._deviceInProgress)
         this._deviceInProgress.getOADService().triggerIdentifyHeaderNotification()
       }
     })

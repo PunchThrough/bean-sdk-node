@@ -12,13 +12,20 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
   sdk.startScanning(15, ()=> {
     // Scan timeout
     if (!found) {
-      errorCallback(`No Bean found with name/address: ${name}/${address}`)
+      let errMsg
+      if (name) {
+        errMsg = `No Bean found with name: ${name}`
+      } else {
+        errMsg = `No Bean found with address: ${address}`
+      }
+      errorCallback(errMsg)
     }
   })
 
   sdk.on('discover', (device)=> {
     if (device.getName() === name || device.getAddress() === address) {
-      console.log(`Found Bean with name/address: ${device.getName()}/${device.getAddress()}`)
+
+      console.log(`\nFound Bean with name/address: ${device.getName()}/${device.getAddress()}`)
       found = true
 
       sdk.connectToDevice(device.getAddress(), (err)=> {

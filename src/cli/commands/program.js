@@ -13,7 +13,6 @@ const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
 
 
 function programFirmware(sdk, beanName, beanUUID, completedCallback) {
-  console.log(`Programming Bean ${beanName}`)
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 

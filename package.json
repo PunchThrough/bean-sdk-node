@@ -2,6 +2,14 @@
   "name": "bean-sdk",
   "version": "0.0.4",
   "description": "Official Light Blue Bean SDK for Node.js by Punch Through",
+  "keywords": [
+    "bean",
+    "punchthrough",
+    "lightblue",
+    "ble",
+    "bluetooth",
+    "noble"
+  ],
   "main": "build/lightblue.js",
   "babel": {
     "presets": [

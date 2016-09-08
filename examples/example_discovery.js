@@ -1,8 +1,6 @@
 let LightBlueSDK = require('../src/lightblue')
 
-sdk = new LightBlueSDK()
-
-sdk.startScanning()
+let sdk = new LightBlueSDK()
 
 sdk.on('discover', (device)=> {
 
@@ -17,4 +15,7 @@ sdk.on('discover', (device)=> {
       })
     }
   })
+
 })
+
+sdk.startScanning()

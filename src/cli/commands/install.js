@@ -127,7 +127,7 @@ function installBeanArduinoCore(completedCallback) {
   fnMap[platform.LINUX] = ()=> {return '/home/user/Arduino/'}
   let example = platform.runFunction(fnMap)
 
-  rl.question(`Where is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {
+  rl.question(`\nWhere is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {
     openArduinoApp(arduinoInstallPath, ()=> {
       let beanArduinoCore = paths.getResource('bean-arduino-core-2.0.0')
 

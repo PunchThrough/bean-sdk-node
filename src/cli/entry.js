@@ -64,6 +64,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
+    console.log('')
     commands.programFirmware(initSdk('info'), options.name, options.address, commandComplete)
   })
 
@@ -74,6 +75,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((sketchName, options)=> {
+    console.log('')
     commands.programSketch(initSdk('info'), sketchName, options.name, options.address, commandComplete)
   })
 

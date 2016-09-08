@@ -90,6 +90,7 @@ function programSketch(sdk, sketchName, beanName, beanUUID, completedCallback) {
 
 function listCompiledSketches(completedCallback) {
 
+  console.log('')
   let dirFiles = fs.readdirSync(COMPILED_SKETCH_LOCATION)
   for (let i in dirFiles) {
     let f = dirFiles[i]

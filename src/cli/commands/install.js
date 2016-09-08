@@ -33,7 +33,6 @@ function arduinoHardwarePath(arduinoFolder) {
 }
 
 
-
 function arduinoExamplesPath(arduinoFolder) {
   let fnMap = {}
   fnMap[platform.OSX] = ()=> {

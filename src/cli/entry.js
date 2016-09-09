@@ -9,6 +9,7 @@ const LightBlueSDK = require('../lightblue.js')
 const winston = require('winston')
 const logging = require('../util/logs')
 const platform = require('../util/platform')
+const pkg = require('../../package.json')
 
 
 function initSdk(logLevel='error') {
@@ -42,8 +43,9 @@ function commandComplete(error) {
 
 
 program
-  .version('0.0.1')
-  .action(()=> {
+  .version(pkg.version)
+  .option('-v, --version', 'Get SDK version')
+  .action((options)=> {
     // Default handler
     console.log('Invalid command.')
     program.help()

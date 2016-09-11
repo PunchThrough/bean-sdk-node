@@ -138,6 +138,25 @@ program
   })
 
 
+program
+  .command('log_serial')
+  .description('Log any serial output from the Bean')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((options)=> {
+  })
+
+
+program
+  .command('send_serial [data]')
+  .description('Send serial data to the Bean (default ascii)')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .option('-b, --binary', 'Send binary data')
+  .action((options)=> {
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

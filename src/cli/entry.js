@@ -144,6 +144,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
+    commands.logSerial(initSdk(), options.name, options.address, commandComplete)
   })
 
 

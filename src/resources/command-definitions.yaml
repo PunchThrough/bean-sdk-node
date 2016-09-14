@@ -1,7 +1,9 @@
 outgoing:
   0x0000:
     name: "SERIAL_DATA"
-    arguments: []
+    arguments:
+      - name: "thing"
+        type: "my_new_type"
     response: []
 
   0x0500:
@@ -48,7 +50,7 @@ outgoing:
       - name: "ibeacon_minor_id"
         type: "uint16"
       - name: "local_name"
-        type: "string"
+        type: "padded_string"
         length: 20
       - name: "local_name_size"
         type: "uint8"
@@ -71,7 +73,7 @@ outgoing:
       - name: "ibeacon_minor_id"
         type: "uint16"
       - name: "local_name"
-        type: "string"
+        type: "padded_string"
         length: 20
       - name: "local_name_size"
         type: "uint8"
@@ -119,7 +121,7 @@ outgoing:
       - name: "sketch_name_size"
         type: "uint8"
       - name: "sketch_name"
-        type: "string"
+        type: "padded_string"
         length: 20
     response: []
 
@@ -232,6 +234,13 @@ outgoing:
 
 
 incoming:
+  0x0000:
+      name: "SERIAL_DATA"
+      arguments:
+        - name: "data"
+          type: "my_new_type"
+      response: []
+
   0x0001:
     name: "LB_PROTOCOL_ERROR"
     arguments:

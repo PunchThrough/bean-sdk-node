@@ -2,6 +2,7 @@
 
 
 const common = require('./common')
+const commandIds = require('../../command-definitions').commandIds
 const sleep = require('sleep')
 const async = require('async')
 const sprintf = require('sprintf-js').sprintf
@@ -84,14 +85,17 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
 function logSerial(sdk, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
-
+    console.log('Logging serial data...')
+    device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
+      console.log(`Rx: ${serialCmd.data}`)
+    })
+    sleep.sleep(30)
   })
 }
 
 
 function sendSerial(sdk, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
-
   })
 }
 

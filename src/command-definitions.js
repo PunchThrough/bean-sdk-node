@@ -42,11 +42,14 @@ function _binaryField(type) {
     case 'int16':
       binaryField = binary.Int16
       break
-    case 'string':
-      binaryField = binary.VariableLengthString
+    case 'padded_string':
+      binaryField = binary.PaddedString
       break
     case 'binary_blob':
       binaryField = binary.BinaryBlob
+      break
+    case 'my_new_type':
+      binaryField = binary.MyNewType
       break
     default:
       logger.info(`No binary type found: ${type}`)

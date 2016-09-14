@@ -104,11 +104,11 @@ class Int16 extends BinaryField {
 }
 
 
-class VariableLengthString extends BinaryField {
+class PaddedString extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
     let strBuf = buf.slice(offset, definition.length + offset)
-    return new VariableLengthString(strBuf.toString('ascii'), definition)
+    return new PaddedString(strBuf.toString('ascii'), definition)
   }
 
   pack() {
@@ -120,6 +120,27 @@ class VariableLengthString extends BinaryField {
 
   size() {
     return this._defn.length
+  }
+}
+
+
+class MyNewType extends BinaryField {
+
+  static fromBuffer(buf, offset, definition) {
+    return new MyNewType(buf, definition, buf.length)
+  }
+
+  constructor(value, defn, length) {
+    super(value, defn)
+    this._length = length
+  }
+
+  pack() {
+    throw new Error('Not implemented')
+  }
+
+  size() {
+    return this._length
   }
 }
 
@@ -146,6 +167,7 @@ module.exports = {
   UInt16: UInt16,
   UInt32: UInt32,
   Int16: Int16,
-  VariableLengthString: VariableLengthString,
-  BinaryBlob: BinaryBlob
+  PaddedString: PaddedString,
+  BinaryBlob: BinaryBlob,
+  MyNewType: MyNewType
 }

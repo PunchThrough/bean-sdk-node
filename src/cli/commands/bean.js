@@ -60,7 +60,7 @@ function readConfig(sdk, beanName, beanUUID, completedCallback) {
       console.log(out)
       completedCallback(null)
     })
-  })
+  }, completedCallback)
 }
 
 
@@ -78,7 +78,7 @@ function readDeviceInfo(sdk, beanName, beanUUID, completedCallback) {
       console.log(out)
       completedCallback(null)
     })
-  })
+  }, completedCallback)
 }
 
 

@@ -2,5 +2,5 @@ build/
 tmp/
 .idea/
 node_modules/
-*npm-debug.log
+*npm-debug.log*
 *.tgz

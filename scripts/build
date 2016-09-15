@@ -40,8 +40,9 @@ def babel():
 
 def clean():
     print("Cleaning...")
-    shutil.rmtree(BUILD_DIR)
-    os.mkdir(BUILD_DIR)
+    if os.path.exists(BUILD_DIR):
+        shutil.rmtree(BUILD_DIR)
+        os.mkdir(BUILD_DIR)
 
 
 clean()

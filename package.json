@@ -22,7 +22,7 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers js:babel-register --recursive",
     "babel": "./node_modules/.bin/babel src -d build/",
-    "build": "./scripts/build"
+    "build": "python scripts/build"
   },
   "repository": {
     "type": "git",

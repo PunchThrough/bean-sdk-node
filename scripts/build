@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+
+import os
+import shutil
+import tarfile
+
+
+THIS_DIR = os.path.abspath(os.path.dirname(__file__))
+BUILD_DIR = os.path.join(THIS_DIR, '..', 'build')
+SRC_DIR = os.path.join(THIS_DIR, '..', 'src')
+RESOURCES_DIR = os.path.join(SRC_DIR, 'resources')
+
+BEAN_ARDUINO_CORE = "bean-arduino-core-2.0.0"
+BEAN_ARDUINO_CORE_TARBALL = "bean-arduino-core-2.0.0.tar.gz"
+
+
+def extract_arduino_core():
+    build_resources = os.path.join(BUILD_DIR, 'resources')
+    archive_path = os.path.join(build_resources, BEAN_ARDUINO_CORE_TARBALL)
+    archive = tarfile.open(archive_path)
+    archive.extractall(build_resources)
+
+    # lastly, copy platforms.local.txt
+    src = os.path.join(RESOURCES_DIR, 'platform.local.txt')
+    dst = os.path.join(build_resources, BEAN_ARDUINO_CORE, 'hardware', 'LightBlue-Bean', 'bean', 'avr')
+    shutil.copy(src, dst)
+
+
+def copy_resources():
+    shutil.copytree(RESOURCES_DIR, os.path.join(BUILD_DIR, 'resources'))
+
+
+def babel():
+    print("Running babel...")
+    babel_exe = os.path.join(THIS_DIR, '..', 'node_modules', '.bin', 'babel')
+    cmd_str = "{} {} -d {}".format(babel_exe, SRC_DIR, BUILD_DIR)
+    os.system(cmd_str)
+
+
+def clean():
+    print("Cleaning...")
+    if os.path.exists(BUILD_DIR):
+        shutil.rmtree(BUILD_DIR)
+        os.mkdir(BUILD_DIR)
+
+
+clean()
+babel()
+copy_resources()
+extract_arduino_core()
+print("Build complete")

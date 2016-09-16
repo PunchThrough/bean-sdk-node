@@ -127,20 +127,15 @@ class PaddedString extends BinaryField {
 class VariableLengthBytes extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new VariableLengthBytes(buf, definition, buf.length)
-  }
-
-  constructor(value, defn, length) {
-    super(value, defn)
-    this._length = length
+    return new VariableLengthBytes(buf, definition)
   }
 
   pack() {
-    throw new Error('Not implemented')
+    return this._value
   }
 
   size() {
-    return this._length
+    return this._value.length
   }
 }
 

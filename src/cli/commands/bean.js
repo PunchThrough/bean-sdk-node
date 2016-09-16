@@ -6,6 +6,7 @@ const commandIds = require('../../command-definitions').commandIds
 const sleep = require('sleep')
 const async = require('async')
 const sprintf = require('sprintf-js').sprintf
+const buffer = require('buffer')
 
 
 function blinkLed(sdk, beanName, beanAddress, completedCallback) {
@@ -89,13 +90,27 @@ function logSerial(sdk, beanName, beanAddress, completedCallback) {
     device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
       console.log(`Rx: ${serialCmd.data}`)
     })
-    sleep.sleep(30)
   })
 }
 
 
-function sendSerial(sdk, beanName, beanAddress, completedCallback) {
+function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback) {
+
+  // Parse data into buffer
+  let buf
+
+  if (binary === true) {
+    // Interpret as hex digits
+    buf = new buffer.Buffer(data, 'hex')
+  } else {
+    // Ascii
+    buf = new buffer.Buffer(data, 'ascii')
+  }
+
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    device.sendSerial(buf)
+    sleep.sleep(1)
+    completedCallback(null)
   })
 }
 

@@ -153,8 +153,9 @@ program
   .description('Send serial data to the Bean (default ascii)')
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
-  .option('-b, --binary', 'Send binary data')
-  .action((options)=> {
+  .option('-b, --binary', 'Interpret data as hex digits')
+  .action((data, options)=> {
+    commands.sendSerial(initSdk(), data, options.binary, options.name, options.address, commandComplete)
   })
 
 

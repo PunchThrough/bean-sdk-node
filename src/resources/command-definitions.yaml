@@ -2,8 +2,8 @@ outgoing:
   0x0000:
     name: "SERIAL_DATA"
     arguments:
-      - name: "thing"
-        type: "my_new_type"
+      - name: "data"
+        type: "variable_length_bytes"
     response: []
 
   0x0500:

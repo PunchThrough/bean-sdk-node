@@ -124,10 +124,10 @@ class PaddedString extends BinaryField {
 }
 
 
-class MyNewType extends BinaryField {
+class VariableLengthBytes extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
-    return new MyNewType(buf, definition, buf.length)
+    return new VariableLengthBytes(buf, definition, buf.length)
   }
 
   constructor(value, defn, length) {
@@ -145,11 +145,11 @@ class MyNewType extends BinaryField {
 }
 
 
-class BinaryBlob extends BinaryField {
+class FixedLengthBytes extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
     let binBuf = buf.slice(offset, definition.length + offset)
-    return new BinaryBlob(binBuf, definition)
+    return new FixedLengthBytes(binBuf, definition)
   }
 
   pack() {
@@ -168,6 +168,6 @@ module.exports = {
   UInt32: UInt32,
   Int16: Int16,
   PaddedString: PaddedString,
-  BinaryBlob: BinaryBlob,
-  MyNewType: MyNewType
+  FixedLengthBytes: FixedLengthBytes,
+  VariableLengthBytes: VariableLengthBytes
 }

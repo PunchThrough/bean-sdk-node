@@ -129,7 +129,7 @@ outgoing:
     name: "BL_FW_BLOCK"
     arguments:
       - name: "block"
-        type: "binary_blob"
+        type: "fixed_length_bytes"
         length: 64
     response: []
 
@@ -238,7 +238,7 @@ incoming:
       name: "SERIAL_DATA"
       arguments:
         - name: "data"
-          type: "my_new_type"
+          type: "variable_length_bytes"
       response: []
 
   0x0001:

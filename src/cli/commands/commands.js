@@ -13,5 +13,7 @@ module.exports = {
   readConfig: bean.readConfig,
   readDeviceInfo: bean.readDeviceInfo,
   installBeanArduinoCore: install.installBeanArduinoCore,
-  listCompiledSketches: program.listCompiledSketches
+  listCompiledSketches: program.listCompiledSketches,
+  logSerial: bean.logSerial,
+  sendSerial: bean.sendSerial
 }

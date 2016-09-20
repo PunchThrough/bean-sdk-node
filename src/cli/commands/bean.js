@@ -2,14 +2,16 @@
 
 
 const common = require('./common')
+const commandIds = require('../../command-definitions').commandIds
 const sleep = require('sleep')
 const async = require('async')
 const sprintf = require('sprintf-js').sprintf
+const buffer = require('buffer')
 
 
-function blinkLed(sdk, beanName, beanUUID, completedCallback) {
+function blinkLed(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log('Blinking led...')
     device.setLed(255, 0, 255)
     sleep.sleep(1)
@@ -20,9 +22,9 @@ function blinkLed(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function readAccel(sdk, beanName, beanUUID, completedCallback) {
+function readAccel(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
 
     async.timesSeries(30, (n, next)=> {
       device.readAccelerometer((err, response)=> {
@@ -44,9 +46,9 @@ function readAccel(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function readConfig(sdk, beanName, beanUUID, completedCallback) {
+function readConfig(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     device.readBleConfig((err, response)=> {
       let out = "\n"
       out += `    Advertising Interval: ${response.advertising_interval}\n`
@@ -64,9 +66,9 @@ function readConfig(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function readDeviceInfo(sdk, beanName, beanUUID, completedCallback) {
+function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     let dis = device.getDeviceInformationService()
     dis.serialize((err, info) => {
       let out = "\n"
@@ -82,9 +84,42 @@ function readDeviceInfo(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
+function logSerial(sdk, beanName, beanAddress, completedCallback) {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    console.log('Logging serial data...')
+    device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
+      console.log(`Rx: ${serialCmd.data}`)
+    })
+  })
+}
+
+
+function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback) {
+
+  // Parse data into buffer
+  let buf
+
+  if (binary === true) {
+    // Interpret as hex digits
+    buf = new buffer.Buffer(data, 'hex')
+  } else {
+    // Ascii
+    buf = new buffer.Buffer(data, 'ascii')
+  }
+
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    device.sendSerial(buf)
+    sleep.sleep(1)
+    completedCallback(null)
+  })
+}
+
+
 module.exports = {
   blinkLed: blinkLed,
   readAccel: readAccel,
   readConfig: readConfig,
-  readDeviceInfo: readDeviceInfo
+  readDeviceInfo: readDeviceInfo,
+  logSerial: logSerial,
+  sendSerial: sendSerial
 }

@@ -221,6 +221,11 @@ class LightBlueDevice extends BleDevice {
     this.getSerialTransportService().sendCommand(cmd, [], callback)
   }
 
+  sendSerial(dataBuffer) {
+    let cmd = BleServices.serialTransport.commandIds.SERIAL_DATA
+    this.getSerialTransportService().sendCommand(cmd, [dataBuffer])
+  }
+
 }
 
 

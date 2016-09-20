@@ -104,11 +104,11 @@ class Int16 extends BinaryField {
 }
 
 
-class VariableLengthString extends BinaryField {
+class PaddedString extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
     let strBuf = buf.slice(offset, definition.length + offset)
-    return new VariableLengthString(strBuf.toString('ascii'), definition)
+    return new PaddedString(strBuf.toString('ascii'), definition)
   }
 
   pack() {
@@ -124,11 +124,27 @@ class VariableLengthString extends BinaryField {
 }
 
 
-class BinaryBlob extends BinaryField {
+class VariableLengthBytes extends BinaryField {
+
+  static fromBuffer(buf, offset, definition) {
+    return new VariableLengthBytes(buf, definition)
+  }
+
+  pack() {
+    return this._value
+  }
+
+  size() {
+    return this._value.length
+  }
+}
+
+
+class FixedLengthBytes extends BinaryField {
 
   static fromBuffer(buf, offset, definition) {
     let binBuf = buf.slice(offset, definition.length + offset)
-    return new BinaryBlob(binBuf, definition)
+    return new FixedLengthBytes(binBuf, definition)
   }
 
   pack() {
@@ -146,6 +162,7 @@ module.exports = {
   UInt16: UInt16,
   UInt32: UInt32,
   Int16: Int16,
-  VariableLengthString: VariableLengthString,
-  BinaryBlob: BinaryBlob
+  PaddedString: PaddedString,
+  FixedLengthBytes: FixedLengthBytes,
+  VariableLengthBytes: VariableLengthBytes
 }

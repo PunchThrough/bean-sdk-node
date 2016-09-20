@@ -60,7 +60,7 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function programSketch(sdk, sketchName, beanName, beanUUID, completedCallback) {
+function programSketch(sdk, sketchName, beanName, beanUUID, oops, completedCallback) {
 
   let hexFile = sketchName
   if (!sketchName.endsWith('.hex'))
@@ -76,7 +76,7 @@ function programSketch(sdk, sketchName, beanName, beanUUID, completedCallback) {
   let binary = intelHex.parse()
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
-    sdk.uploadSketch(device, binary, sketchName, (err)=> {
+    sdk.uploadSketch(device, binary, sketchName, oops === true, (err)=> {
       if (err) {
         completedCallback(`Sketch upload failed: ${err}`)
       } else {

@@ -1,4 +1,4 @@
-# v0.3.0 (UNRELEASED)
+# v0.3.0
 
 ### Features
 

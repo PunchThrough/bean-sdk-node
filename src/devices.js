@@ -220,6 +220,11 @@ class LightBlueDevice extends BleDevice {
     this.getSerialTransportService().sendCommand(cmd, [], callback)
   }
 
+  readSketchInfo(callback) {
+    let cmd = BleServices.serialTransport.commandIds.BL_GET_META
+    this.getSerialTransportService().sendCommand(cmd, [], callback)
+  }
+
   readBleConfig(callback) {
     let cmd = BleServices.serialTransport.commandIds.BT_GET_CONFIG
     this.getSerialTransportService().sendCommand(cmd, [], callback)

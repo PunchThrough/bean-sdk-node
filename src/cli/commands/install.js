@@ -5,17 +5,11 @@ const fs = require('fs-extra')
 const os = require('os')
 const paths = require('../../util/paths')
 const platform = require('../../util/platform')
+const util = require('../../util/util')
 const path = require('path')
-const readline = require('readline')
 
 
 const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
-
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
 
 
 function arduinoHardwarePath(arduinoFolder) {
@@ -126,7 +120,7 @@ function installBeanArduinoCore(completedCallback) {
   fnMap[platform.LINUX] = ()=> {return '/home/user/Arduino/'}
   let example = platform.runFunction(fnMap)
 
-  rl.question(`\nWhere is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {
+  util.userInput.question(`\nWhere is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {
     openArduinoApp(arduinoInstallPath, ()=> {
       let beanArduinoCore = paths.getResource('bean-arduino-core-2.0.0')
 

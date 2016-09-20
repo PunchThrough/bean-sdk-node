@@ -4,12 +4,7 @@ const util = require('./util/util')
 const commandIds = require('./command-definitions').commandIds
 const buffer = require('buffer')
 const timers = require('timers')
-const readline = require('readline')
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
 
 const BLOCK_SIZE = 64
 
@@ -176,7 +171,7 @@ class StateAwaitReady extends SketchUploadState {
     ]
 
     if (this.ctx.shouldPromptUser()) {
-      rl.question(`Press any character to begin upload:\n`, () => {
+      util.userInput.question(`Press ENTER to begin upload:\n`, () => {
         logger.info('Sketch upload started!')
         serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
       })

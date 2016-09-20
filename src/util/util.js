@@ -3,7 +3,13 @@
 
 const buffer = require('buffer')
 const crc = require('crc')
+const readline = require('readline')
 
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
 
 function normalizeUUID(uuid) {
   return parseInt(uuid, 16)
@@ -27,5 +33,6 @@ function crc16(buf) {
 module.exports = {
   normalizeUUID: normalizeUUID,
   concatBuffers: concatBuffers,
-  crc16: crc16
+  crc16: crc16,
+  userInput: rl
 }

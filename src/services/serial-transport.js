@@ -35,7 +35,7 @@ class LightBluePacket {
   }
 
   toString() {
-    return `LightBluePacket (First: ${this._first}) (Remaining: ${this._packetsRemaining}`
+    return `LightBluePacket (First: ${this._first}) (Remaining: ${this._packetsRemaining})`
   }
 
   pack() {

@@ -3,7 +3,6 @@
 
 const util = require('../util/util')
 const BleService = require('./base')
-
 const deviceInformation = require('./device-information')
 const oad = require('./oad')
 const serialTransport = require('./serial-transport')

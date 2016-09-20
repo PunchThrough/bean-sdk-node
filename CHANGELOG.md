@@ -1,3 +1,10 @@
+# v0.3.1
+
+### Bug Fixes
+
+* Fix user input being printed to stdout twice when prompting for user input.
+
+
 # v0.3.0
 
 ### Features
@@ -5,6 +12,7 @@
 * New CLI Command `rename`: Allows Bean renaming.
 * Updated CLI Command `read_device_info`: Now shows **battery voltage** and **current sketch**.
 * Updated CLI Command `program_sketch`: New `--oops` option which prompts users before starting sketch upload process. This will aid users who have accidentally "bricked" their beans with a malicious sketch.
+
 
 # v0.2.0
 

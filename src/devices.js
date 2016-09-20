@@ -17,7 +17,7 @@ function fromExistingDevice(existingDevice, peripheral) {
    * Return the same `existingDevice` instance, with updated info from peripheral
    */
 
-  // Kind of hacky...altering "protected" state within the `existingDevice`
+    // Kind of hacky...altering "protected" state within the `existingDevice`
   let adv = peripheral.advertisement
   existingDevice._name = adv.localName ? adv.localName : ''
   existingDevice._noblePeripheral = peripheral
@@ -233,6 +233,27 @@ class LightBlueDevice extends BleDevice {
   sendSerial(dataBuffer) {
     let cmd = BleServices.serialTransport.commandIds.SERIAL_DATA
     this.getSerialTransportService().sendCommand(cmd, [dataBuffer])
+  }
+
+  rename(newName, callback) {
+    this.readBleConfig((err, existingCfg)=> {
+      let cmd = BleServices.serialTransport.commandIds.BT_SET_CONFIG
+
+      let args = [
+        existingCfg.advertising_interval,
+        existingCfg.connection_interval,
+        existingCfg.tx_power,
+        existingCfg.advertising_mode,
+        existingCfg.ibeacon_uuid,
+        existingCfg.ibeacon_major_id,
+        existingCfg.ibeacon_minor_id,
+        newName,
+        existingCfg.local_name_size
+      ]
+
+      this.getSerialTransportService().sendCommand(cmd, args)
+      callback(null)
+    })
   }
 
 }

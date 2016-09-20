@@ -136,11 +136,22 @@ function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback)
 }
 
 
+function rename(sdk, newName, beanName, beanAddress, completedCallback) {
+
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    console.log(`Renaming Bean to: ${newName}`)
+    device.rename(newName, completedCallback)
+  })
+
+}
+
+
 module.exports = {
   blinkLed: blinkLed,
   readAccel: readAccel,
   readConfig: readConfig,
   readDeviceInfo: readDeviceInfo,
   logSerial: logSerial,
-  sendSerial: sendSerial
+  sendSerial: sendSerial,
+  rename: rename
 }

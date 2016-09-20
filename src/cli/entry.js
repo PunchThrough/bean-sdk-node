@@ -93,6 +93,16 @@ program
 
 
 program
+  .command('rename [new_name]')
+  .description('Rename Bean')
+  .option('-n, --name [name]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((newName, options)=> {
+    commands.rename(initSdk(), newName, options.name, options.address, commandComplete)
+  })
+
+
+program
   .command('read_accel')
   .description('Read accelerometer data')
   .option('-n, --name [name]', 'Bean name')

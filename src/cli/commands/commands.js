@@ -15,5 +15,6 @@ module.exports = {
   installBeanArduinoCore: install.installBeanArduinoCore,
   listCompiledSketches: program.listCompiledSketches,
   logSerial: bean.logSerial,
-  sendSerial: bean.sendSerial
+  sendSerial: bean.sendSerial,
+  rename: bean.rename
 }

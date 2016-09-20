@@ -141,6 +141,7 @@ function rename(sdk, newName, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log(`Renaming Bean to: ${newName}`)
     device.rename(newName, completedCallback)
+    sleep.sleep(1)
   })
 
 }

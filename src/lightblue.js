@@ -163,6 +163,7 @@ class LightBlueSDK extends events.EventEmitter {
   }
 
   uploadSketch(device, sketchBuf, sketchName, callback) {
+    this.stopScanning()
     this._sketchUploader.beginUpload(device, sketchBuf, sketchName, callback)
   }
 

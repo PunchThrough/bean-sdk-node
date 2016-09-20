@@ -9,6 +9,19 @@ const sprintf = require('sprintf-js').sprintf
 const buffer = require('buffer')
 
 
+function _printDeviceInfo(mfgName, modelNumber, hwVersion, fwVersion, swVersion, battVoltage, sketchName) {
+  let out = "\n"
+  out += `      Manufacturer: ${mfgName}\n`
+  out += `      Model Number: ${modelNumber}\n`
+  out += `  Hardware Version: ${hwVersion}\n`
+  out += `  Firmware Version: ${fwVersion}\n`
+  out += `  Software Version: ${swVersion}\n`
+  out += `     Battery Level: ${battVoltage}%\n`
+  out += `       Sketch Name: ${sketchName}\n`
+  console.log(out)
+}
+
+
 function blinkLed(sdk, beanName, beanAddress, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
@@ -71,14 +84,24 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     let dis = device.getDeviceInformationService()
     dis.serialize((err, info) => {
-      let out = "\n"
-      out += `      Manufacturer: ${info.manufacturer_name}\n`
-      out += `      Model Number: ${info.model_number}\n`
-      out += `  Hardware Version: ${info.hardware_version}\n`
-      out += `  Firmware Version: ${info.firmware_version}\n`
-      out += `  Software Version: ${info.software_version}\n`
-      console.log(out)
-      completedCallback(null)
+      if (err)
+        throw new Error(err)
+
+      device.getBatteryService().getVoltage((err, battVoltage)=> {
+        if (err)
+          throw new Error(err)
+
+        _printDeviceInfo(
+          info.manufacturer_name,
+          info.model_number,
+          info.hardware_version,
+          info.firmware_version,
+          info.software_version,
+          battVoltage,
+          '')
+        completedCallback(null)
+      })
+
     })
   }, completedCallback)
 }

@@ -15,12 +15,14 @@ const UUID_CHAR_BATTERY = 0x2A19
 class BatteryService extends BleService {
 
   getVoltage(callback) {
-    this._performCachedLookup(UUID_CHAR_BATTERY, callback)
+    this._performCachedLookup(UUID_CHAR_BATTERY, (err, buf)=> {
+      callback(err, buf.readUInt8(0))
+    })
   }
 }
 
 
 module.exports = {
-  DeviceInformationService: DeviceInformationService,
-  UUID: UUID_SERVICE_DEVICE_INFORMATION
+  BatteryService: BatteryService,
+  UUID: UUID_SERVICE_BATTERY
 }

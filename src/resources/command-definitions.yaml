@@ -136,7 +136,18 @@ outgoing:
   0x1003:
     name: "BL_GET_META"
     arguments: []
-    response: []
+    response:
+      - name: "hex_size"
+        type: "uint32"
+      - name: "hex_crc"
+        type: "uint32"
+      - name: "unix_timestamp"
+        type: "uint32"
+      - name: "sketch_name_size"
+        type: "uint8"
+      - name: "sketch_name"
+        type: "padded_string"
+        length: 20
 
   0x2000:
     name: "CC_LED_WRITE"

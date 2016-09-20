@@ -206,6 +206,10 @@ class LightBlueDevice extends BleDevice {
     return this._lookupService(BleServices.serialTransport.UUID)
   }
 
+  getBatteryService() {
+    return this._lookupService(BleServices.battery.UUID)
+  }
+
   setLed(red, green, blue) {
     let cmd = BleServices.serialTransport.commandIds.CC_LED_WRITE_ALL
     this.getSerialTransportService().sendCommand(cmd, [red, green, blue])

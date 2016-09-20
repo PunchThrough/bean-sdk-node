@@ -163,9 +163,9 @@ class LightBlueSDK extends events.EventEmitter {
     this._fwUpdater.beginUpdate(device, bundle, callback)
   }
 
-  uploadSketch(device, sketchBuf, sketchName, callback) {
+  uploadSketch(device, sketchBuf, sketchName, promptUser, callback) {
     this.stopScanning()
-    this._sketchUploader.beginUpload(device, sketchBuf, sketchName, callback)
+    this._sketchUploader.beginUpload(device, sketchBuf, sketchName, promptUser, callback)
   }
 
   /**

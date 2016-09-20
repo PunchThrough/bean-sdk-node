@@ -76,9 +76,10 @@ program
   .description('Program a single sketch to the Bean')
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
+  .option('-o, --oops', 'Re-program a "bricked" sketch')
   .action((sketchName, options)=> {
     console.log('')
-    commands.programSketch(initSdk('info'), sketchName, options.name, options.address, commandComplete)
+    commands.programSketch(initSdk('info'), sketchName, options.name, options.address, options.oops, commandComplete)
   })
 
 

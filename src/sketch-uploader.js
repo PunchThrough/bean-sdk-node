@@ -4,6 +4,12 @@ const util = require('./util/util')
 const commandIds = require('./command-definitions').commandIds
 const buffer = require('buffer')
 const timers = require('timers')
+const readline = require('readline')
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
 
 const BLOCK_SIZE = 64
 
@@ -52,8 +58,8 @@ class SketchUploader {
     this._process = null
   }
 
-  beginUpload(device, sketchBuf, sketchName, callback) {
-    this._process = new UploadProcess(device, sketchBuf, sketchName, callback)
+  beginUpload(device, sketchBuf, sketchName, promptUser, callback) {
+    this._process = new UploadProcess(device, sketchBuf, sketchName, promptUser, callback)
     this._process.start()
   }
 
@@ -61,12 +67,13 @@ class SketchUploader {
 
 
 class UploadProcess extends fsm.Context {
-  constructor(device, sketchBuf, sketchName, callback) {
+  constructor(device, sketchBuf, sketchName, promptUser, callback) {
     super()
 
     this._device = device
     this._sketchBuf = sketchBuf
     this._sketchName = sketchName
+    this._promptUser = promptUser
     this._callback = callback
 
     this.initStates({
@@ -101,6 +108,10 @@ class UploadProcess extends fsm.Context {
       commandIds.BL_STATUS,
       (statusCommand) => this._statusCommandReceived(statusCommand))
     this.setState(STATE_AWAIT_READY)
+  }
+
+  shouldPromptUser() {
+    return this._promptUser
   }
 
   getDevice() {
@@ -164,7 +175,16 @@ class StateAwaitReady extends SketchUploadState {
       sketchName                     // sketch name
     ]
 
-    serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
+    if (this.ctx.shouldPromptUser()) {
+      rl.question(`Press any character to begin upload:\n`, () => {
+        logger.info('Sketch upload started!')
+        serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
+      })
+    } else {
+      logger.info('Sketch upload started!')
+      serialTransport.sendCommand(commandIds.BL_CMD_START, cmdArgs)
+    }
+
   }
 
   eventBeanState(state) {

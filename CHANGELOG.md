@@ -1,3 +1,10 @@
+# v0.3.0 (UNRELEASED)
+
+### Features
+
+* New CLI Command: `rename` - allows Bean renaming.
+* Updated CLI Command: `read_device_info` - now shows battery voltage and current sketch.
+
 # v0.2.0
 
 ### Features

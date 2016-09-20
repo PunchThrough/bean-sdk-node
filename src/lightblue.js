@@ -6,7 +6,6 @@ const devices = require('./devices')
 const FirmwareUpdater = require('./firmware-updater').FirmwareUpdater
 const SketchUploader = require('./sketch-uploader').SketchUploader
 const events = require('events')
-const timers = require('timers')
 const logger = require('./util/logs').logger
 const configureLogger = require('./util/logs').configure
 
@@ -39,6 +38,7 @@ class LightBlueSDK extends events.EventEmitter {
     // State
     this._devices = {}
     this._scanning = false
+    this._scanTimeout = null
 
     noble.on('discover', (peripheral)=> {
       this._discover(peripheral)
@@ -133,7 +133,7 @@ class LightBlueSDK extends events.EventEmitter {
     }
 
     logger.info(`Setting scan timeout: ${timeoutSeconds} seconds`)
-    timers.setTimeout(()=> {
+    this._scanTimeout = setTimeout(()=> {
       logger.info("Scan timeout!")
       ctx.stopScanning()
       if (timeoutCallback) {
@@ -144,6 +144,7 @@ class LightBlueSDK extends events.EventEmitter {
 
   stopScanning() {
     logger.info('No longer scanning...')
+    clearTimeout(this._scanTimeout)
     noble.stopScanning()
     this._scanning = false
   }

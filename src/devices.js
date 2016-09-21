@@ -159,23 +159,26 @@ class BleDevice {
         let setupFns = []
 
         for (let nobleService of services) {
-          setupFns.push((setupCallback)=> {
-            let sUUID = util.normalizeUUID(nobleService.uuid)
-            let service = null
-            if (this._services[sUUID]) {
-              // Service exists
-              service = BleServices.fromExistingService(this._services[sUUID], nobleService)
-            } else {
-              // New service
-              service = BleServices.fromNobleService(nobleService)
-            }
+          let sUUID = util.normalizeUUID(nobleService.uuid)
+          let service = null
+          if (this._services[sUUID]) {
+            // Service exists
+            service = BleServices.fromExistingService(this._services[sUUID], nobleService)
+          } else {
+            // New service
+            service = BleServices.fromNobleService(nobleService)
+          }
+          logger.info(`Found service: ${service.getName()} / ${nobleService.uuid}`)
+          this._services[sUUID] = service
+        }
 
-            service.setup((setupError)=> {
-              logger.info(`Service setup successfully: ${service.getName()}`)
+        for (let i in this._services) {
+          let s = this._services[i]
+          setupFns.push((setupCallback)=> {
+            s.setup((setupError)=> {
+              logger.info(`Service setup successfully: ${s.getName()}`)
               setupCallback(setupError)
             })
-
-            this._services[sUUID] = service
           })
         }
 
@@ -183,6 +186,7 @@ class BleDevice {
           logger.info('All services have been setup!')
           callback(error)
         })
+
       }
     })
   }

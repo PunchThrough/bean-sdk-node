@@ -23,7 +23,7 @@ class BleService {
 
     this._registeredNotificationCallbacks[uuid] = []
 
-    this._characteristics[uuid].notify(true, (err)=> {
+    this._characteristics[uuid].subscribe((err)=> {
       callback(err)
     })
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''
+"""
 Mac OS X
 
 tools.beanupload.upload.pattern="{cmd.path}/post_compile" "-board={build.mcu}" "-tools={cmd.path}" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
@@ -11,33 +11,45 @@ Example:
 -path=/var/folders/34/886kwtkx31g2zgglpg8th7400000gn/T/buildf38d4be60096b3615388b79e01a0e4e5.tmp
 -file=sleep.ino
 -bean_variant=2
-'''
+"""
 
-'''
+"""
 Windows
 
 tools.beanupload.upload.pattern.windows="{cmd.path}\WinBeanPostScript.exe" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
 
 Example:
 ...
-'''
+
+
+Issue:
+
+python ~/projects/bean-sdk-node-private/src/resources/post_compile -board=atmega328p -tools=/Applications/Arduino.app/Contents/Java/hardware/tools/bean -path=/var/folders/34/886kwtkx31g2zgglpg8th7400000gn/T/buildf38d4be60096b3615388b79e01a0e4e5.tmp -file=sleep.ino -bean_variant=2
+
+"""
 
 import os
 import sys
 import shutil
-import platform
+
 
 COMPILED_BEAN_SKETCH_LOCATION = os.path.join(os.path.expanduser("~"), '.beansketches')
 DEBUG_LOG = os.path.abspath(os.path.join(os.path.expanduser('~'), 'post_compile.log'))
-SILENT = False
+SILENT = True
 
 
-def debug(msg, mode='a'):
+def debug(msg, mode='ab'):
     if SILENT:
         return
 
+    msg = "{}\n".format(msg)
+    if sys.version_info >= (3, 0):
+        bytes_msg = msg.encode('utf8') # cast to bytes
+    else:
+        bytes_msg = msg  # already bytes
+
     with open(DEBUG_LOG, mode) as f:
-        f.write("{}{}".format(msg, '\n'))
+        f.write(bytes_msg)
 
 
 def parse_input(sys_args):

@@ -21,7 +21,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
 
       console.log(`\nFound Bean with name/address: ${device.getName()}/${device.getAddress()}`)
       found = true
-
+      sdk.stopScanning()
       sdk.connectToDevice(device.getAddress(), (err)=> {
 
         if (err) {

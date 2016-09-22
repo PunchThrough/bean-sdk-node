@@ -143,8 +143,10 @@ class SerialTransportService extends BleService {
         this._sendLightBluePackets(commandId)
       } else {
         let cb = this._sendCallbacks[commandId]
-        if (cb)
-          cb(null)
+        if (cb) {
+          this._sendCallbacks[commandId] = null
+          setTimeout(cb, 50, null)
+        }
       }
 
     })

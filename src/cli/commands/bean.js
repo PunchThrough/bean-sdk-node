@@ -103,7 +103,7 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
           out += `  Hardware Version: ${info.hardware_version}\n`
           out += `  Firmware Version: ${info.firmware_version}\n`
           out += `     Battery Level: ${battVoltage}%\n`
-          out += `       Sketch Name: ${sketchInfo.sketch_name}\n`
+          out += `       Sketch Name: ${sketchInfo.sketch_name.substring(0, sketchInfo.sketch_name_size)}\n`
           console.log(out)
 
           completedCallback(null)

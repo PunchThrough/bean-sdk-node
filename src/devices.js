@@ -252,7 +252,7 @@ class LightBlueDevice extends BleDevice {
         existingCfg.ibeacon_major_id,
         existingCfg.ibeacon_minor_id,
         newName,
-        existingCfg.local_name_size
+        newName.length
       ]
 
       this.getSerialTransportService().sendCommand(cmd, args, callback)

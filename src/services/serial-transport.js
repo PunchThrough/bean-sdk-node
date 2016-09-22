@@ -72,6 +72,7 @@ class SerialTransportService extends BleService {
     this._incomingPackets = []
     this._commandCallbacks = {}
     this._responseCallbacks = {}
+    this._sendCallbacks = {}
   }
 
   _packetReceived(buf) {
@@ -127,17 +128,23 @@ class SerialTransportService extends BleService {
     }
   }
 
-  _sendLightBluePackets() {
+  _sendLightBluePackets(commandId) {
     let packet = this._outgoingPackets.shift()
     let packetData = packet.pack()
     logger.debug(`PACKET >>>: ${packet.toString()}`)
     this._characteristics[UUID_CHAR_SERIAL_TRANSPORT].write(packetData, true, (err)=> {
       if (err) {
-        logger.info(`Error sending LightBlue Packet: ${err}`)
+        logger.error(`ERROR sending LightBlue Packet: ${err}`)
+        this._sendCallbacks[commandId](err)
+        this._outgoingPackets = []
       }
 
       if (this._outgoingPackets.length != 0) {
-        this._sendLightBluePackets()
+        this._sendLightBluePackets(commandId)
+      } else {
+        let cb = this._sendCallbacks[commandId]
+        if (cb)
+          cb(null)
       }
 
     })
@@ -166,7 +173,7 @@ class SerialTransportService extends BleService {
     this._commandCallbacks[commandId] = callback
   }
 
-  sendCommand(commandId, payloadArguments, responseCallback) {
+  sendCommand(commandId, payloadArguments, sendCallback, responseCallback) {
     /**
      * Send a LightBlue Command
      *
@@ -196,11 +203,15 @@ class SerialTransportService extends BleService {
       this._outgoingPackets.push(packet)
     }
 
-    this._sendLightBluePackets()
+    if (sendCallback) {
+      this._sendCallbacks[commandId] = sendCallback
+    }
 
     if (responseCallback) {
         this._responseCallbacks[commandId] = responseCallback
     }
+
+    this._sendLightBluePackets(commandId)
   }
 
 }

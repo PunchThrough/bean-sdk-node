@@ -17,11 +17,15 @@ function _printDeviceInfo(mfgName, modelNumber, hwVersion, fwVersion, swVersion,
 function blinkLed(sdk, beanName, beanAddress, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
-    console.log('Blinking led...')
-    device.setLed(255, 0, 255)
-    sleep.sleep(1)
-    device.setLed(0, 0, 0)
-    completedCallback(null)
+    console.log('Turning LED on...')
+    device.setLed(255, 0, 255, (err)=> {
+      console.log('Waiting for 3 seconds...')
+      sleep.sleep(1)
+      console.log('Turning LED off...')
+      device.setLed(0, 0, 0, ()=> {
+        completedCallback(null)
+      })
+    })
   }, completedCallback)
 
 }
@@ -140,7 +144,6 @@ function rename(sdk, newName, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log(`Renaming Bean to: ${newName}`)
     device.rename(newName, completedCallback)
-    sleep.sleep(1)
   })
 
 }

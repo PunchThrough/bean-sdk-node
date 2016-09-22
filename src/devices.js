@@ -214,29 +214,29 @@ class LightBlueDevice extends BleDevice {
     return this._lookupService(BleServices.battery.UUID)
   }
 
-  setLed(red, green, blue) {
+  setLed(red, green, blue, callback) {
     let cmd = BleServices.serialTransport.commandIds.CC_LED_WRITE_ALL
-    this.getSerialTransportService().sendCommand(cmd, [red, green, blue])
+    this.getSerialTransportService().sendCommand(cmd, [red, green, blue], callback)
   }
 
   readAccelerometer(callback) {
     let cmd = BleServices.serialTransport.commandIds.CC_ACCEL_READ
-    this.getSerialTransportService().sendCommand(cmd, [], callback)
+    this.getSerialTransportService().sendCommand(cmd, [], null, callback)
   }
 
   readSketchInfo(callback) {
     let cmd = BleServices.serialTransport.commandIds.BL_GET_META
-    this.getSerialTransportService().sendCommand(cmd, [], callback)
+    this.getSerialTransportService().sendCommand(cmd, [], null, callback)
   }
 
   readBleConfig(callback) {
     let cmd = BleServices.serialTransport.commandIds.BT_GET_CONFIG
-    this.getSerialTransportService().sendCommand(cmd, [], callback)
+    this.getSerialTransportService().sendCommand(cmd, [], null, callback)
   }
 
-  sendSerial(dataBuffer) {
+  sendSerial(dataBuffer, callback) {
     let cmd = BleServices.serialTransport.commandIds.SERIAL_DATA
-    this.getSerialTransportService().sendCommand(cmd, [dataBuffer])
+    this.getSerialTransportService().sendCommand(cmd, [dataBuffer], callback)
   }
 
   rename(newName, callback) {
@@ -255,8 +255,7 @@ class LightBlueDevice extends BleDevice {
         existingCfg.local_name_size
       ]
 
-      this.getSerialTransportService().sendCommand(cmd, args)
-      callback(null)
+      this.getSerialTransportService().sendCommand(cmd, args, callback)
     })
   }
 

@@ -7,8 +7,8 @@
 
 ### Bug Fixes
 
-* Fixed CLI command: `blink_led` now works on Windows.
-* Fixed CLI command: `rename` now works on Windows.
+* Fixed CLI command: `blink_led` now works on Windows/Linux.
+* Fixed CLI command: `rename` now works on Windows/Linux.
 * Fixed CLI Command `read_device_info`: Now shows correct sketch name.
 
 

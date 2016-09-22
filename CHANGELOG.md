@@ -1,3 +1,15 @@
+# v0.4.0
+
+### Features
+
+* Arduino `post_compile` script now supports Python 2 and 3
+* Updated CLI Command `read_device_info`: Removed "Software Version" from output b/c it's not used by firmware.
+
+### Bug Fixes
+
+* Fixed CLI commands: `blink_led` and `rename` now work on Windows.
+
+
 # v0.3.1
 
 ### Bug Fixes

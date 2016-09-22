@@ -19,10 +19,16 @@ function blinkLed(sdk, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log('Turning LED on...')
     device.setLed(255, 0, 255, (err)=> {
+      if (err)
+        throw new Error(err)
+
       console.log('Waiting for 3 seconds...')
-      sleep.sleep(1)
+      sleep.sleep(3)
       console.log('Turning LED off...')
-      device.setLed(0, 0, 0, ()=> {
+      device.setLed(0, 0, 0, (err)=> {
+        if (err)
+          throw new Error(err)
+
         completedCallback(null)
       })
     })

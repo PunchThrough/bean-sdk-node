@@ -113,7 +113,11 @@ class PaddedString extends BinaryField {
 
   pack() {
     let buf = new buffer.Buffer(this._defn.length)
-    buf.fill(0)
+    if (this._defn.pad_char) {
+      buf.fill(this._defn.pad_char)
+    } else {
+      buf.fill(0)
+    }
     buf.write(this._value, 0, this._defn.length)
     return buf
   }

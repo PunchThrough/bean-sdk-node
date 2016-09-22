@@ -122,6 +122,7 @@ outgoing:
         type: "uint8"
       - name: "sketch_name"
         type: "padded_string"
+        pad_char: " "
         length: 20
     response: []
 

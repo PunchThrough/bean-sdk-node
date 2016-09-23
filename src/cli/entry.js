@@ -143,9 +143,10 @@ program
 
 program
   .command('list_compiled_sketches')
+  .option('-c, --clean', 'Delete all compiled sketches')
   .description('Lists compiled sketches (/homedir/.beansketches)')
   .action((options)=> {
-    commands.listCompiledSketches(commandComplete)
+    commands.listCompiledSketches(options.clean, commandComplete)
   })
 
 

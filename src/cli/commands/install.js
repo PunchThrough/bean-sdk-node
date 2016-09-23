@@ -7,9 +7,7 @@ const paths = require('../../util/paths')
 const platform = require('../../util/platform')
 const util = require('../../util/util')
 const path = require('path')
-
-
-const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
+const common = require('./common')
 
 
 function arduinoHardwarePath(arduinoFolder) {
@@ -125,7 +123,7 @@ function installBeanArduinoCore(completedCallback) {
       let beanArduinoCore = paths.getResource('bean-arduino-core-2.0.0')
 
       // Make sure COMPILED_BEAN_LOCATION exists
-      fs.mkdirsSync(COMPILED_SKETCH_LOCATION)
+      common.cleanSketchFolder()
 
       // Install bean-arduino-core
       let arduinoHardwareFolder = arduinoHardwarePath(arduinoInstallPath)

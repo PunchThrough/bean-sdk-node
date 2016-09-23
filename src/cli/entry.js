@@ -35,7 +35,7 @@ function quit(rc, message) {
 
 function commandComplete(error) {
   if (error) {
-    quit(1, error)
+    quit(1, `${platform.lineEnding()}${error}`)
   } else {
     quit(0, `${platform.lineEnding()}Command completed successfully`)
   }

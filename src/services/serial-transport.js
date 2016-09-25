@@ -166,9 +166,6 @@ class SerialTransportService extends BleService {
       })
     })
 
-    let x = new Date()
-    x.toISOString()
-
   }
 
   registerForCommandNotification(commandId, callback) {

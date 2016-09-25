@@ -86,11 +86,21 @@ program
 
 
 program
-  .command('program_sketch [sketch_name]')
-  .description('Program a single sketch to the Bean')
+  .command('program_sketch [sketch]')
+  .on('--help', ()=> {
+    console.log('  Example 1 (using sketch name):')
+    console.log('')
+    console.log('    $ program_sketch setLed -n Bean')
+    console.log('')
+
+    console.log('  Example 2 (using a path):')
+    console.log('')
+    console.log('    $ program_sketch /Users/me/my_sketches/custom_sketch.hex -n Bean')
+  })
+  .description('Program a sketch to the Bean (sketch name or path ending in .hex)')
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
-  .option('-o, --oops', 'Aids in reprogramming a malicious sketch')
+  .option('-o, --oops', 'Assists in reprogramming a malicious sketch')
   .action((sketchName, options)=> {
     console.log('')
     commands.programSketch(sdk('info'), sketchName, options.name, options.address, options.oops, commandComplete)

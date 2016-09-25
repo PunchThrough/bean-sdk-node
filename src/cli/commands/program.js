@@ -62,18 +62,38 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 }
 
 
-function programSketch(sdk, sketchName, beanName, beanUUID, oops, completedCallback) {
+function _uploadSketch(sdk, device, sketchData, sketchName, oops, callback) {
 
-  let hexFile = sketchName
-  if (!sketchName.endsWith('.hex'))
-    hexFile = `${sketchName}.hex`
+  sdk.uploadSketch(device, sketchData, sketchName, oops === true, (err)=> {
+    if (err) {
+      callback(`Sketch upload failed: ${err}`)
+    } else {
+      callback(null)
+    }
+  })
+}
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 
-    device.getDeviceInformationService().getHardwareVersion((err, version)=> {
-      if (err)
-        completedCallback(err)
+function _getSketchData(device, sketch, callback) {
 
+  device.getDeviceInformationService().getHardwareVersion((err, version)=> {
+    if (err)
+      callback(err)
+
+    let hexPath
+    let sketchName
+    if (sketch.endsWith('.hex')) {
+      hexPath = sketch
+      if (!fs.existsSync(hexPath)) {
+        throw new Error(`Invalid path: ${hexPath}`)
+      }
+
+      sketchName = path.parse(hexPath).name
+
+    } else {
+
+      sketchName = sketch
+      let hexFile = `${sketch}.hex`
       let hardwareVersion = version.toString('utf8')
 
       let sketchDir
@@ -88,24 +108,26 @@ function programSketch(sdk, sketchName, beanName, beanUUID, oops, completedCallb
         throw new Error(`Unrecognized hardware version: ${hardwareVersion}`)
       }
 
-      let hexPath = path.join(sketchDir, hexFile)
+      hexPath = path.join(sketchDir, hexFile)
       if (!fs.existsSync(hexPath)) {
-
-        throw new Error(`No sketch with name "${sketchName}" for board ${boardName}`)
+        throw new Error(`No sketch with name "${sketch}" for board ${boardName}`)
       }
 
-      let asciiData = fs.readFileSync(hexPath, 'ascii')
-      let intelHex = new intelhex.IntelHexFile(asciiData)
-      let binary = intelHex.parse()
+    }
 
-      sdk.uploadSketch(device, binary, sketchName, oops === true, (err)=> {
-        if (err) {
-          completedCallback(`Sketch upload failed: ${err}`)
-        } else {
-          completedCallback(null)
-        }
-      })
+    let asciiData = fs.readFileSync(hexPath, 'ascii')
+    let intelHex = new intelhex.IntelHexFile(asciiData)
+    let binarySketchData = intelHex.parse()
+    callback(binarySketchData, sketchName)
+  })
+}
 
+
+function programSketch(sdk, sketch, beanName, beanUUID, oops, completedCallback) {
+
+  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+    _getSketchData(device, sketch, (binary, sketchName)=> {
+      _uploadSketch(sdk, device, binary, sketchName, completedCallback)
     })
 
   }, completedCallback)

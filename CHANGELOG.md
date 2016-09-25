@@ -1,3 +1,15 @@
+# v0.4.1
+
+### Features
+
+* Updated CLI Command `list_compiled_sketches`: Groups sketches by board variant (Bean/Bean+)
+* Updated CLI Command `list_compiled_sketches`: Added `--clean` argument to delete compiled sketches
+* Updated CLI `program_sketch`: Uses hardware revision to pick correct sketch
+
+### Bug Fixes
+
+
+
 # v0.4.0
 
 ### Features

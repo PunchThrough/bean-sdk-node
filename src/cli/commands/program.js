@@ -3,13 +3,13 @@
 
 const intelhex = require('../../util/intelhex')
 const common = require('./common')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const paths = require('../../util/paths')
 const platform = require("../../util/platform")
+const util = require('../../util/util')
 
 
-const COMPILED_SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
 const FIRMWARE_BUNDLES = paths.getResource('firmware_bundles')
 
 
@@ -66,38 +66,93 @@ function programSketch(sdk, sketchName, beanName, beanUUID, oops, completedCallb
   if (!sketchName.endsWith('.hex'))
     hexFile = `${sketchName}.hex`
 
-  let hexPath = path.join(COMPILED_SKETCH_LOCATION, hexFile)
-  if (!fs.existsSync(hexPath)) {
-    throw new Error(`No sketch with name: ${sketchName}`)
-  }
-
-  let asciiData = fs.readFileSync(hexPath, 'ascii')
-  let intelHex = new intelhex.IntelHexFile(asciiData)
-  let binary = intelHex.parse()
-
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
-    sdk.uploadSketch(device, binary, sketchName, oops === true, (err)=> {
-      if (err) {
-        completedCallback(`Sketch upload failed: ${err}`)
+
+    device.getDeviceInformationService().getHardwareVersion((err, version)=> {
+      if (err)
+        completedCallback(err)
+
+      let hardwareVersion = version.toString('utf8')
+
+      let sketchDir
+      let boardName
+      if (hardwareVersion.startsWith('1') || hardwareVersion.startsWith('E')) {
+        sketchDir = common.SKETCH_LOCATION_BEAN
+        boardName = 'Bean'
+      } else if (hardwareVersion.startsWith('2')) {
+        sketchDir = common.SKETCH_LOCATION_BEANPLUS
+        boardName = 'Bean+'
       } else {
-        completedCallback(null)
+        throw new Error(`Unrecognized hardware version: ${hardwareVersion}`)
       }
+
+      let hexPath = path.join(sketchDir, hexFile)
+      if (!fs.existsSync(hexPath)) {
+
+        throw new Error(`No sketch with name "${sketchName}" for board ${boardName}`)
+      }
+
+      let asciiData = fs.readFileSync(hexPath, 'ascii')
+      let intelHex = new intelhex.IntelHexFile(asciiData)
+      let binary = intelHex.parse()
+
+      sdk.uploadSketch(device, binary, sketchName, oops === true, (err)=> {
+        if (err) {
+          completedCallback(`Sketch upload failed: ${err}`)
+        } else {
+          completedCallback(null)
+        }
+      })
+
     })
+
   }, completedCallback)
 
 }
 
 
-function listCompiledSketches(completedCallback) {
+function listCompiledSketches(clean, completedCallback) {
 
   console.log('')
-  let dirFiles = fs.readdirSync(COMPILED_SKETCH_LOCATION)
-  for (let i in dirFiles) {
-    let f = dirFiles[i]
-    console.log(`${i}: ${f.split('.')[0]}`)
+
+  let beanSketches = fs.readdirSync(common.SKETCH_LOCATION_BEAN)
+  console.log('Bean Sketches:')
+  if (beanSketches.length < 1) {
+    console.log('    None.')
+  } else {
+    for (let i in beanSketches) {
+      let f = beanSketches[i]
+      console.log(`    ${i}: ${f.split('.')[0]}`)
+    }
   }
 
-  completedCallback(null)
+  console.log('')
+
+  let beanPlusSketches = fs.readdirSync(common.SKETCH_LOCATION_BEANPLUS)
+  console.log('Bean+ Sketches:')
+  if (beanPlusSketches.length < 1) {
+    console.log('    None.')
+  } else {
+    for (let i in beanPlusSketches) {
+      let f = beanPlusSketches[i]
+      console.log(`    ${i}: ${f.split('.')[0]}`)
+    }
+  }
+
+  if (clean === true) {
+    util.userInput.question('Are you sure you want to delete compiled sketches? (y/n):', (input)=> {
+      input.replace('\r\n', '')
+      if (input.toLowerCase() === 'y') {
+        common.cleanSketchFolder()
+        console.log('Sketches have been deleted.')
+      } else if (input.toLowerCase() !== 'y' || input.toLowerCase() !== 'n') {
+        console.log('Sketches have NOT been deleted.')
+      }
+      completedCallback(null)
+    })
+  } else {
+    completedCallback(null)
+  }
 }
 
 

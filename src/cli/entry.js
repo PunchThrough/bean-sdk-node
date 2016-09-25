@@ -35,7 +35,7 @@ function quit(rc, message) {
 
 function commandComplete(error) {
   if (error) {
-    quit(1, error)
+    quit(1, `${platform.lineEnding()}${error}`)
   } else {
     quit(0, `${platform.lineEnding()}Command completed successfully`)
   }
@@ -143,9 +143,10 @@ program
 
 program
   .command('list_compiled_sketches')
+  .option('-c, --clean', 'Delete all compiled sketches')
   .description('Lists compiled sketches (/homedir/.beansketches)')
   .action((options)=> {
-    commands.listCompiledSketches(commandComplete)
+    commands.listCompiledSketches(options.clean, commandComplete)
   })
 
 

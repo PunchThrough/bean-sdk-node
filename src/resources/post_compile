@@ -16,7 +16,7 @@ Example:
 """
 Windows
 
-tools.beanupload.upload.pattern.windows="{cmd.path}\WinBeanPostScript.exe" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
+tools.beanupload.program.pattern="python" "{cmd.path}/post_compile" "-board={build.mcu}" "-tools={cmd.path}" "-path={build.path}" "-file={build.project_name}" "-bean_variant={build.bean_variant}"
 
 Example:
 ...
@@ -32,9 +32,14 @@ import os
 import sys
 import shutil
 
+VARIANT_BEAN = "1"
+VARIANT_BEANPLUS = "2"
 
-COMPILED_BEAN_SKETCH_LOCATION = os.path.join(os.path.expanduser("~"), '.beansketches')
+SKETCH_LOCATION = os.path.join(os.path.expanduser("~"), '.beansketches')
+SKETCH_LOCATION_BEAN = os.path.join(SKETCH_LOCATION, 'bean')
+SKETCH_LOCATION_BEANPLUS = os.path.join(SKETCH_LOCATION, 'beanplus')
 DEBUG_LOG = os.path.abspath(os.path.join(os.path.expanduser('~'), 'post_compile.log'))
+
 SILENT = True
 
 
@@ -66,7 +71,21 @@ def copy_hex(args):
     debug(str(args))
     sketch_name, extension = os.path.splitext(args['file'])
     tmp_compiled_path = os.path.join(args['path'], "{}.hex".format(args['file']))
-    perm_compiled_path = os.path.join(COMPILED_BEAN_SKETCH_LOCATION, "{}.hex".format(sketch_name))
+
+    if not os.path.exists(SKETCH_LOCATION_BEAN):
+        os.makedirs(SKETCH_LOCATION_BEAN)
+
+    if not os.path.exists(SKETCH_LOCATION_BEANPLUS):
+        os.makedirs(SKETCH_LOCATION_BEANPLUS)
+
+    if (args['bean_variant'] == VARIANT_BEAN):
+        perm_compiled_path = os.path.join(SKETCH_LOCATION_BEAN, "{}.hex".format(sketch_name))
+    elif (args['bean_variant'] == VARIANT_BEANPLUS):
+        perm_compiled_path = os.path.join(SKETCH_LOCATION_BEANPLUS, "{}.hex".format(sketch_name))
+    else:
+        print("ERROR: Unknown variant {}".format(args['bean_variant']))
+        sys.exit(1)
+
     shutil.copyfile(tmp_compiled_path, perm_compiled_path)
 
 

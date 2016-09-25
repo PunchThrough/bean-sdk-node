@@ -1,6 +1,23 @@
 'use strict'
 
 
+const platform = require("../../util/platform")
+const path = require('path')
+const fs = require('fs-extra')
+
+
+const SKETCH_LOCATION = path.join(platform.userHome(), '.beansketches')
+const SKETCH_LOCATION_BEAN = path.join(SKETCH_LOCATION, 'bean')
+const SKETCH_LOCATION_BEANPLUS = path.join(SKETCH_LOCATION, 'beanplus')
+
+
+function cleanSketchFolder() {
+  fs.emptyDirSync(SKETCH_LOCATION)
+  fs.emptyDirSync(SKETCH_LOCATION_BEAN)
+  fs.emptyDirSync(SKETCH_LOCATION_BEANPLUS)
+}
+
+
 function connectToBean(sdk, name, address, successCallback, errorCallback) {
 
   if (!name && !address) {
@@ -46,4 +63,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
 
 module.exports = {
   connectToBean: connectToBean,
+  cleanSketchFolder: cleanSketchFolder,
+  SKETCH_LOCATION_BEAN: SKETCH_LOCATION_BEAN,
+  SKETCH_LOCATION_BEANPLUS: SKETCH_LOCATION_BEANPLUS
 }

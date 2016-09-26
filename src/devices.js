@@ -143,8 +143,15 @@ class BleDevice {
     }
   }
 
-  disconnect() {
-    this._noblePeripheral.disconnect()
+  disconnect(callback) {
+    this._noblePeripheral.disconnect((error)=> {
+      if (error) {
+        logger.error(`Device disconnect ERROR (${this.toString()}: ${error}`)
+      } else {
+        logger.info(`Device disconnect success (${this.toString()})`)
+      }
+      callback(error)
+    })
   }
 
   lookupServices(callback) {

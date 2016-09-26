@@ -81,6 +81,34 @@ function readConfig(sdk, beanName, beanAddress, completedCallback) {
 }
 
 
+function _getVoltage(device, callback) {
+  let batt = device.getBatteryService()
+  if (batt) {
+    batt.getVoltage((err, battVoltage)=> {
+      if (err)
+        log.error(err)
+      callback(battVoltage)
+    })
+  } else {
+    callback('No Battery Service')
+  }
+}
+
+
+function _getSketch(device, callback) {
+  let serial = device.getSerialTransportService()
+  if (serial) {
+    device.readSketchInfo((err, sketchInfo)=> {
+      if (err)
+        log.error(err)
+      callback(sketchInfo.sketch_name.substring(0, sketchInfo.sketch_name_size))
+    })
+  } else {
+    callback('No Serial Transport Service')
+  }
+}
+
+
 function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
@@ -89,26 +117,21 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
       if (err)
         throw new Error(err)
 
-      device.getBatteryService().getVoltage((err, battVoltage)=> {
-        if (err)
-          throw new Error(err)
-
-        device.readSketchInfo((err, sketchInfo)=> {
-          if (err)
-            throw new Error(err)
-
+      _getVoltage(device, (voltage)=> {
+        _getSketch(device, (sketch)=> {
           let out = "\n"
           out += `      Manufacturer: ${info.manufacturer_name}\n`
           out += `      Model Number: ${info.model_number}\n`
           out += `  Hardware Version: ${info.hardware_version}\n`
           out += `  Firmware Version: ${info.firmware_version}\n`
-          out += `     Battery Level: ${battVoltage}%\n`
-          out += `       Sketch Name: ${sketchInfo.sketch_name.substring(0, sketchInfo.sketch_name_size)}\n`
+          out += `     Battery Level: ${voltage}\n`
+          out += `       Sketch Name: ${sketch}\n`
           console.log(out)
 
           completedCallback(null)
         })
       })
+
     })
   }, completedCallback)
 }

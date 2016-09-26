@@ -25,7 +25,9 @@ function lookupFirmwareBundleForHardwareVersion(hardwareVersion) {
 
   let bundle = []
   for (let filename of fs.readdirSync(bundleDir).sort())
-    bundle.push(path.join(bundleDir, filename))
+    // Sometimes there are hidden files we don't want to include (.DS_Store)
+    if (!filename.startsWith('.'))
+      bundle.push(path.join(bundleDir, filename))
 
   return bundle
 }

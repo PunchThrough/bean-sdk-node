@@ -2,26 +2,25 @@
 
 ### Features
 
-* Updated CLI Command `list_compiled_sketches`: Groups sketches by board variant (Bean/Bean+)
-* Updated CLI Command `list_compiled_sketches`: Added `--clean` argument to delete compiled sketches
+* Updated CLI command `list_compiled_sketches`: Groups sketches by board variant (Bean/Bean+)
+* Updated CLI command `list_compiled_sketches`: Added `--clean` argument to delete compiled sketches
 * Updated CLI `program_sketch`: Uses hardware revision to pick correct sketch
-
-### Bug Fixes
-
-
+* Updated CLI `program_sketch`: Allows direct hex file upload given a path
+* All CLI commands now "quit gracefully"
+* Ctrl+c now "quits gracefully"
 
 # v0.4.0
 
 ### Features
 
 * Arduino `post_compile` script now supports Python 2 and 3
-* Updated CLI Command `read_device_info`: Removed "Software Version" from output b/c it's not used by firmware.
+* Updated CLI command `read_device_info`: Removed "Software Version" from output b/c it's not used by firmware.
 
 ### Bug Fixes
 
 * Fixed CLI command: `blink_led` now works on Windows/Linux.
 * Fixed CLI command: `rename` now works on Windows/Linux.
-* Fixed CLI Command `read_device_info`: Now shows correct sketch name.
+* Fixed CLI command `read_device_info`: Now shows correct sketch name.
 
 
 # v0.3.1

@@ -88,6 +88,8 @@ class LightBlueSDK extends events.EventEmitter {
   quitGracefully(callback) {
     let disconnects = []
 
+    this.stopScanning()
+
     Object.keys(this._devices).forEach((key)=> {
       let d = this._devices[key]
       disconnects.push((disconnectCallback)=> {

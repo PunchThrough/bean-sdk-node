@@ -127,7 +127,7 @@ function programSketch(sdk, sketch, beanName, beanUUID, oops, completedCallback)
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
     _getSketchData(device, sketch, (binary, sketchName)=> {
-      _uploadSketch(sdk, device, binary, sketchName, completedCallback)
+      _uploadSketch(sdk, device, binary, sketchName, oops, completedCallback)
     })
 
   }, completedCallback)

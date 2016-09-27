@@ -29,9 +29,12 @@ function sdk(logLevel='error') {
 }
 
 
-function quit(rc, message) {
-  console.log(message)
+function quit(rc) {
+  console.log('')
+  console.log('Qutting gracefully...')
   lightblue.sdk.quitGracefully((err)=> {
+    console.log("All devices disconnected.")
+    console.log("Done.")
     process.exit(rc)
   })
 }
@@ -39,11 +42,18 @@ function quit(rc, message) {
 
 function commandComplete(error) {
   if (error) {
-    quit(1, `${platform.lineEnding()}${error}`)
+    console.log(`Command completed with error(s): ${error}`)
+    quit(1)
   } else {
-    quit(0, `${platform.lineEnding()}Command completed successfully`)
+    console.log('Command completed.')
+    quit(0)
   }
 }
+
+
+process.on('SIGINT', function() {
+  quit(0)
+})
 
 
 program

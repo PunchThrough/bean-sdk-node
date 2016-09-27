@@ -85,7 +85,8 @@ function _getSketchData(device, sketch, callback) {
     if (sketch.endsWith('.hex')) {
       hexPath = sketch
       if (!fs.existsSync(hexPath)) {
-        throw new Error(`Invalid path: ${hexPath}`)
+        callback(`Invalid hex file path: ${hexPath}`)
+        return
       }
 
       sketchName = path.parse(hexPath).name
@@ -106,14 +107,16 @@ function _getSketchData(device, sketch, callback) {
         sketchDir = common.SKETCH_LOCATION_BEANPLUS
         boardName = 'Bean+'
       } else {
-        throw new Error(`Unrecognized hardware version: ${hardwareVersion}`)
+        callback(`Unrecognized hardware version: ${hardwareVersion}`)
+        return
       }
 
       hexPath = path.join(sketchDir, hexFile)
       if (fs.existsSync(hexPath)) {
         console.log(`Found sketch ${sketch} for board ${boardName}`)
       } else {
-        throw new Error(`No sketch with name "${sketch}" for board ${boardName}`)
+        callback(`No sketch with name "${sketch}" for board ${boardName}`)
+        return
       }
     }
 
@@ -128,8 +131,12 @@ function _getSketchData(device, sketch, callback) {
 function programSketch(sdk, sketch, beanName, beanUUID, oops, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
-    _getSketchData(device, sketch, (binary, sketchName)=> {
-      _uploadSketch(sdk, device, binary, sketchName, oops, completedCallback)
+    _getSketchData(device, sketch, (error, binary, sketchName)=> {
+      if (error) {
+        completedCallback(error)
+      } else {
+        _uploadSketch(sdk, device, binary, sketchName, oops, completedCallback)
+      }
     })
 
   }, completedCallback)

@@ -41,6 +41,7 @@ function quit(rc) {
 
 
 function commandComplete(error) {
+  console.log('')
   if (error) {
     console.log(`Command completed with error(s): ${error}`)
     quit(1)

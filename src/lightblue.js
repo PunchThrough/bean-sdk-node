@@ -7,8 +7,7 @@ const FirmwareUpdater = require('./firmware-updater').FirmwareUpdater
 const SketchUploader = require('./sketch-uploader').SketchUploader
 const events = require('events')
 const logger = require('./util/logs').logger
-const configureLogger = require('./util/logs').configure
-
+const async = require('async')
 
 const NOBLE_STATE_READY = 'poweredOn'
 
@@ -24,12 +23,8 @@ class LightBlueSDK extends events.EventEmitter {
    *
    */
 
-  constructor(loggerOpts=null) {
+  constructor() {
     super()
-
-    if (loggerOpts) {
-      configureLogger(loggerOpts)
-    }
 
     // Dependencies
     this._fwUpdater = new FirmwareUpdater(this)
@@ -43,16 +38,6 @@ class LightBlueSDK extends events.EventEmitter {
     noble.on('discover', (peripheral)=> {
       this._discover(peripheral)
     })
-  }
-
-  _disconnectDevices() {
-    for (let i in this._devices) {
-      let d = this._devices[i]
-      if (d.isConnected()) {
-        d.disconnect()
-        logger.info(`Disconnected from Bean: ${d.getName()}`)
-      }
-    }
   }
 
   _autoReconnect(device) {
@@ -98,6 +83,22 @@ class LightBlueSDK extends events.EventEmitter {
       }
     }
 
+  }
+
+  quitGracefully(callback) {
+    let disconnects = []
+
+    Object.keys(this._devices).forEach((key)=> {
+      let d = this._devices[key]
+      disconnects.push((disconnectCallback)=> {
+        d.disconnect(disconnectCallback)
+      })
+    })
+
+    async.parallel(disconnects, function (error, results) {
+      logger.info('All devices have disconnected')
+      callback(error)
+    })
   }
 
   reset() {
@@ -193,11 +194,21 @@ class LightBlueSDK extends events.EventEmitter {
     }
   }
 
-  quitGracefully() {
-    logger.info('Quitting LightBlue SDK...')
-    this.stopScanning()
-    this._disconnectDevices()
-  }
 }
 
-module.exports = LightBlueSDK
+
+let sdk = null
+
+
+function getSdk() {
+  if (!sdk) {
+    sdk = new LightBlueSDK()
+  }
+
+  return sdk
+}
+
+
+module.exports = {
+  sdk: getSdk()
+}

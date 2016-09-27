@@ -5,16 +5,17 @@
 
 const program = require('commander')
 const commands = require('./commands/commands.js')
-const LightBlueSDK = require('../lightblue.js')
+const lightblue = require('../lightblue.js')
 const winston = require('winston')
 const logging = require('../util/logs')
 const platform = require('../util/platform')
 const pkg = require('../../package.json')
 
 
-function initSdk(logLevel='error') {
+function sdk(logLevel='error') {
   // We want the SDK to be as silent as possible from the CLI, hence error level
-  let loggingOpts = {
+
+  logging.configure({
     level: logLevel,
     transports: [
       new (winston.transports.Console)({
@@ -22,24 +23,37 @@ function initSdk(logLevel='error') {
         formatter: logging.formatter,
       })
     ]
-  }
-  return new LightBlueSDK(loggingOpts)
+  })
+  
+  return lightblue.sdk
 }
 
 
-function quit(rc, message) {
-  console.log(message)
-  process.exit(rc)
+function quit(rc) {
+  console.log('')
+  console.log('Qutting gracefully...')
+  lightblue.sdk.quitGracefully((err)=> {
+    console.log("All devices disconnected.")
+    console.log("Done.")
+    process.exit(rc)
+  })
 }
 
 
 function commandComplete(error) {
   if (error) {
-    quit(1, `${platform.lineEnding()}${error}`)
+    console.log(`Command completed with error(s): ${error}`)
+    quit(1)
   } else {
-    quit(0, `${platform.lineEnding()}Command completed successfully`)
+    console.log('Command completed.')
+    quit(0)
   }
 }
+
+
+process.on('SIGINT', function() {
+  quit(0)
+})
 
 
 program
@@ -56,7 +70,7 @@ program
   .command('scan')
   .description('Scan for LightBlue devices')
   .action((options)=> {
-    commands.startScan(initSdk(), commandComplete)
+    commands.startScan(sdk(), commandComplete)
   })
 
 
@@ -67,7 +81,7 @@ program
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
     console.log('')
-    commands.programFirmware(initSdk('info'), options.name, options.address, commandComplete)
+    commands.programFirmware(sdk('info'), options.name, options.address, commandComplete)
   })
 
 
@@ -79,7 +93,7 @@ program
   .option('-o, --oops', 'Aids in reprogramming a malicious sketch')
   .action((sketchName, options)=> {
     console.log('')
-    commands.programSketch(initSdk('info'), sketchName, options.name, options.address, options.oops, commandComplete)
+    commands.programSketch(sdk('info'), sketchName, options.name, options.address, options.oops, commandComplete)
   })
 
 
@@ -89,7 +103,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.blinkLed(initSdk(), options.name, options.address, commandComplete)
+    commands.blinkLed(sdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -99,7 +113,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((newName, options)=> {
-    commands.rename(initSdk(), newName, options.name, options.address, commandComplete)
+    commands.rename(sdk(), newName, options.name, options.address, commandComplete)
   })
 
 
@@ -109,7 +123,7 @@ program
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readAccel(initSdk(), options.name, options.address, commandComplete)
+    commands.readAccel(sdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -119,7 +133,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readConfig(initSdk(), options.name, options.address, commandComplete)
+    commands.readConfig(sdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -129,7 +143,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.readDeviceInfo(initSdk(), options.name, options.address, commandComplete)
+    commands.readDeviceInfo(sdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -156,7 +170,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((options)=> {
-    commands.logSerial(initSdk(), options.name, options.address, commandComplete)
+    commands.logSerial(sdk(), options.name, options.address, commandComplete)
   })
 
 
@@ -167,7 +181,7 @@ program
   .option('-a, --address [address]', 'Bean address')
   .option('-b, --binary', 'Interpret data as hex digits')
   .action((data, options)=> {
-    commands.sendSerial(initSdk(), data, options.binary, options.name, options.address, commandComplete)
+    commands.sendSerial(sdk(), data, options.binary, options.name, options.address, commandComplete)
   })
 
 

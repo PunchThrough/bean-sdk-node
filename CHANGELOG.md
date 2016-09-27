@@ -1,4 +1,6 @@
-# v0.4.1
+# v0.5.0
+
+**Note:** This version requires CLI users to re-run `install_bean_arduino_core` command!
 
 ### Features
 

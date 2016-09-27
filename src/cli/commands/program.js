@@ -123,7 +123,7 @@ function _getSketchData(device, sketch, callback) {
     let asciiData = fs.readFileSync(hexPath, 'ascii')
     let intelHex = new intelhex.IntelHexFile(asciiData)
     let binarySketchData = intelHex.parse()
-    callback(binarySketchData, sketchName)
+    callback(null, binarySketchData, sketchName)
   })
 }
 

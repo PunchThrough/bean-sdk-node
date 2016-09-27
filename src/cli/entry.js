@@ -170,7 +170,12 @@ program
   .option('-c, --clean', 'Delete all compiled sketches')
   .description('Lists compiled sketches (/homedir/.beansketches)')
   .action((options)=> {
-    commands.listCompiledSketches(options.clean, commandComplete)
+    sdk()  // configure logger
+    commands.listCompiledSketches(options.clean, (err)=> {
+      if (err)
+        console.log(err)
+      process.exit(0)
+    })
   })
 
 

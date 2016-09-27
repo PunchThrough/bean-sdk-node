@@ -89,6 +89,7 @@ function _getSketchData(device, sketch, callback) {
       }
 
       sketchName = path.parse(hexPath).name
+      console.log(`Found sketch at path: ${hexPath}`)
 
     } else {
 
@@ -109,10 +110,11 @@ function _getSketchData(device, sketch, callback) {
       }
 
       hexPath = path.join(sketchDir, hexFile)
-      if (!fs.existsSync(hexPath)) {
+      if (fs.existsSync(hexPath)) {
+        console.log(`Found sketch ${sketch} for board ${boardName}`)
+      } else {
         throw new Error(`No sketch with name "${sketch}" for board ${boardName}`)
       }
-
     }
 
     let asciiData = fs.readFileSync(hexPath, 'ascii')

@@ -223,6 +223,7 @@ class StateBlockTransfer extends SketchUploadState {
   eventBeanState(state) {
     if (state === BEAN_STATE_COMPLETE) {
       this.ctx.setState(STATE_COMPLETED)
+      return
     }
 
     if (state !== BEAN_STATE_PROGRAMMING) {

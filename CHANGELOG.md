@@ -1,3 +1,16 @@
+# v0.5.1
+
+### Features
+
+* Updated CLI command `program_firmware`: Added `--force` option
+
+
+### New Bean+ Firmware (201609290000)
+
+* Bug fix: Sketch upload failures due to sketches sending a lot of serial data
+* Bug fix: `Bean.setLed()` now works from `setup()`
+
+
 # v0.5.0
 
 **Note:** This version requires CLI users to re-run `install_bean_arduino_core` command!

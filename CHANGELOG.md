@@ -5,7 +5,7 @@
 * Updated CLI command `program_firmware`: Added `--force` option
 
 
-### New Bean+ Firmware (201609290000)
+### New Bean and Bean+ Firmware (201609290000)
 
 * Bug fix: Sketch upload failures due to sketches sending a lot of serial data
 * Bug fix: `Bean.setLed()` now works from `setup()`

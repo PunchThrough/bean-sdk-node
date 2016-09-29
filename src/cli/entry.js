@@ -33,7 +33,6 @@ function quit(rc) {
   console.log('')
   console.log('Qutting gracefully...')
   lightblue.sdk.quitGracefully((err)=> {
-    console.log("All devices disconnected.")
     console.log("Done.")
     process.exit(rc)
   })

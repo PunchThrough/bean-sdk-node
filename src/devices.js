@@ -161,6 +161,7 @@ class BleDevice {
   lookupServices(callback) {
     logger.info(`Looking up services for device: ${this._name}`)
 
+    this._services = []  // Clear services
     this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         logger.info(`There was an error getting services: ${err}`)

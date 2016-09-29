@@ -79,9 +79,10 @@ program
   .description('Program bean firmware')
   .option('-n, --name [name]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
+  .option('-f, --force', 'Program firmware even if versions are the same')
   .action((options)=> {
     console.log('')
-    commands.programFirmware(sdk('info'), options.name, options.address, commandComplete)
+    commands.programFirmware(sdk('info'), options.name, options.address, options.force === true, commandComplete)
   })
 
 

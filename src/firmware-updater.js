@@ -54,6 +54,7 @@ class FirmwareUpdater {
     this._stateStep = null
     this._nextBlock = 0
     this._blockTransferStartTime = null;
+    this._force = false
 
     if (!init) {
       // We don't want to log anything from the constructor
@@ -221,11 +222,18 @@ class FirmwareUpdater {
       } else {
         let v = fwVersion.toString('utf8').split(' ')[0]
         logger.info(`Comparing firmware versions: Bundle version (${this._storedFwVersion}), Bean version (${v})`)
+
         if (this._storedFwVersion === v) {
-          callback('Versions are the same, no update needed')
+          if (this._force && this._stateGlobal === OAD_STATE_NOT_IN_PROGRESS) {
+            logger.info('Versions are the same, but updating anyway')
+            callback(null)
+          } else {
+            callback('Versions are the same, no update needed')
+          }
         } else {
           callback(null)
         }
+
       }
     })
   }
@@ -288,7 +296,7 @@ class FirmwareUpdater {
     })
   }
 
-  beginUpdate(device, bundle, callback) {
+  beginUpdate(device, bundle, force, callback) {
     /**
      * Begin an update procedure for `device` assuming it passes FW version check
      *
@@ -298,6 +306,7 @@ class FirmwareUpdater {
 
     logger.info('Begin update called')
     this._fwfiles = bundle
+    this._force = force
     let filename = path.parse(this._fwfiles[0]).name
     this._storedFwVersion = filename.split('_')[0]
 

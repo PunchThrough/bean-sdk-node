@@ -33,7 +33,7 @@ function lookupFirmwareBundleForHardwareVersion(hardwareVersion) {
 }
 
 
-function programFirmware(sdk, beanName, beanUUID, completedCallback) {
+function programFirmware(sdk, beanName, beanUUID, force, completedCallback) {
 
   common.connectToBean(sdk, beanName, beanUUID, (device)=> {
 
@@ -46,7 +46,7 @@ function programFirmware(sdk, beanName, beanUUID, completedCallback) {
 
         console.log(`Programming device firmware: ${device.getAddress()}`)
 
-        sdk.updateFirmware(device, bundle, (err)=> {
+        sdk.updateFirmware(device, bundle, force, (err)=> {
 
           if (err) {
             completedCallback(`FW update failed: ${err}`)

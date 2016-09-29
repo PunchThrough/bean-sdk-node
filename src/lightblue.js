@@ -162,8 +162,8 @@ class LightBlueSDK extends events.EventEmitter {
    * @param device LightBlue Device object
    * @param bundle an array of firmware images
    */
-  updateFirmware(device, bundle, callback) {
-    this._fwUpdater.beginUpdate(device, bundle, callback)
+  updateFirmware(device, bundle, force, callback) {
+    this._fwUpdater.beginUpdate(device, bundle, force, callback)
   }
 
   uploadSketch(device, sketchBuf, sketchName, promptUser, callback) {

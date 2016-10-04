@@ -42,10 +42,10 @@ function fromNoblePeripheral(peripheral) {
 
 class BleDevice {
 
-  constructor(address, name, noble_peripheral) {
+  constructor(address, name, noblePeripheral) {
     this._address = address
     this._name = name
-    this._noblePeripheral = noble_peripheral
+    this._noblePeripheral = noblePeripheral
 
     // State
     this._services = {}

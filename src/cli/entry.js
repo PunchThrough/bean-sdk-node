@@ -31,7 +31,7 @@ function sdk(logLevel='error') {
 
 function quit(rc) {
   console.log('')
-  console.log('Qutting gracefully...')
+  console.log('Quitting gracefully...')
   lightblue.sdk.quitGracefully((err)=> {
     console.log("Done.")
     process.exit(rc)

@@ -140,8 +140,9 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 function logSerial(sdk, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log('Logging serial data...')
+    console.log('')
     device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
-      console.log(`Rx: ${serialCmd.data}`)
+      process.stdout.write(`${serialCmd.data}`)
     })
   })
 }

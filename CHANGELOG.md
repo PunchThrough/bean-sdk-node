@@ -1,3 +1,13 @@
+# v0.5.3
+
+### Fixes
+
+* Fix typo in CLI when "Quitting gracefully"
+* Fixed CLI command `log_serial`: No more erroneous newlines.
+* Fixed CLI command `send_serial`: Fix race condition, now works on Windows/Linux.
+
+---
+
 # v0.5.2
 
 ### Features
@@ -10,6 +20,7 @@
 * Bug fix: Sketch upload failures due to sketches sending a lot of serial data
 * Bug fix: `Bean.setLed()` now works from `setup()`
 
+---
 
 # v0.5.0
 
@@ -24,6 +35,8 @@
 * All CLI commands now "quit gracefully"
 * Ctrl+c now "quits gracefully"
 
+---
+
 # v0.4.0
 
 ### Features
@@ -37,6 +50,7 @@
 * Fixed CLI command: `rename` now works on Windows/Linux.
 * Fixed CLI command `read_device_info`: Now shows correct sketch name.
 
+---
 
 # v0.3.1
 
@@ -44,6 +58,7 @@
 
 * Fix user input being printed to stdout twice when prompting for user input.
 
+---
 
 # v0.3.0
 
@@ -53,6 +68,7 @@
 * Updated CLI Command `read_device_info`: Now shows **battery voltage** and **current sketch**.
 * Updated CLI Command `program_sketch`: New `--oops` option which prompts users before starting sketch upload process. This will aid users who have accidentally "bricked" their beans with a malicious sketch.
 
+---
 
 # v0.2.0
 
@@ -60,6 +76,8 @@
 
 * New CLI Command `log_serial`: Logs any serial data from Bean.
 * New CLI Command `send_serial`: Allows users to send ascii or binary data to the Bean.
+
+---
 
 # v0.1.0
 

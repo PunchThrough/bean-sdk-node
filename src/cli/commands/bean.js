@@ -162,9 +162,12 @@ function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback)
   }
 
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
-    device.sendSerial(buf)
-    sleep.sleep(1)
-    completedCallback(null)
+    device.sendSerial(buf, (err)=> {
+      if (err)
+        throw new Error(err)
+
+      completedCallback(null)
+    })
   })
 }
 

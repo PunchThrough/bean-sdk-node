@@ -90,6 +90,18 @@ class BleDevice {
     return this._lookupService(BleServices.deviceInformation.UUID)
   }
 
+  getBatteryService() {
+    return this._lookupService(BleServices.battery.UUID)
+  }
+
+  getOADService() {
+    return this._lookupService(BleServices.oad.UUID)
+  }
+
+  getSerialTransportService() {
+    return this._lookupService(BleServices.serialTransport.UUID)
+  }
+
   describe() {
     let adv = this._noblePeripheral.advertisement
     let out = `${this.getType()}:\n`
@@ -212,18 +224,6 @@ class LightBlueDevice extends BleDevice {
 
   getType() {
     return DEVICE_TYPE_LIGHT_BLUE
-  }
-
-  getOADService() {
-    return this._lookupService(BleServices.oad.UUID)
-  }
-
-  getSerialTransportService() {
-    return this._lookupService(BleServices.serialTransport.UUID)
-  }
-
-  getBatteryService() {
-    return this._lookupService(BleServices.battery.UUID)
   }
 
   setLed(red, green, blue, callback) {

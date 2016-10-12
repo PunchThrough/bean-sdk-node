@@ -102,6 +102,10 @@ class BleDevice {
     return this._lookupService(BleServices.serialTransport.UUID)
   }
 
+  getScratchService() {
+    return this._lookupService(BleServices.scratch.UUID)
+  }
+
   describe() {
     let adv = this._noblePeripheral.advertisement
     let out = `${this.getType()}:\n`

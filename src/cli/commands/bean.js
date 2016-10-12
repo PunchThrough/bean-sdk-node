@@ -182,6 +182,34 @@ function rename(sdk, newName, beanName, beanAddress, completedCallback) {
 }
 
 
+function writeScratch(sdk, bank, data, binary, beanName, beanAddress, completedCallback) {
+
+  // Parse data into buffer
+  let buf
+
+  if (binary === true) {
+    // Interpret as hex digits
+    buf = new buffer.Buffer(data, 'hex')
+  } else {
+    // Ascii
+    buf = new buffer.Buffer(data, 'ascii')
+  }
+
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    console.log(`Writing to scratch bank ${bank}: ${buf}`)
+    device.getScratchService().writeScratch(bank, buf, completedCallback)
+  })
+}
+
+
+function readScratch(sdk, bank, beanName, beanAddress, completedCallback) {
+  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+    console.log(`Reading scratch bank: ${bank}`)
+    device.getScratchService().readScratch(bank, completedCallback)
+  })
+}
+
+
 module.exports = {
   blinkLed: blinkLed,
   readAccel: readAccel,
@@ -189,5 +217,7 @@ module.exports = {
   readDeviceInfo: readDeviceInfo,
   logSerial: logSerial,
   sendSerial: sendSerial,
-  rename: rename
+  rename: rename,
+  writeScratch: writeScratch,
+  readScratch: readScratch
 }

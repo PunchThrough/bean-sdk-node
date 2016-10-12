@@ -201,6 +201,27 @@ program
   })
 
 
+program
+  .command('write_scratch [bank] [data]')
+  .description('Write data to a scratch characteristic')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .option('-b, --binary', 'Interpret data as hex digits')
+  .action((bank, data, options)=> {
+    commands.writeScratch(sdk(), bank, data, options.binary, options.name, options.address, commandComplete)
+  })
+
+
+program
+  .command('read_scratch [bank]')
+  .description('Read value of scratch characteristic')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((bank, options)=> {
+    commands.readScratch(sdk(), bank, options.binary, options.name, options.address, commandComplete)
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

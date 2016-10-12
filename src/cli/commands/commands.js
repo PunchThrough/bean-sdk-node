@@ -29,5 +29,7 @@ module.exports = {
   listCompiledSketches: cmd(program.listCompiledSketches),
   logSerial: cmd(bean.logSerial),
   sendSerial: cmd(bean.sendSerial),
-  rename: cmd(bean.rename)
+  rename: cmd(bean.rename),
+  readScratch: cmd(bean.readScratch),
+  writeScratch: cmd(bean.writeScratch)
 }

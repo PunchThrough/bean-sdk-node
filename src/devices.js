@@ -9,7 +9,8 @@ const logger = require('./util/logs').logger
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
 const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
-const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
+
+const BEAN_UUID = util.normalizeUUID('a495ff10c5b14b44b5121370f02d74de');
 
 
 function fromExistingDevice(existingDevice, peripheral) {

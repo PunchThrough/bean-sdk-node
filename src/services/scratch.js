@@ -2,13 +2,14 @@
 
 
 const BleService = require ('./base')
+const util = require('../util/util')
 
-const UUID_SERVICE_SCRATCH = 'a495ff20-c5b1-4b44-b512-1370f02d74de'
-const UUID_CHAR_SCRATCH_BANK_1 = 'a495ff21-c5b1-4b44-b512-1370f02d74de'
-const UUID_CHAR_SCRATCH_BANK_2 = 'a495ff22-c5b1-4b44-b512-1370f02d74de'
-const UUID_CHAR_SCRATCH_BANK_3 = 'a495ff23-c5b1-4b44-b512-1370f02d74de'
-const UUID_CHAR_SCRATCH_BANK_4 = 'a495ff24-c5b1-4b44-b512-1370f02d74de'
-const UUID_CHAR_SCRATCH_BANK_5 = 'a495ff25-c5b1-4b44-b512-1370f02d74de'
+const UUID_SERVICE_SCRATCH = util.normalizeUUID('a495ff20c5b14b44b5121370f02d74de');
+const UUID_CHAR_SCRATCH_BANK_1 = util.normalizeUUID('a495ff21c5b14b44b5121370f02d74de');
+const UUID_CHAR_SCRATCH_BANK_2 = util.normalizeUUID('a495ff22c5b14b44b5121370f02d74de');
+const UUID_CHAR_SCRATCH_BANK_3 = util.normalizeUUID('a495ff23c5b14b44b5121370f02d74de');
+const UUID_CHAR_SCRATCH_BANK_4 = util.normalizeUUID('a495ff24c5b14b44b5121370f02d74de');
+const UUID_CHAR_SCRATCH_BANK_5 = util.normalizeUUID('a495ff25c5b14b44b5121370f02d74de');
 
 const BANK_MAP = {
   1: UUID_CHAR_SCRATCH_BANK_1,

@@ -144,7 +144,7 @@ function logSerial(sdk, beanName, beanAddress, completedCallback) {
     device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
       process.stdout.write(`${serialCmd.data}`)
     })
-  })
+  }, completedCallback)
 }
 
 
@@ -168,7 +168,7 @@ function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback)
 
       completedCallback(null)
     })
-  })
+  }, completedCallback)
 }
 
 
@@ -177,7 +177,7 @@ function rename(sdk, newName, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log(`Renaming Bean to: ${newName}`)
     device.rename(newName, completedCallback)
-  })
+  }, completedCallback)
 
 }
 
@@ -198,7 +198,7 @@ function writeScratch(sdk, bank, data, binary, beanName, beanAddress, completedC
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log(`Writing to scratch bank ${bank}: ${buf}`)
     device.getScratchService().writeScratch(bank, buf, completedCallback)
-  })
+  }, completedCallback)
 }
 
 
@@ -206,7 +206,7 @@ function readScratch(sdk, bank, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
     console.log(`Reading scratch bank: ${bank}`)
     device.getScratchService().readScratch(bank, completedCallback)
-  })
+  }, completedCallback)
 }
 
 

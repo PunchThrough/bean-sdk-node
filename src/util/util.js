@@ -12,7 +12,9 @@ const rl = readline.createInterface({
 })
 
 function normalizeUUID(uuid) {
-  return parseInt(uuid, 16)
+  // Noble stores UUIDs as lower case strings with no dashes
+  // Note: the replace call isn't working...don't use dashes
+  return uuid.replace('-', '').toLowerCase();
 }
 
 

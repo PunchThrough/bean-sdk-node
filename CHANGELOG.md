@@ -1,3 +1,12 @@
+# v0.6.0
+
+### Features
+
+* New CLI command `write_scratch [bank] [data]`: writes to a scratch characteristic 
+* New CLI command `read_scratch [bank]`: reads from a scratch characteristic 
+
+---
+
 # v0.5.3
 
 ### Fixes

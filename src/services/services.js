@@ -7,6 +7,7 @@ const deviceInformation = require('./device-information')
 const oad = require('./oad')
 const serialTransport = require('./serial-transport')
 const battery = require('./battery')
+const scratch = require('./scratch')
 
 
 function _charListToObject(charList) {
@@ -50,6 +51,9 @@ function fromNobleService(nobleService) {
     case battery.UUID:
       s = new battery.BatteryService(_charListToObject(nobleService.characteristics), nobleService)
       break
+    case scratch.UUID:
+      s = new scratch.ScratchService(_charListToObject(nobleService.characteristics), nobleService)
+      break
     default:
       s = new BleService([], nobleService)
       break
@@ -66,6 +70,7 @@ module.exports = {
   serialTransport: serialTransport,
   oad: oad,
   deviceInformation: deviceInformation,
-  battery: battery
+  battery: battery,
+  scratch: scratch
 
 }

@@ -49,16 +49,21 @@ class BleService {
     }
 
     let char = this._characteristics[key]
-    char.read((err, data)=> {
-      if (err) {
-        logger.info(`Error reading characteristic(${key.toString(16)}): ${err}`)
-        callback(err, null)
-      } else {
-        this._charValueCache[key] = data
-        logger.info(`Char read success(${key.toString(16)}): ${data}`)
-        callback(null, data)
-      }
-    })
+    if (!char) {
+      callback(`No such characteristic: ${key}`)
+    } else {
+      char.read((err, data)=> {
+        if (err) {
+          logger.info(`Error reading characteristic(${key.toString(16)}): ${err}`)
+          callback(err, null)
+        } else {
+          this._charValueCache[key] = data
+          logger.info(`Char read success(${key.toString(16)}): ${data}`)
+          callback(null, data)
+        }
+      })
+    }
+
   }
 
   resetCache() {

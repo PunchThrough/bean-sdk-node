@@ -2,14 +2,15 @@
 
 
 const BleService = require ('./base')
+const util = require('../util/util')
 
-const UUID_SERVICE_DEVICE_INFORMATION = 0x180A
+const UUID_SERVICE_DEVICE_INFORMATION = util.normalizeUUID('180A');
 
-const UUID_CHAR_SOFTWARE_VERSION = 0x2A28
-const UUID_CHAR_FIRMWARE_VERSION = 0x2A26
-const UUID_CHAR_HARDWARE_VERSION = 0x2A27
-const UUID_CHAR_MFG_NAME = 0x2A29
-const UUID_CHAR_MODEL_NUMBER = 0x2A24
+const UUID_CHAR_SOFTWARE_VERSION = util.normalizeUUID('2A28');
+const UUID_CHAR_FIRMWARE_VERSION = util.normalizeUUID('2A26');
+const UUID_CHAR_HARDWARE_VERSION = util.normalizeUUID('2A27');
+const UUID_CHAR_MFG_NAME = util.normalizeUUID('2A29');
+const UUID_CHAR_MODEL_NUMBER = util.normalizeUUID('2A24');
 
 
 /**

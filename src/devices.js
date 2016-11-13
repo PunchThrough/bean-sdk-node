@@ -9,7 +9,8 @@ const logger = require('./util/logs').logger
 // Device types
 const DEVICE_TYPE_LIGHT_BLUE = 'DEVICE_TYPE_LIGHT_BLUE'
 const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
-const BEAN_UUID = 'a495ff10c5b14b44b5121370f02d74de'
+
+const BEAN_UUID = util.normalizeUUID('a495ff10c5b14b44b5121370f02d74de');
 
 
 function fromExistingDevice(existingDevice, peripheral) {
@@ -88,6 +89,22 @@ class BleDevice {
 
   getDeviceInformationService() {
     return this._lookupService(BleServices.deviceInformation.UUID)
+  }
+
+  getBatteryService() {
+    return this._lookupService(BleServices.battery.UUID)
+  }
+
+  getOADService() {
+    return this._lookupService(BleServices.oad.UUID)
+  }
+
+  getSerialTransportService() {
+    return this._lookupService(BleServices.serialTransport.UUID)
+  }
+
+  getScratchService() {
+    return this._lookupService(BleServices.scratch.UUID)
   }
 
   describe() {
@@ -212,18 +229,6 @@ class LightBlueDevice extends BleDevice {
 
   getType() {
     return DEVICE_TYPE_LIGHT_BLUE
-  }
-
-  getOADService() {
-    return this._lookupService(BleServices.oad.UUID)
-  }
-
-  getSerialTransportService() {
-    return this._lookupService(BleServices.serialTransport.UUID)
-  }
-
-  getBatteryService() {
-    return this._lookupService(BleServices.battery.UUID)
   }
 
   setLed(red, green, blue, callback) {

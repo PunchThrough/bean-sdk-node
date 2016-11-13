@@ -26,9 +26,9 @@ const BANK_MAP = {
 class ScratchService extends BleService {
 
   readScratch(bank, callback) {
-    let bank_char_uuid = BANK_MAP[bank]
-    if (bank_char_uuid) {
-      this._performCachedLookup(bank_char_uuid, (err, buf)=> {
+    let bankCharUUID = BANK_MAP[bank]
+    if (bankCharUUID) {
+      this._performCachedLookup(bankCharUUID, (err, buf)=> {
         callback(err, buf)
       })
     } else {
@@ -37,10 +37,10 @@ class ScratchService extends BleService {
   }
 
   writeScratch(bank, data, callback) {
-    let bank_char_uuid = BANK_MAP[bank]
-    if (bank_char_uuid) {
-      this._characteristics[bank_char_uuid].write(data, true, (err)=> {
-        callback(err)
+    let bankCharUUID = BANK_MAP[bank]
+    if (bankCharUUID) {
+      this._characteristics[bankCharUUID].write(data, true, (err)=> {
+        setTimeout(callback, 50, err)
       })
       } else {
       callback(`Invalid bank: ${bank}`)

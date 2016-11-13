@@ -204,8 +204,11 @@ function writeScratch(sdk, bank, data, binary, beanName, beanAddress, completedC
 
 function readScratch(sdk, bank, beanName, beanAddress, completedCallback) {
   common.connectToBean(sdk, beanName, beanAddress, (device)=> {
-    console.log(`Reading scratch bank: ${bank}`)
-    device.getScratchService().readScratch(bank, completedCallback)
+    device.getScratchService().readScratch(parseInt(bank, 10), (err, buf)=> {
+      console.log('');
+      console.log(`Scratch bank ${bank} value: ${buf}`)
+      completedCallback(err)
+    })
   }, completedCallback)
 }
 

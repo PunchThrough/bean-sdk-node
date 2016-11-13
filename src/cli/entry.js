@@ -218,7 +218,7 @@ program
   .option('-n, --name [bean]', 'Bean name')
   .option('-a, --address [address]', 'Bean address')
   .action((bank, options)=> {
-    commands.readScratch(sdk(), bank, options.binary, options.name, options.address, commandComplete)
+    commands.readScratch(sdk(), bank, options.name, options.address, commandComplete)
   })
 
 

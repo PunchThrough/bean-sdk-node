@@ -238,6 +238,10 @@ class FirmwareUpdater {
     })
   }
 
+  failedToReconnect() {
+    this._fail("Failed to reconnect to device!")
+  }
+
   getState() {
     return {
       accepted_fw_file: this._fwfiles[this._fileOfferedIndex],
@@ -319,7 +323,6 @@ class FirmwareUpdater {
         this._stateGlobal = OAD_STATE_IN_PROGRESS
         this._deviceInProgress = device
         this._completionCallback = callback
-        device.setAutoReconnect(true)
         this._registerNotifications(device)
         this._fwBeginTime = Math.round(+new Date() / 1000)
         logger.info(`Begin FW @ ${this._fwBeginTime}`)

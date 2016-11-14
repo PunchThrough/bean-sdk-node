@@ -33,13 +33,13 @@ function connectToDevice(sdk, name, address, successCallback, errorCallback, fil
     }
   })
 
-  sdk.on('discover', (device)=> {
-    if (device.getName() === name || device.getAddress() === address) {
+  sdk.on('discover', (scannedDevice)=> {
+    if (scannedDevice.getName() === name || scannedDevice.getAddress() === address) {
 
-      console.log(`\nFound Bean with name/address: ${device.getName()}/${device.getAddress()}`)
+      console.log(`\nFound device with name/address: ${scannedDevice.getName()}/${scannedDevice.getAddress()}`)
       found = true
       sdk.stopScanning()
-      sdk.connectToDevice(device.getAddress(), (err)=> {
+      sdk.connectScannedDevice(scannedDevice, (err, device)=> {
 
         if (err) {
           errorCallback(`Bean connection failed: ${err}`)

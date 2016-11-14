@@ -13,44 +13,92 @@ const DEVICE_TYPE_BLE = 'DEVICE_TYPE_BLE'
 const BEAN_UUID = util.normalizeUUID('a495ff10c5b14b44b5121370f02d74de');
 
 
-function fromExistingDevice(existingDevice, peripheral) {
-  /**
-   * Return the same `existingDevice` instance, with updated info from peripheral
-   */
+class PeripheralMixin {
+  constructor(peripheral) {
+    this._peripheral = peripheral
+  }
 
-    // Kind of hacky...altering "protected" state within the `existingDevice`
-  let adv = peripheral.advertisement
-  existingDevice._name = adv.localName ? adv.localName : ''
-  existingDevice._noblePeripheral = peripheral
-  return existingDevice
-}
+  update(peripheral) {
+    this._peripheral = peripheral
+    return true
+  }
 
+  getPeripheral() {
+    return this._peripheral
+  }
 
-function fromNoblePeripheral(peripheral) {
-  /**
-   * Return a Device class given a Noble peripheral object
-   */
+  getName() {
+    let adv = this._peripheral.advertisement
+    return adv.localName ? adv.localName : ''
+  }
 
-  let adv = peripheral.advertisement
-  let name = adv.localName ? adv.localName : ''
-  if (adv.serviceUuids.indexOf(BEAN_UUID) == -1) {
-    return new BleDevice(peripheral.uuid, name, peripheral)
-  } else {
-    return new LightBlueDevice(peripheral.uuid, name, peripheral)
+  getAddress() {
+    return this._peripheral.uuid
   }
 }
 
 
-class BleDevice {
+class ScannedDevice extends PeripheralMixin {
+  constructor(peripheral) {
+    super(peripheral)
+    this._advertisedServices = []
+    this._reportAtLeastOnce = false
+  }
 
-  constructor(address, name, noblePeripheral) {
-    this._address = address
-    this._name = name
-    this._noblePeripheral = noblePeripheral
+  print() {
+    let out = `${this.getType()}:\n`
+    out += `    Name: ${this.getName()}\n`
+    out += `    Address: ${this.getAddress()}\n`
+    out += `    Advertised Services:\n`
+    if (this._advertisedServices.length > 0) {
+      for (let i in this._advertisedServices) {
+        out += `        ${this._advertisedServices[i]}\n`
+      }
+    } else {
+      out += `        None\n`
+    }
+    return out
+  }
+
+  update(peripheral) {
+    this._peripheral = peripheral
+
+    let newServices = peripheral.advertisement.serviceUuids
+    let updated = false
+    for (let i in newServices) {
+      let sUUID = newServices[i]
+      if (this._advertisedServices.indexOf(sUUID) === -1) {
+        updated = true
+        this._advertisedServices.push(sUUID)
+      }
+    }
+
+    if (!this._reportAtLeastOnce) {
+      this._reportAtLeastOnce = true
+      updated = true
+    }
+
+    return updated
+  }
+
+  getType() {
+    if (this._advertisedServices.indexOf(BEAN_UUID) < 0) {
+      return DEVICE_TYPE_BLE
+    } else {
+      return DEVICE_TYPE_LIGHT_BLUE
+    }
+  }
+
+}
+
+
+class BleDevice extends PeripheralMixin {
+
+  constructor(peripheral) {
+    super(peripheral)
 
     // State
     this._services = {}
-    this._autoReconnect = false
   }
 
   _lookupService(serviceKey) {
@@ -70,25 +118,8 @@ class BleDevice {
     return DEVICE_TYPE_BLE
   }
 
-  getAddress() {
-    return this._address
-  }
-
-  getName() {
-    return this._name
-  }
-
   getServices() {
     return this._services
-  }
-
-  setAutoReconnect(state) {
-    logger.info(`Set reconnect for ${this._name}: ${state}`)
-    this._autoReconnect = state
-  }
-
-  autoReconnect() {
-    return this._autoReconnect
   }
 
   getDeviceInformationService() {
@@ -111,40 +142,24 @@ class BleDevice {
     return this._lookupService(BleServices.scratch.UUID)
   }
 
-  describe() {
-    let adv = this._noblePeripheral.advertisement
-    let out = `${this.getType()}:\n`
-    out += `    Name: ${this._name}\n`
-    out += `    Address: ${this._address}\n`
-    out += `    Advertised Services:\n`
-    if (adv.serviceUuids.length > 0) {
-      for (let i in adv.serviceUuids) {
-        out += `        ${adv.serviceUuids[i]}\n`
-      }
-    } else {
-      out += `        None\n`
-    }
-    return out
-  }
-
   toString() {
-    return `${this._name}(${this._address})`
+    return `${this.getName()}(${this.getAddress()})`
   }
 
   serialize() {
     return {
-      name: this._name,
-      address: this._address,
+      name: this.getName(),
+      address: this.getAddress(),
       device_type: this.getType()
     }
   }
 
   isConnected() {
-    return this._noblePeripheral.state === 'connected'
+    return this._peripheral.state === 'connected'
   }
 
   isConnectedOrConnecting() {
-    return this._noblePeripheral.state === 'connected' || this._noblePeripheral.state === 'connecting'
+    return this._peripheral.state === 'connected' || this._peripheral.state === 'connecting'
   }
 
   connect(callback) {
@@ -153,20 +168,20 @@ class BleDevice {
      *
      * @param callback Callback function that takes an error argument
      */
-    logger.info(`Connecting to device: ${this._name}`)
+    logger.info(`Connecting to device: ${this.getName()}`)
     if (this.isConnected()) {
       logger.info('Already connected.')
-      callback(null)
+      callback(null, this)
     } else {
-      this._noblePeripheral.connect((err)=> {
-        callback(err)
+      this._peripheral.connect((err)=> {
+        callback(err, this)
       })
     }
   }
 
   disconnect(callback) {
     if (this.isConnected()) {
-      this._noblePeripheral.disconnect((error)=> {
+      this._peripheral.disconnect((error)=> {
         if (error) {
           logger.error(`Device disconnect ERROR (${this.toString()}: ${error}`)
         } else {
@@ -180,10 +195,10 @@ class BleDevice {
   }
 
   lookupServices(callback) {
-    logger.info(`Looking up services for device: ${this._name}`)
+    logger.info(`Looking up services for device: ${this.getName()}`)
 
     this._services = []  // Clear services
-    this._noblePeripheral.discoverAllServicesAndCharacteristics((err, services) => {
+    this._peripheral.discoverAllServicesAndCharacteristics((err, services) => {
       if (err) {
         logger.info(`There was an error getting services: ${err}`)
         callback(err)
@@ -227,8 +242,8 @@ class BleDevice {
 
 
 class LightBlueDevice extends BleDevice {
-  constructor(uuid, name, services, noble_peripheral) {
-    super(uuid, name, services, noble_peripheral)
+  constructor(peripheral) {
+    super(peripheral)
   }
 
   getType() {
@@ -284,8 +299,7 @@ class LightBlueDevice extends BleDevice {
 
 
 module.exports = {
-  fromNoblePeripheral: fromNoblePeripheral,
-  fromExistingDevice: fromExistingDevice,
+  ScannedDevice: ScannedDevice,
   BleDevice: BleDevice,
   LightBlueDevice: LightBlueDevice,
   DEVICE_TYPE_LIGHT_BLUE: DEVICE_TYPE_LIGHT_BLUE,

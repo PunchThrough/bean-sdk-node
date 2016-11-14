@@ -16,8 +16,8 @@ function startScan(sdk, all, completedCallback) {
 
   console.log(`\nScanning for ${msg} devices for ${SCAN_DURATION} seconds...\n`)
 
-  sdk.on('discover', (device)=> {
-    console.log("New LightBlue device discovered!\n%s", device.describe())
+  sdk.on('discover', (scannedDevice)=> {
+    console.log(`New Device discovered or updated!\n${scannedDevice.print()}`)
   })
 
   sdk.startScanning(SCAN_DURATION, filter, completedCallback)

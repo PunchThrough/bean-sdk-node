@@ -34,6 +34,7 @@ class LightBlueSDK extends events.EventEmitter {
     this._devices = {}
     this._scanning = false
     this._scanTimeout = null
+    this._filter = false  // filter on lightblue devices only
 
     noble.on('discover', (peripheral)=> {
       this._discover(peripheral)
@@ -77,7 +78,7 @@ class LightBlueSDK extends events.EventEmitter {
       // We don't have a record of this device
 
       let device = devices.fromNoblePeripheral(peripheral)
-      if (device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
+      if (this._filter === false || device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
         this._devices[device.getAddress()] = device
         this.emit('discover', device)
       }
@@ -111,7 +112,7 @@ class LightBlueSDK extends events.EventEmitter {
     this._fwUpdater.resetState()
   }
 
-  startScanning(timeoutSeconds=30, timeoutCallback=null) {
+  startScanning(timeoutSeconds=30, filter=false, timeoutCallback=null) {
     /**
      * Start a BLE scan for a given period of time
      *
@@ -120,6 +121,7 @@ class LightBlueSDK extends events.EventEmitter {
      */
 
     let ctx = this
+    this._filter = filter
 
     if (noble.state === NOBLE_STATE_READY) {
       logger.info('Starting to scan...')

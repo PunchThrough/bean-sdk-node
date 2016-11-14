@@ -69,8 +69,9 @@ program
 program
   .command('scan')
   .description('Scan for LightBlue devices')
+  .option('--all', 'Remove all filters on scan results')
   .action((options)=> {
-    commands.startScan(sdk(), commandComplete)
+    commands.startScan(sdk(), options.all, commandComplete)
   })
 
 

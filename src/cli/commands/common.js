@@ -18,7 +18,7 @@ function cleanSketchFolder() {
 }
 
 
-function connectToBean(sdk, name, address, successCallback, errorCallback) {
+function connectToDevice(sdk, name, address, successCallback, errorCallback, filter=true) {
 
   if (!name && !address) {
     errorCallback("Please provide bean name or address")
@@ -26,7 +26,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
 
   let found = false
 
-  sdk.startScanning(15, ()=> {
+  sdk.startScanning(15, filter, ()=> {
     // Scan timeout
     if (!found) {
       errorCallback('No bean found!')
@@ -51,7 +51,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
           if (err) {
             errorCallback(`Service lookup FAILED: ${err}`)
           } else {
-            console.log('Connected!')
+            console.log('Connected!\n')
             successCallback(device)
           }
 
@@ -62,7 +62,7 @@ function connectToBean(sdk, name, address, successCallback, errorCallback) {
 }
 
 module.exports = {
-  connectToBean: connectToBean,
+  connectToDevice: connectToDevice,
   cleanSketchFolder: cleanSketchFolder,
   SKETCH_LOCATION_BEAN: SKETCH_LOCATION_BEAN,
   SKETCH_LOCATION_BEANPLUS: SKETCH_LOCATION_BEANPLUS

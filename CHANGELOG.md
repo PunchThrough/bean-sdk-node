@@ -2,8 +2,18 @@
 
 ### Features
 
-* New CLI command `write_scratch [bank] [data]`: writes to a scratch characteristic 
-* New CLI command `read_scratch [bank]`: reads from a scratch characteristic 
+* New CLI command `write_scratch`: Writes to a scratch characteristic.
+* New CLI command `read_scratch`: Reads from a scratch characteristic.
+* Update CLI command `scan`: Adds `--all` option to remove all filters from scan results (more than just Bean's will appear in scan results).
+* New CLI command `listGATT`: Lists all BLE services and characteristics.
+
+### Improvements
+
+* Detect the presence of a USB dongle, and provide better error message if missing.
+
+### Fixes
+
+* Don't stack-trace when reading from null characteristic, provide better error message.
 
 ---
 

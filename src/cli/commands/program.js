@@ -35,7 +35,7 @@ function lookupFirmwareBundleForHardwareVersion(hardwareVersion) {
 
 function programFirmware(sdk, beanName, beanUUID, force, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToDevice(sdk, beanName, beanUUID, (device)=> {
 
     device.getDeviceInformationService().getHardwareVersion((err, version)=> {
       if (err) {
@@ -130,7 +130,7 @@ function _getSketchData(device, sketch, callback) {
 
 function programSketch(sdk, sketch, beanName, beanUUID, oops, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanUUID, (device)=> {
+  common.connectToDevice(sdk, beanName, beanUUID, (device)=> {
     _getSketchData(device, sketch, (error, binary, sketchName)=> {
       if (error) {
         completedCallback(error)

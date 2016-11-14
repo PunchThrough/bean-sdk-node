@@ -69,8 +69,9 @@ program
 program
   .command('scan')
   .description('Scan for LightBlue devices')
+  .option('--all', 'Remove all filters on scan results')
   .action((options)=> {
-    commands.startScan(sdk(), commandComplete)
+    commands.startScan(sdk(), options.all, commandComplete)
   })
 
 
@@ -219,6 +220,16 @@ program
   .option('-a, --address [address]', 'Bean address')
   .action((bank, options)=> {
     commands.readScratch(sdk(), bank, options.name, options.address, commandComplete)
+  })
+
+
+program
+  .command('list_gatt')
+  .description('List all BLE services and characteristics')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((options)=> {
+    commands.listGATT(sdk(), options.name, options.address, commandComplete)
   })
 
 

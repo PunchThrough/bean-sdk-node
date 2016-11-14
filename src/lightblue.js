@@ -1,7 +1,6 @@
 'use strict'
 
 
-const noble = require('noble')
 const devices = require('./devices')
 const FirmwareUpdater = require('./firmware-updater').FirmwareUpdater
 const SketchUploader = require('./sketch-uploader').SketchUploader
@@ -27,6 +26,7 @@ class LightBlueSDK extends events.EventEmitter {
     super()
 
     // Dependencies
+    this._noble = require('noble')
     this._fwUpdater = new FirmwareUpdater(this)
     this._sketchUploader = new SketchUploader()
 
@@ -36,7 +36,7 @@ class LightBlueSDK extends events.EventEmitter {
     this._scanTimeout = null
     this._filter = false  // filter on lightblue devices only
 
-    noble.on('discover', (peripheral)=> {
+    this._noble.on('discover', (peripheral)=> {
       this._discover(peripheral)
     })
   }
@@ -120,19 +120,20 @@ class LightBlueSDK extends events.EventEmitter {
      * @param timeoutCallback Function called back after scan timeout
      */
 
-    let ctx = this
+    let _ctx = this
+    let _noble = this._noble
     this._filter = filter
 
-    if (noble.state === NOBLE_STATE_READY) {
+    if (_noble.state === NOBLE_STATE_READY) {
       logger.info('Starting to scan...')
-      noble.startScanning([], true)
+      _noble.startScanning([], true)
       this._scanning = true
     } else {
-      noble.on('stateChange', function (state) {
+      _noble.on('stateChange', function (state) {
         if (state === NOBLE_STATE_READY) {
           logger.info('Starting to scan...')
-          noble.startScanning([], true)
-          this._scanning = true
+          _noble.startScanning([], true)
+          _ctx._scanning = true
         }
       })
     }
@@ -140,7 +141,7 @@ class LightBlueSDK extends events.EventEmitter {
     logger.info(`Setting scan timeout: ${timeoutSeconds} seconds`)
     this._scanTimeout = setTimeout(()=> {
       logger.info("Scan timeout!")
-      ctx.stopScanning()
+      _ctx.stopScanning()
       if (timeoutCallback) {
         timeoutCallback()
       }
@@ -150,7 +151,7 @@ class LightBlueSDK extends events.EventEmitter {
   stopScanning() {
     logger.info('No longer scanning...')
     clearTimeout(this._scanTimeout)
-    noble.stopScanning()
+    this._noble.stopScanning()
     this._scanning = false
   }
 
@@ -214,5 +215,5 @@ function getSdk() {
 
 
 module.exports = {
-  sdk: getSdk()
+  sdk: getSdk
 }

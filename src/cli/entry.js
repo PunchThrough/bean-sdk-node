@@ -24,15 +24,24 @@ function sdk(logLevel='error') {
       })
     ]
   })
-  
-  return lightblue.sdk
+
+  try {
+    return lightblue.sdk()
+  } catch (error) {
+    let msg = error.message
+    if(msg.indexOf("LIBUSB") > -1) {
+      msg = "Failed to find LIBUSB device. Please use the Zadig tool to install libusb/WinUSB driver for your BLE device."
+    }
+    console.log(`\nERROR: ${msg}`)
+    process.exit(1)
+  }
 }
 
 
 function quit(rc) {
   console.log('')
   console.log('Quitting gracefully...')
-  lightblue.sdk.quitGracefully((err)=> {
+  lightblue.sdk().quitGracefully((err)=> {
     console.log("Done.")
     process.exit(rc)
   })

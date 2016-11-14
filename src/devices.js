@@ -78,6 +78,10 @@ class BleDevice {
     return this._name
   }
 
+  getServices() {
+    return this._services
+  }
+
   setAutoReconnect(state) {
     logger.info(`Set reconnect for ${this._name}: ${state}`)
     this._autoReconnect = state

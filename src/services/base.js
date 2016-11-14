@@ -82,6 +82,10 @@ class BleService {
     return this._nobleService.uuid
   }
 
+  getCharacteristics() {
+    return this._characteristics
+  }
+
   registerForNotifications(key, cb) {
     /**
      * Register to be called-back on receipt of a notification

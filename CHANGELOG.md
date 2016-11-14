@@ -4,8 +4,8 @@
 
 * New CLI command `write_scratch`: Writes to a scratch characteristic.
 * New CLI command `read_scratch`: Reads from a scratch characteristic.
-* Update CLI command `scan`: Adds `--no-filter` option to remove all filters from scan results (more than just Bean's will appear in scan results).
-* New CLI command `interrogate`: Lists all BLE services and characteristics.
+* Update CLI command `scan`: Adds `--all` option to remove all filters from scan results (more than just Bean's will appear in scan results).
+* New CLI command `listGATT`: Lists all BLE services and characteristics.
 
 ### Improvements
 

@@ -223,6 +223,16 @@ program
   })
 
 
+program
+  .command('list_gatt')
+  .description('List all BLE services and characteristics')
+  .option('-n, --name [bean]', 'Bean name')
+  .option('-a, --address [address]', 'Bean address')
+  .action((options)=> {
+    commands.listGATT(sdk(), options.name, options.address, commandComplete)
+  })
+
+
 if (!process.argv.slice(2).length) {
   console.log("Please provide a command as the first argument.")
   program.help()

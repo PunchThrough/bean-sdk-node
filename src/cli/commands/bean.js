@@ -9,14 +9,9 @@ const sprintf = require('sprintf-js').sprintf
 const buffer = require('buffer')
 
 
-function _printDeviceInfo(mfgName, modelNumber, hwVersion, fwVersion, swVersion, battVoltage, sketchName) {
-
-}
-
-
 function blinkLed(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     console.log('Turning LED on...')
     device.setLed(255, 0, 255, (err)=> {
       if (err)
@@ -39,7 +34,7 @@ function blinkLed(sdk, beanName, beanAddress, completedCallback) {
 
 function readAccel(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
 
     async.timesSeries(30, (n, next)=> {
       device.readAccelerometer((err, response)=> {
@@ -63,9 +58,9 @@ function readAccel(sdk, beanName, beanAddress, completedCallback) {
 
 function readConfig(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     device.readBleConfig((err, response)=> {
-      let out = "\n"
+      let out = ""
       out += `    Advertising Interval: ${response.advertising_interval}\n`
       out += `     Connection Interval: ${response.connection_interval}\n`
       out += `                Tx Power: ${response.tx_power}\n`
@@ -111,7 +106,7 @@ function _getSketch(device, callback) {
 
 function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     let dis = device.getDeviceInformationService()
     dis.serialize((err, info) => {
       if (err)
@@ -119,7 +114,7 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
       _getVoltage(device, (voltage)=> {
         _getSketch(device, (sketch)=> {
-          let out = "\n"
+          let out = ""
           out += `      Manufacturer: ${info.manufacturer_name}\n`
           out += `      Model Number: ${info.model_number}\n`
           out += `  Hardware Version: ${info.hardware_version}\n`
@@ -138,7 +133,7 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
 
 
 function logSerial(sdk, beanName, beanAddress, completedCallback) {
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     console.log('Logging serial data...')
     console.log('')
     device.getSerialTransportService().registerForCommandNotification(commandIds.SERIAL_DATA, (serialCmd)=> {
@@ -161,7 +156,7 @@ function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback)
     buf = new buffer.Buffer(data, 'ascii')
   }
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     device.sendSerial(buf, (err)=> {
       if (err)
         throw new Error(err)
@@ -174,7 +169,7 @@ function sendSerial(sdk, data, binary, beanName, beanAddress, completedCallback)
 
 function rename(sdk, newName, beanName, beanAddress, completedCallback) {
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     console.log(`Renaming Bean to: ${newName}`)
     device.rename(newName, completedCallback)
   }, completedCallback)
@@ -195,7 +190,7 @@ function writeScratch(sdk, bank, data, binary, beanName, beanAddress, completedC
     buf = new buffer.Buffer(data, 'ascii')
   }
 
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     console.log(`Writing to scratch bank ${bank}: ${buf}`)
     device.getScratchService().writeScratch(bank, buf, completedCallback)
   }, completedCallback)
@@ -203,7 +198,7 @@ function writeScratch(sdk, bank, data, binary, beanName, beanAddress, completedC
 
 
 function readScratch(sdk, bank, beanName, beanAddress, completedCallback) {
-  common.connectToBean(sdk, beanName, beanAddress, (device)=> {
+  common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     device.getScratchService().readScratch(parseInt(bank, 10), (err, buf)=> {
       console.log('');
       console.log(`Scratch bank ${bank} value: ${buf}`)

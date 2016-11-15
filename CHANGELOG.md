@@ -1,4 +1,4 @@
-# v0.6.0
+# 0.6.0
 
 ### Features
 
@@ -15,9 +15,21 @@
 
 * Don't stack-trace when reading from null characteristic, provide better error message.
 
+### New Bean and Bean+ Firmware (201611070000)
+
+* Fix: Eliminates even more cases of sketch upload failures.
+* Fix: Fixes to make using the Bean/Bean+ with pairing more stable. Resolves certain connect/disconnect failures in OSX loader.
+* Fix: Bean.getAdvertisingState() now returns correct state.
+* Fix: Removes 16 byte limit for observer data
+
+### New `bean-arduino-core` v2.0.1
+
+* New macro `#IS_BEAN` - `0` for Bean+ and `1` for Bean
+* Fixed typo `ObserverAdvertisementInfo`
+
 ---
 
-# v0.5.3
+# 0.5.3
 
 ### Fixes
 
@@ -27,7 +39,7 @@
 
 ---
 
-# v0.5.2
+# 0.5.2
 
 ### Features
 
@@ -35,12 +47,12 @@
 
 ### New Bean and Bean+ Firmware (201609290000)
 
-* Bug fix: Sketch upload failures due to sketches sending a lot of serial data
-* Bug fix: `Bean.setLed()` now works from `setup()`
+* Fix: Sketch upload failures due to sketches sending a lot of serial data
+* Fix: `Bean.setLed()` now works fr om `setup()`
 
 ---
 
-# v0.5.0
+# 0.5.0
 
 **Note:** This version requires CLI users to re-run `install_bean_arduino_core` command!
 
@@ -55,7 +67,7 @@
 
 ---
 
-# v0.4.0
+# 0.4.0
 
 ### Features
 
@@ -70,7 +82,7 @@
 
 ---
 
-# v0.3.1
+# 0.3.1
 
 ### Bug Fixes
 
@@ -78,7 +90,7 @@
 
 ---
 
-# v0.3.0
+# 0.3.0
 
 ### Features
 
@@ -88,7 +100,7 @@
 
 ---
 
-# v0.2.0
+# 0.2.0
 
 ### Features
 
@@ -97,6 +109,6 @@
 
 ---
 
-# v0.1.0
+# 0.1.0
 
 Initial public release.

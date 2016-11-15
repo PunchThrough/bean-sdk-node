@@ -22,6 +22,11 @@
 * Fix: Bean.getAdvertisingState() now returns correct state.
 * Fix: Removes 16 byte limit for observer data
 
+### New `bean-arduino-core` v2.0.1
+
+* New macro `#IS_BEAN` - `0` for Bean+ and `1` for Bean
+* Fixed typo `ObserverAdvertisementInfo`
+
 ---
 
 # 0.5.3
@@ -43,7 +48,7 @@
 ### New Bean and Bean+ Firmware (201609290000)
 
 * Fix: Sketch upload failures due to sketches sending a lot of serial data
-* Fix: `Bean.setLed()` now works from `setup()`
+* Fix: `Bean.setLed()` now works fr om `setup()`
 
 ---
 

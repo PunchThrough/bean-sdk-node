@@ -55,7 +55,7 @@ function fromNobleService(nobleService) {
       s = new scratch.ScratchService(_charListToObject(nobleService.characteristics), nobleService)
       break
     default:
-      s = new BleService([], nobleService)
+      s = new BleService(nobleService.characteristics, nobleService)
       break
   }
   return s

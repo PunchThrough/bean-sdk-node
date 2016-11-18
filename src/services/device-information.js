@@ -3,6 +3,8 @@
 
 const BleService = require ('./base')
 const util = require('../util/util')
+const async = require('async')
+const logger = require('../util/logs').logger
 
 const UUID_SERVICE_DEVICE_INFORMATION = util.normalizeUUID('180A');
 
@@ -36,6 +38,45 @@ class DeviceInformationService extends BleService {
 
   getSoftwareVersion(callback) {
     this._performCachedLookup(UUID_CHAR_SOFTWARE_VERSION, callback)
+  }
+
+  serialize(finalCallback) {
+
+    let ctx = this
+
+    let lookup = (fn,  cb)=> {
+      fn.apply(ctx, [function(err, result) {
+        let val
+        if (err) {
+          val = "Lookup error"
+        } else {
+          val = result === undefined ? '' : result.toString('utf8')
+        }
+        cb(null, val)
+      }])
+    }
+
+    async.parallel([
+      // Have to wrap these with fat arrows to conserve `this` context
+      (cb) => lookup(this.getManufacturerName, cb),
+      (cb) => lookup(this.getModelNumber, cb),
+      (cb) => lookup(this.getHardwareVersion, cb),
+      (cb) => lookup(this.getFirmwareVersion, cb),
+      (cb) => lookup(this.getSoftwareVersion, cb)
+    ], (err, results) => {
+      if (err) {
+        logger.info(err)
+        finalCallback(err, null)
+      } else {
+        finalCallback(null, {
+          manufacturer_name: results[0],
+          model_number: results[1],
+          hardware_version: results[2],
+          firmware_version: results[3],
+          software_version: results[4]
+        })
+      }
+    })
   }
 
 }

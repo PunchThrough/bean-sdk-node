@@ -40,19 +40,5 @@ let mockLightBluePeripheral = {
 describe('LightBlue Devices', ()=> {
   describe('fromNoblePeripheral', ()=> {
 
-    it('create BLE Device', ()=> {
-      let d = devices.fromNoblePeripheral(mockBlePeripheral)
-      assert.equal(d.getType(), devices.DEVICE_TYPE_BLE)
-    })
-
-    it('create LightBlue Device', ()=> {
-      let d = devices.fromNoblePeripheral(mockLightBluePeripheral)
-      assert.equal(d.getType(), devices.DEVICE_TYPE_LIGHT_BLUE)
-    })
-
-    it('setLed', ()=> {
-      let d = devices.fromNoblePeripheral(mockLightBluePeripheral)
-    })
-
   })
 })

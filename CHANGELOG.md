@@ -10,6 +10,7 @@
 ### Improvements
 
 * Detect the presence of a USB dongle, and provide better error message if missing.
+* Handle Bean rotating advertisement packets. Improves stability/connectivity with Beans running certain sketches (HID, MIDI, ANCS).
 
 ### Fixes
 

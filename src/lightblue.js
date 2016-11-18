@@ -32,6 +32,7 @@ class LightBlueSDK extends events.EventEmitter {
 
     // State
     this._devices = {}
+    this._scannedDevices = {}
     this._scanning = false
     this._scanTimeout = null
     this._filter = false  // filter on lightblue devices only
@@ -41,49 +42,47 @@ class LightBlueSDK extends events.EventEmitter {
     })
   }
 
-  _autoReconnect(device) {
-    logger.info(`Auto reconnecting to ${device.getName()}`)
-    device.connect((err)=> {
-      if (err) {
-        logger.info(`Error reconnecting to ${device.getName()}`)
-      }
-      else {
-        logger.info(`Auto reconnect to ${device.getName()} success`)
-        if (this._fwUpdater.isInProgress(device)) {
-          logger.info('Auto-reconnected to device in middle of FW update')
-
-          device.lookupServices((err)=> {
-            this._fwUpdater.continueUpdate()
-          })
-
-        }
-      }
-    })
-  }
-
   _discover(peripheral) {
     /**
      * A new BLE peripheral device has been discovered (from Noble)
      */
 
-    if (this._devices[peripheral.uuid]) {
-      // We already have a record of this device
-
-      let device = devices.fromExistingDevice(this._devices[peripheral.uuid], peripheral)
-      if (device.autoReconnect() && !device.isConnectedOrConnecting()) {
-        this._autoReconnect(device)
-      }
-
-    } else {
-      // We don't have a record of this device
-
-      let device = devices.fromNoblePeripheral(peripheral)
-      if (this._filter === false || device.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
-        this._devices[device.getAddress()] = device
-        this.emit('discover', device)
-      }
+    let address = peripheral.uuid
+    let scannedDevice = this._scannedDevices[address]
+    if (!scannedDevice) {
+      scannedDevice = new devices.ScannedDevice(peripheral)
+      this._scannedDevices[address] = scannedDevice
     }
 
+    let updated = scannedDevice.update(peripheral)
+
+    if (this._checkForUpdateInProgress(scannedDevice)) {
+      return  // Don't emit any events during fw update for this device
+    }
+
+    if ((scannedDevice.getType() === devices.DEVICE_TYPE_LIGHT_BLUE && updated) ||
+      (this._filter === false && updated)) {
+      this.emit('discover', scannedDevice)
+    }
+  }
+
+  _checkForUpdateInProgress(scannedDevice) {
+    let updateInProgress = false
+    let device = this._devices[scannedDevice.getAddress()]
+    if (device) {
+      device.update(scannedDevice.getPeripheral())
+      if (this._fwUpdater.isInProgress(device)) {
+        updateInProgress = true
+        if (!device.isConnectedOrConnecting()) {
+          device.connect((err, device)=> {
+            device.lookupServices((err)=> {
+              this._fwUpdater.continueUpdate()
+            })
+          })
+        }
+      }
+    }
+    return updateInProgress
   }
 
   quitGracefully(callback) {
@@ -174,31 +173,21 @@ class LightBlueSDK extends events.EventEmitter {
     this._sketchUploader.beginUpload(device, sketchBuf, sketchName, promptUser, callback)
   }
 
-  /**
-   * Connect to a device, preserving scanning state
-   *
-   * This method exists on the LB object by design, in addition to the Device object itself.
-   * This is because Noble will not connect to a device while scanning is enabled, therefore
-   * we stop scanning, connect to the device, and then set scanning back to it's original state.
-   *
-   * @param uuid string UUID of device
-   * @param callback Function with one error param
-   */
-  connectToDevice(uuid, callback) {
-    let d = this._devices[uuid]
-    if (d) {
-      let originalScanningState = this._scanning
-      this.stopScanning()
-      d.connect((err)=> {
-        if (originalScanningState === true)
-          this.startScanning()
-        callback(err)
-      })
+  connectScannedDevice(scannedDevice, callback) {
+    let device = this._devices[scannedDevice.getAddress()]
+    if (device) {
+      device.update(scannedDevice.getPeripheral())
     } else {
-      callback(`No device: ${uuid}`)
+      if (scannedDevice.getType() === devices.DEVICE_TYPE_LIGHT_BLUE) {
+        device = new devices.LightBlueDevice(scannedDevice.getPeripheral())
+      } else {
+        device = new devices.BleDevice(scannedDevice.getPeripheral())
+      }
+      this._devices[device.getAddress()] = device
     }
-  }
 
+    device.connect(callback)
+  }
 }
 
 

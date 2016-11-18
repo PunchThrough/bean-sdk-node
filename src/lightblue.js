@@ -185,6 +185,7 @@ class LightBlueSDK extends events.EventEmitter {
       }
       this._devices[device.getAddress()] = device
     }
+
     device.connect(callback)
   }
 }

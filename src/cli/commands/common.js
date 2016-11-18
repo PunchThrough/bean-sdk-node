@@ -18,7 +18,7 @@ function cleanSketchFolder() {
 }
 
 
-function connectToDevice(sdk, name, address, successCallback, errorCallback, filter=true) {
+function connectToDevice(sdk, name, address, successCallback, errorCallback, filter=false) {
 
   if (!name && !address) {
     errorCallback("Please provide bean name or address")

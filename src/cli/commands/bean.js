@@ -109,24 +109,24 @@ function readDeviceInfo(sdk, beanName, beanAddress, completedCallback) {
   common.connectToDevice(sdk, beanName, beanAddress, (device)=> {
     let dis = device.getDeviceInformationService()
     dis.serialize((err, info) => {
-      if (err)
-        throw new Error(err)
+      if (err) {
+        completedCallback(err)
+      } else {
+        _getVoltage(device, (voltage)=> {
+          _getSketch(device, (sketch)=> {
+            let out = ""
+            out += `      Manufacturer: ${info.manufacturer_name}\n`
+            out += `      Model Number: ${info.model_number}\n`
+            out += `  Hardware Version: ${info.hardware_version}\n`
+            out += `  Firmware Version: ${info.firmware_version}\n`
+            out += `     Battery Level: ${voltage}\n`
+            out += `       Sketch Name: ${sketch}\n`
+            console.log(out)
 
-      _getVoltage(device, (voltage)=> {
-        _getSketch(device, (sketch)=> {
-          let out = ""
-          out += `      Manufacturer: ${info.manufacturer_name}\n`
-          out += `      Model Number: ${info.model_number}\n`
-          out += `  Hardware Version: ${info.hardware_version}\n`
-          out += `  Firmware Version: ${info.firmware_version}\n`
-          out += `     Battery Level: ${voltage}\n`
-          out += `       Sketch Name: ${sketch}\n`
-          console.log(out)
-
-          completedCallback(null)
+            completedCallback(null)
+          })
         })
-      })
-
+      }
     })
   }, completedCallback)
 }

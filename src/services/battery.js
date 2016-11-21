@@ -24,5 +24,8 @@ class BatteryService extends BleService {
 
 module.exports = {
   BatteryService: BatteryService,
-  UUID: UUID_SERVICE_BATTERY
+  UUID: UUID_SERVICE_BATTERY,
+  characteristics: {
+    UUID_CHAR_BATTERY: UUID_CHAR_BATTERY
+  }
 }

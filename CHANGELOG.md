@@ -1,3 +1,11 @@
+# 0.6.1
+
+### New `bean-arduino-core` 2.0.2
+
+* Fixes missing header files due to submodule issue.
+
+---
+
 # 0.6.0
 
 ### Features
@@ -23,7 +31,7 @@
 * Fix: Bean.getAdvertisingState() now returns correct state.
 * Fix: Removes 16 byte limit for observer data
 
-### New `bean-arduino-core` v2.0.1
+### New `bean-arduino-core` 2.0.1
 
 * New macro `#IS_BEAN` - `0` for Bean+ and `1` for Bean
 * Fixed typo `ObserverAdvertisementInfo`

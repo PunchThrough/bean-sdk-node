@@ -24,3 +24,5 @@ This project ships with a full-featured CLI that can talk to the Bean/Bean+ with
 # SDK/Library
 
 API reference and examples coming soon!
+
+Basic usage can be found in `examples/set_led.js`

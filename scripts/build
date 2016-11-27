@@ -11,8 +11,8 @@ BUILD_DIR = os.path.join(THIS_DIR, '..', 'build')
 SRC_DIR = os.path.join(THIS_DIR, '..', 'src')
 RESOURCES_DIR = os.path.join(SRC_DIR, 'resources')
 
-BEAN_ARDUINO_CORE = "bean-arduino-core-2.0.1"
-BEAN_ARDUINO_CORE_TARBALL = "bean-arduino-core-2.0.1.tar.gz"
+BEAN_ARDUINO_CORE = "bean-arduino-core-2.0.2"
+BEAN_ARDUINO_CORE_TARBALL = "bean-arduino-core-2.0.2.tar.gz"
 
 
 def extract_arduino_core():

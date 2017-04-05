@@ -4,7 +4,11 @@
 
 Welcome to the Node.js SDK and CLI source code repo for the LightBlue Bean/Bean+.
 
+Documentation:
+
 * [Project Overview](https://punchthrough.com/bean/guides/node-sdk/overview/)
+* [Developer Guide](docs/developer.md)
+* [Release Notes](CHANGELOG.md)
 
 # Installation
 

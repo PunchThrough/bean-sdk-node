@@ -1,20 +1,35 @@
+[<< Back](../README.md)
+
 # Developer Guide
 
 This is a guide for developers of this project.
 
+* [Environment Setup](#setup)
+* [Release Process](#release-process)
 
-## Setup
+# Environment Setup
 
 Here is a brief overview of how to setup for this project:
 
-* Use NVM to install correct Node.js version (currently 6.2.2)
-* Use NPM to install dependencies
-* Use WebStorm for development
+* Use `nvm` to install correct Node.js version (currently 6.2.2)
+
+  ```
+  nvm install x.x.x
+  nvm use x.x.x
+  ```
+
+* Install platform dependencies. These are unique to each platform and are implicitly covered in the different [CLI install guides](../README.md#installation)
+* Install app dependencies
+
+  ```
+  cd bean-sdk-node
+  npm install
+  ```
+
+* Open project in WebStorm and begin developing!
 
 
-### WebStorm
-
-Make sure you do the following:
+### Setup WebStorm
 
 * Configure to use ECMAScript 6
 
@@ -27,13 +42,13 @@ Make sure you do the following:
 * Enable Node core libraries
 
     *Preferences > Languages & Frameworks > Node.js & NPM > (Enable node core libraries)*
-     
+
 * Configure the correct Node.js interpreter
 
     *Preferences > Languages & Frameworks > Node.js & NPM > (Dropdown choose NVM install)*
 
 
-## Release Guide
+# Release Process
 
 *Before you begin:*
 

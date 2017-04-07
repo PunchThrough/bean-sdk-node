@@ -65,15 +65,10 @@ git remote add public git@github.com:PunchThrough/bean-sdk-node.git
 4. **Optional**: Update `bean-arduino-core` if there is a new version.
 
   * Check out [bean-arduino-core](https://github.com/punchthrough/bean-arduino-core) at a given tag.
-  * Bundle it
+  * Run the bundle script and copy it over to this project:
 
   ```
   python scripts/bundle.py
-  ```
-
-  * Copy the newly built bundle into this project:
-
-  ```
   cp bean-arduino-core/tmp/bean-arduino-core-x.x.x.tar.gz src/resources/
   ```
 
@@ -81,11 +76,36 @@ git remote add public git@github.com:PunchThrough/bean-sdk-node.git
 
 5. **Optional**: Update `bean-firmware` if there is a new version.
 
-  *
+  * Find the latest release on [Confluence](https://punchthrough.atlassian.net/wiki/pages/viewpage.action?pageId=51366714)
+  * Unzip the release
+  * Copy the following files to `src/resources/firmware_bundles/bean/`
 
-4. Make a new commit/PR containing changes from steps 2 and 3
-5. Tag release: `git tag -a <version>`
-6. Push to public and private repos: `git push origin master --tags && git push public master --tags`
-6. Build app: `npm run build`
-7. Login to npm: `npm login`
-8. Publish: `npm publish`
+    * `*_a_BeanSmallImgAPadded.bin`
+    * `*_b_Bean_imgB_large.bin`
+    * `*_c_BeanSmallImgA.bin`
+    * `*_a_BeanSmallImgB.bin`
+
+  * Copy the following files to `src/resources/firmware_bundles/beanplus/`
+
+    * `*_b_BeanPlus_imgB_large.bin`
+    * `*_c_BeanPlusSmallImgA.bin`
+
+6. Make a new commit/PR containing the following changes:
+
+  * Updated CHANGELOG
+  * Updated version in `package.json`
+  * **Optional:** Updated bean-arduino-core
+  * **Optional:** Updated bean-firmware
+
+7. Review and merge to master
+8. Checkout master and tag release: `git tag -a <version>`
+9. Push to public and private repos
+
+```
+git push origin master --tags
+git push public master --tags
+```
+
+10. Build app: `npm run build`
+11. Login to npm: `npm login`
+12. Publish: `npm publish`

@@ -1,37 +1,59 @@
 #!/usr/bin/env python
 
-
 import os
 import shutil
 import tarfile
 
 
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
-BUILD_DIR = os.path.join(THIS_DIR, '..', 'build')
-SRC_DIR = os.path.join(THIS_DIR, '..', 'src')
-RESOURCES_DIR = os.path.join(SRC_DIR, 'resources')
+BUILD_DIR = os.path.abspath(os.path.join(THIS_DIR, '..', 'build'))
+SRC_DIR = os.path.abspath(os.path.join(THIS_DIR, '..', 'src'))
+SRC_RESOURCES_DIR = os.path.join(SRC_DIR, 'resources')
+BUILD_RESOURCES_DIR = os.path.join(BUILD_DIR, 'resources')
 
-BEAN_ARDUINO_CORE = "bean-arduino-core-2.0.2"
-BEAN_ARDUINO_CORE_TARBALL = "bean-arduino-core-2.0.2.tar.gz"
+BEAN_ARDUINO_CORE_GLOB = "bean-arduino-core"
 
 
-def extract_arduino_core():
-    build_resources = os.path.join(BUILD_DIR, 'resources')
-    archive_path = os.path.join(build_resources, BEAN_ARDUINO_CORE_TARBALL)
-    archive = tarfile.open(archive_path)
-    archive.extractall(build_resources)
+def patch_platforms_local_txt(arduino_core):
+    """Monkey-patch the builtin platforms.local.txt with our own customized version"""
 
-    # lastly, copy platforms.local.txt
-    src = os.path.join(RESOURCES_DIR, 'platform.local.txt')
-    dst = os.path.join(build_resources, BEAN_ARDUINO_CORE, 'hardware', 'LightBlue-Bean', 'bean', 'avr')
+    src = os.path.join(SRC_RESOURCES_DIR, 'platform.local.txt')
+    dst = os.path.join(BUILD_RESOURCES_DIR, arduino_core, 'hardware', 'LightBlue-Bean', 'bean', 'avr')
     shutil.copy(src, dst)
 
 
+def extract_arduino_core(arduino_core):
+    """Unzip the bean-arduino-core inside the build/ dir and delete the tarball"""
+
+    archive_path = os.path.join(BUILD_RESOURCES_DIR, "{}.tar.gz".format(arduino_core))
+    archive = tarfile.open(archive_path)
+    archive.extractall(BUILD_RESOURCES_DIR)
+    os.remove(archive_path)
+
+
+def resolve_arduino_core_version():
+    """Turn BEAN_ARDUINO_CORE_GLOB into an actual path with correct version
+
+    This function exists so we don't have to have hardcoded versions in
+    the build script.
+    """
+
+    for f in os.listdir(BUILD_RESOURCES_DIR):
+        if BEAN_ARDUINO_CORE_GLOB in f:
+            return f.strip('.tar.gz')
+
+    raise Exception("Couldn't find arduino core given glob: {}".format(BEAN_ARDUINO_CORE_GLOB))
+
+
 def copy_resources():
-    shutil.copytree(RESOURCES_DIR, os.path.join(BUILD_DIR, 'resources'))
+    """Copy src/resources/ to build/resources/ """
+
+    shutil.copytree(SRC_RESOURCES_DIR, os.path.join(BUILD_DIR, 'resources'))
 
 
 def babel():
+    """Babel transpiles ES6 and copies all output files to the build/ dir"""
+
     print("Running babel...")
     babel_exe = os.path.join(THIS_DIR, '..', 'node_modules', '.bin', 'babel')
     cmd_str = "{} {} -d {}".format(babel_exe, SRC_DIR, BUILD_DIR)
@@ -39,6 +61,8 @@ def babel():
 
 
 def clean():
+    """Delete the build/ dir"""
+
     print("Cleaning...")
     if os.path.exists(BUILD_DIR):
         shutil.rmtree(BUILD_DIR)
@@ -48,5 +72,7 @@ def clean():
 clean()
 babel()
 copy_resources()
-extract_arduino_core()
+arduino_core = resolve_arduino_core_version()
+extract_arduino_core(arduino_core)
+patch_platforms_local_txt(arduino_core)
 print("Build complete")

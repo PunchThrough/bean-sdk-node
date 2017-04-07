@@ -119,8 +119,10 @@ function installBeanArduinoCore(completedCallback) {
   let example = platform.runFunction(fnMap)
 
   util.userInput.question(`\nWhere is Arduino core installed? (ex. ${example})\nPath:`, (arduinoInstallPath) => {
+
     openArduinoApp(arduinoInstallPath, ()=> {
-      let beanArduinoCore = paths.getResource('bean-arduino-core-2.0.2')
+
+      let beanArduinoCore = paths.getResourceGlob('bean-arduino-core')
 
       // Make sure COMPILED_BEAN_LOCATION exists
       common.cleanSketchFolder()

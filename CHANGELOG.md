@@ -1,3 +1,12 @@
+# 0.6.2
+
+### New `bean-arduino-core` 2.0.3
+
+* Fixes incorrect version number when selecting board/programmer in Arduino
+* Fixes acceleration range issue
+
+---
+
 # 0.6.1
 
 ### New `bean-arduino-core` 2.0.2

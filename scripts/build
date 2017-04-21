@@ -28,6 +28,7 @@ def extract_arduino_core(arduino_core):
     archive_path = os.path.join(BUILD_RESOURCES_DIR, "{}.tar.gz".format(arduino_core))
     archive = tarfile.open(archive_path)
     archive.extractall(BUILD_RESOURCES_DIR)
+    archive.close()
     os.remove(archive_path)
 
 

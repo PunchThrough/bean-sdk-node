@@ -3,7 +3,7 @@
 ### Downgrading Noble
 
 * Fix: downgrading Noble from 1.8.1 to 1.7.0 because of incompatibility
-* Fix: unable to buiild from npm on Windows
+* Fix: unable to build from npm on Windows
 
 # 0.6.2
 

@@ -4,8 +4,9 @@ let sdk = lightblue.sdk()
 
 sdk.on('discover', (scannedDevice)=> {
   // We now have a `ScannedDevice` object, found in src/lightblue/devices.js
-
-  sdk.connectScannedDevice(scannedDevice, (err, bean)=> {
+    console.log(`\nFound device with name/address: ${scannedDevice.getName()}/${scannedDevice.getAddress()}`)
+    sdk.stopScanning()
+    sdk.connectScannedDevice(scannedDevice, (err, bean)=> {
     // We now have a `LightBlueDevice` object (named bean), found in src/lightblue/devices.js
 
     if (err) {
@@ -32,4 +33,14 @@ sdk.on('discover', (scannedDevice)=> {
   })
 })
 
-sdk.startScanning()
+//scan and only filter for bean devices
+sdk.startScanning(30,true,(error) =>{
+    console.log('');
+    if (error) {
+        console.log('Command completed with error(s): ' + error);
+        quit(1);
+    } else {
+        console.log('Command completed.');
+        quit(0);
+    }
+})

@@ -6,7 +6,7 @@ Welcome to the Node.js SDK and CLI source code repo for the LightBlue Bean/Bean+
 
 Documentation:
 
-* [Project Overview](https://punchthrough.com/bean/guides/node-sdk/overview/)
+* [Project Overview](https://punchthrough.github.io/bean-docs/guides/node-sdk/overview/)
 * [Developer Guide](docs/developer.md)
 * [Release Notes](CHANGELOG.md)
 
@@ -14,16 +14,16 @@ Documentation:
 
 Follow one of our detailed install guides!
 
-* [OS X](https://punchthrough.com/bean/guides/node-sdk/install-osx)
-* [Linux](https://punchthrough.com/bean/guides/node-sdk/install-linux)
-* [Windows](https://punchthrough.com/bean/guides/node-sdk/install-windows)
-* [Rasperry Pi](https://punchthrough.com/bean/guides/node-sdk/install-rpi)
+* [OS X](https://punchthrough.github.io/bean-docs/guides/node-sdk/install-osx)
+* [Linux](https://punchthrough.github.io/bean-docs/guides/node-sdk/install-linux)
+* [Windows](https://punchthrough.github.io/bean-docs/guides/node-sdk/install-windows)
+* [Rasperry Pi](https://punchthrough.github.io/bean-docs/guides/node-sdk/install-rpi)
 
 # CLI
 
 This project ships with a full-featured CLI that can talk to the Bean/Bean+ without needing to write a single line of code.
 
-* [CLI Tutorial](https://punchthrough.com/bean/guides/getting-started/cli-loader/)
+* [CLI Tutorial](https://punchthrough.github.io/bean-docs/guides/getting-started/cli-loader/)
 
 # SDK/Library
 
